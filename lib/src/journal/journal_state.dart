@@ -4,35 +4,34 @@ import '../models/transaction.dart';
 import '../common.dart';
 
 class JournalState extends ResultState<JournalResult> {
-  final JournalResult result;
-  final String error;
-
-  final bool isInit;
-  final bool isBusy;
-  final bool isResult;
-  final bool isError;
-
   JournalState({
-    this.result,
-    this.error,
-    this.isInit = false,
-    this.isBusy = false,
-    this.isResult = false,
-    this.isError = false,
-  });
+    JournalResult journalResult,
+    String error,
+    bool isInit = false,
+    bool isBusy = false,
+    bool isResult = false,
+    bool isError = false,
+  }) : super(
+          value: journalResult,
+          err: error,
+          isInit: isInit,
+          isBusy: isBusy,
+          isResult: isResult,
+          isError: isError,
+        );
 
   factory JournalState.init() => JournalState(isInit: true);
 
   factory JournalState.busy() => JournalState(isBusy: true);
 
   factory JournalState.result(JournalResult result) =>
-      JournalState(isResult: true, result: result);
+      JournalState(isResult: true, journalResult: result);
 
   factory JournalState.error(String e) => JournalState(isError: true, error: e);
 
   Map<String, dynamic> toMap() => {
-        'result': (result != null) ? result : 'null',
-        'error': (error != null) ? error : 'null',
+        'result': (value != null) ? value : 'null',
+        'error': (err != null) ? err : 'null',
         'isInit': isInit,
         'isBusy': isBusy,
         'isResult': isResult,
