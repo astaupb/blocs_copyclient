@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 
 import 'backend_sunrise.dart';
+import 'login_form.dart';
 
 void main() => runApp(CopyclientDemo());
 
@@ -62,33 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
         bloc: BlocProvider.of<AuthBloc>(context),
         builder: (BuildContext context, AuthState state) {
           if (state.isUnauthorized) {
-            // LOGIN SCREEN
-            return Form(
-              child: ListView(
-                children: <Widget>[
-                  Text('Login:'),
-                  TextFormField(
-                    autocorrect: false,
-                    controller: usernameController,
-                  ),
-                  TextFormField(
-                    autocorrect: false,
-                    controller: passwordController,
-                    obscureText: true,
-                  ),
-                  RaisedButton(
-                    onPressed: () => BlocProvider.of<AuthBloc>(context).login(
-                        usernameController.text, passwordController.text),
-                  ),
-                ],
-              ),
-            );
+            return new LoginForm();
           } else if (state.isBusy) {
-            // LOADING LOGIN
             return Center(child: CircularProgressIndicator());
           } else if (state.isAuthorized) {
             // AUTHORIZED AND READY TO HUSTLE
-            return Placeholder();
+            return Text(state.toString());
           }
         },
       ),
@@ -97,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => Scaffold.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                          BlocProvider.of<AuthBloc>(context).backend.basePath),
+                          BlocProvider.of<AuthBloc>(context).backend.host),
                     ),
                   ),
             ),
