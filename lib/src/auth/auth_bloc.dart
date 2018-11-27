@@ -18,9 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({@required this.backend});
 
   @override
-  AuthState get initialState => AuthState.init();
-
-  void init(Backend backend) => dispatch(AuthInit(backend: backend));
+  AuthState get initialState => AuthState.unauthorized();
 
   void login(String user, String pw) =>
       dispatch(Login(username: user, password: pw));
@@ -30,10 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   Stream<AuthState> mapEventToState(AuthState state, AuthEvent event) async* {
     log.fine('Event: $event');
-    if (event is AuthInit) {
-      backend = event.backend;
-      yield AuthState.unauthorized();
-    } else if (event is Login && state.isUnauthorized) {
+    if (event is Login && state.isUnauthorized) {
       yield AuthState.busy();
       try {
         await _postLogin(event);
