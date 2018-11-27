@@ -50,8 +50,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   _MyHomePageState();
 
+  static final http.Client client = http.Client();
+
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  JobsBloc jobsBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,37 @@ class _MyHomePageState extends State<MyHomePage> {
             return Center(child: CircularProgressIndicator());
           } else if (state.isAuthorized) {
             // AUTHORIZED AND READY TO HUSTLE
-            return Text(state.toString());
+            jobsBloc = JobsBloc(BackendSunrise(client), state.token);
+            return BlocProvider<JobsBloc>(
+              bloc: jobsBloc,
+              child: BlocBuilder(
+                bloc: jobsBloc,
+                builder: (BuildContext context, JobsState state) {
+                  if (state.isInit) {
+                    return Column(children: <Widget>[
+                      Text('Jobliste gestartet!'),
+                      RaisedButton(
+                        onPressed: () => jobsBloc.onStart(),
+                        child: Text('Jobliste laden'),
+                      )
+                    ]);
+                  } else if (state.isBusy) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state.isResult) {
+                    return ListView.builder(
+                      itemCount: state.value.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(state.value[index].jobInfo.filename),
+                        );
+                      },
+                    );
+                  } else if (state.isError) {
+                    return Text('Ein Fehler ist aufgetreten: ${state.err}');
+                  }
+                },
+              ),
+            );
           }
         },
       ),
@@ -76,8 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) => FloatingActionButton(
               onPressed: () => Scaffold.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                          BlocProvider.of<AuthBloc>(context).backend.host),
+                      content:
+                          Text(BlocProvider.of<AuthBloc>(context).backend.host),
                     ),
                   ),
             ),
