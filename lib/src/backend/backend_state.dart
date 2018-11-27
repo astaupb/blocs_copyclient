@@ -5,9 +5,9 @@ class BackendState extends ResultState<Backend> {
   BackendState({
     Backend backend,
     String error,
-    bool isInit,
-    bool isResult,
-    bool isError,
+    bool isInit = false,
+    bool isResult = false,
+    bool isError = false,
   }) : super(
           value: backend,
           err: error,

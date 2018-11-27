@@ -9,9 +9,9 @@ class AuthState extends CommonState {
   AuthState({
     this.token,
     String error,
-    bool isInit,
-    bool isBusy,
-    bool isError,
+    bool isInit = false,
+    bool isBusy = false,
+    bool isError = false,
     this.isUnauthorized = false,
     this.isAuthorized = false,
   }) : super(err: error, isInit: isInit, isBusy: isBusy, isError: isError);

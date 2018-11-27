@@ -5,10 +5,10 @@ class JobsState extends ResultState<List<Job>> {
   JobsState({
     List<Job> jobs,
     String error,
-    bool isInit,
-    bool isBusy,
-    bool isError,
-    bool isResult,
+    bool isInit = false,
+    bool isBusy = false,
+    bool isError = false,
+    bool isResult = false,
   }) : super(
           value: jobs,
           err: error,

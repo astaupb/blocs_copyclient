@@ -5,10 +5,10 @@ class UserState extends ResultState<User> {
   UserState({
     User user,
     String error,
-    bool isInit,
-    bool isBusy,
-    bool isResult,
-    bool isError,
+    bool isInit = false,
+    bool isBusy = false,
+    bool isResult = false,
+    bool isError = false,
   }) : super(
             value: user,
             isResult: isResult,

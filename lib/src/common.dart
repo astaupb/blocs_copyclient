@@ -1,4 +1,4 @@
-class CommonState {
+abstract class CommonState {
   final String err;
 
   final bool isInit;
@@ -7,13 +7,13 @@ class CommonState {
 
   CommonState({
     this.err,
-    this.isInit = false,
-    this.isBusy = false,
-    this.isError = false,
+    this.isInit,
+    this.isBusy ,
+    this.isError,
   });
 }
 
-class ResultState<T> extends CommonState {
+abstract class ResultState<T> extends CommonState {
   /// value the result holds 
   final T value;
 
@@ -21,7 +21,7 @@ class ResultState<T> extends CommonState {
   final bool isResult;
 
   ResultState({
-    this.isResult = false,
+    this.isResult,
     this.value,
     String err,
     bool isInit,
