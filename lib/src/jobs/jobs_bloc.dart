@@ -115,12 +115,12 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   onGetPreview(String uid) => dispatch(GetPreviews(uid));
 
-  onPrint(int deviceId, int index) => dispatch(PrintJob(
+  onPrint(String deviceId, int index) => dispatch(PrintJob(
         deviceId: deviceId,
         index: index,
       ));
 
-  onPrintbyUid(int deviceId, String uid) => dispatch(PrintJob(
+  onPrintbyUid(String deviceId, String uid) => dispatch(PrintJob(
         deviceId: deviceId,
         uid: uid,
       ));
@@ -245,7 +245,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     );
   }
 
-  Future<void> _printJob(int deviceId, String uid) async {
+  Future<void> _printJob(String deviceId, String uid) async {
     Request request = ApiRequest('POST', '/printers/$deviceId/queue', _backend);
     request.headers['X-Api-Key'] = _token;
 

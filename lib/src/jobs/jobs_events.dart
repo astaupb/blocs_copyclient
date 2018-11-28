@@ -35,13 +35,17 @@ abstract class JobsEvent {}
 
 /// [PrintJob] _needs_ to have either [uid] or [index] set
 class PrintJob extends JobsEvent {
-  final int deviceId;
+  final String deviceId;
   final String uid;
   final int index;
 
   PrintJob({@required this.deviceId, this.uid, this.index});
 
-  Map<String, dynamic> toMap() => {'uid': uid, 'index': index};
+  Map<String, dynamic> toMap() => {
+        'deviceId': deviceId,
+        'uid': uid,
+        'index': index,
+      };
 
   @override
   String toString() => toMap().toString();
