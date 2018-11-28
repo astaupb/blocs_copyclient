@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 
 import 'backend_sunrise.dart';
 import 'login_form.dart';
@@ -94,6 +95,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(state.value[index].jobInfo.filename),
+                          onTap: () async {
+                            try {
+                              String target = await BarcodeScanner.scan();
+                              jobsBloc.onPrint(target, index);
+                            } catch (e) {
+                              print('Jobs: $e');
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text(
+                                      'Es wurde kein Drucker ausgewählt')));
+                            }
+                          },
                         );
                       },
                     );
