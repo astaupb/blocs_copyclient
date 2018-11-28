@@ -21,6 +21,7 @@ class _JobsPageState extends State<JobsPage> {
           builder: (BuildContext context, JobsState state) {
             if (state.isInit) {
               jobsBloc.onStart();
+              return Container(width: 0.0, height: 0.0);
             } else if (state.isBusy) {
               return Center(child: CircularProgressIndicator());
             } else if (state.isResult) {
@@ -48,8 +49,10 @@ class _JobsPageState extends State<JobsPage> {
           },
         ),
         floatingActionButton: Builder(
-          builder: (BuildContext context) =>
-              FloatingActionButton(onPressed: () => null),
+          builder: (BuildContext context) => FloatingActionButton(
+                onPressed: () => jobsBloc.onRefresh(),
+                child: Icon(Icons.refresh),
+              ),
         ));
   }
 }
