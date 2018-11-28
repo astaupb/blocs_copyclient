@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'jobinfo.dart';
 import 'joboptions.dart';
 
@@ -9,6 +11,9 @@ class Job {
   final int userId;
   final JobOptions jobOptions;
   final JobInfo jobInfo;
+
+  Uint8List pdfBytes;
+  List<Uint8List> previews;
 
   Job({this.uid, this.timestamp, this.userId, this.jobOptions, this.jobInfo});
 
