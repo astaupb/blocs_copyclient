@@ -51,6 +51,7 @@ class PrintJob extends JobsEvent {
   String toString() => toMap().toString();
 }
 
+/// Demand refreshing all jobs, or if [index] is set only that one
 class RefreshJobs extends JobsEvent {
   final int index;
 

@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:quiver/cache.dart';
 
 import '../models/backend.dart';
 import '../models/job.dart';
@@ -18,10 +19,11 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   Backend _backend;
   String _token;
+  Cache cache;
 
   List<Job> _jobs;
 
-  JobsBloc(this._backend, this._token) {
+  JobsBloc(this._backend, this._token, {this.cache}) {
     log.fine('$this started');
   }
 
@@ -40,6 +42,8 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   @override
   Stream<JobsState> mapEventToState(JobsState state, JobsEvent event) async* {
+    log.fine('Event: ${event}');
+
     /// go into busy state to show busyness
     yield JobsState.busy();
 
@@ -52,7 +56,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       }
     } else if (event is RefreshJobs) {
       try {
-        if (event.index != null)
+        if (event.index == null)
           await _getJobs();
         else
           await _getSingle(_jobs[event.index].uid);
@@ -133,8 +137,15 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   @override
   void onTransition(Transition<JobsEvent, JobsState> transition) {
-    log.fine(transition.event);
-    log.fine(transition.nextState);
+    log.fine('State: ${transition.nextState}');
+    if (transition.nextState.isResult) {
+      try {
+        (cache ?? null).set('jobs', _jobs);
+      } catch (e) {
+        log.severe(
+            'you should use caching with this BloC, pass it in the constructor');
+      }
+    }
 
     super.onTransition(transition);
   }
@@ -260,7 +271,8 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       (response) async {
         if (response.statusCode == 202) {
         } else {
-          throw Exception('status code other than 202 received (${response.statusCode})');
+          throw Exception(
+              'status code other than 202 received (${response.statusCode})');
         }
       },
     );
