@@ -11,10 +11,6 @@ import 'jobs_page.dart';
 void main() => runApp(CopyclientDemo());
 
 class CopyclientDemo extends StatelessWidget {
-  static final http.Client client = http.Client();
-
-  final AuthBloc authBloc = AuthBloc(backend: BackendSunrise(client));
-
   CopyclientDemo() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
@@ -30,10 +26,6 @@ class CopyclientDemo extends StatelessWidget {
       title: 'Copyclient Example',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-      ),
-      home: BlocProvider<AuthBloc>(
-        bloc: authBloc,
-        child: LoginPage(),
       ),
       routes: routes,
     );
@@ -52,29 +44,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static final http.Client client = http.Client();
+  static final Backend backend = BackendSunrise(client);
+  AuthBloc authBloc = AuthBloc(backend: backend);
   JobsBloc jobsBloc;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
-      bloc: BlocProvider.of<AuthBloc>(context),
-      builder: (BuildContext context, AuthState state) {
-        if (state.isUnauthorized) {
-          return LoginPage();
-        } else if (state.isBusy) {
-          return Container(
-            width: 0.0,
-            height: 0.0,
-          );
-          //return Center(child: CircularProgressIndicator());
-        } else if (state.isAuthorized) {
-          // AUTHORIZED AND READY TO HUSTLE
-          jobsBloc = JobsBloc(BackendSunrise(http.Client()), state.token);
-          return BlocProvider<JobsBloc>(
-            bloc: jobsBloc,
-            child: JobsPage(),
-          );
-        }
-      },
+    return BlocProvider(
+      bloc: authBloc,
+      child: BlocBuilder(
+        bloc: authBloc,
+        builder: (BuildContext context, AuthState state) {
+          if (state.isUnauthorized) {
+            return LoginPage();
+          } else if (state.isBusy) {
+            return Container(
+              width: 0.0,
+              height: 0.0,
+            );
+            //return Center(child: CircularProgressIndicator());
+          } else if (state.isAuthorized) {
+            // AUTHORIZED AND READY TO HUSTLE
+            jobsBloc = JobsBloc(BackendSunrise(http.Client()), state.token);
+            return BlocProvider<JobsBloc>(
+              bloc: jobsBloc,
+              child: JobsPage(),
+            );
+          }
+        },
+      ),
     );
   }
 }
