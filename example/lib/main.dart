@@ -98,7 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           onTap: () async {
                             try {
                               String target = await BarcodeScanner.scan();
-                              jobsBloc.onPrint(target, index);
+                              jobsBloc.onPrintbyUid(
+                                  target, state.value[index].uid);
                             } catch (e) {
                               print('Jobs: $e');
                               Scaffold.of(context).showSnackBar(SnackBar(
