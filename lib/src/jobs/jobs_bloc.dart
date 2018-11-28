@@ -246,7 +246,12 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   }
 
   Future<void> _printJob(String deviceId, String uid) async {
-    Request request = ApiRequest('POST', '/printers/$deviceId/queue', _backend);
+    Request request = ApiRequest(
+      'POST',
+      '/printers/$deviceId/queue',
+      _backend,
+      queryParameters: {'uid': uid},
+    );
     request.headers['X-Api-Key'] = _token;
 
     log.finer(request);
@@ -255,7 +260,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       (response) async {
         if (response.statusCode == 202) {
         } else {
-          throw Exception('status code other than 202 received');
+          throw Exception('status code other than 202 received (${response.statusCode})');
         }
       },
     );
