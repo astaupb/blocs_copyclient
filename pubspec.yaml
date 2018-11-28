@@ -13,6 +13,7 @@ dependencies:
   bloc: ^0.7.0
   http: ^0.12.0
   logging: ^0.11.3+2
+  quiver: ^2.0.1
 
 dev_dependencies:
   test: ^1.5.1
