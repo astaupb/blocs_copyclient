@@ -22,7 +22,6 @@ class LoginFormState extends State<LoginForm> {
     return Form(
       child: ListView(
         children: <Widget>[
-          Text('Login:'),
           TextFormField(
             autocorrect: false,
             controller: usernameController,
