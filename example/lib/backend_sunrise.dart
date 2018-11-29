@@ -5,7 +5,7 @@ import 'package:blocs_copyclient/src/models/backend.dart';
 
 class BackendSunrise implements Backend {
   final String host = 'sunrise.upb.de';
-  final String basePath = '/astaprint-backend';
+  final String basePath = '/astaprint';
   final Client _innerClient;
 
   Logger _log = new Logger('BackendSunrise');
@@ -36,7 +36,7 @@ class BackendSunrise implements Backend {
 
     /// copy over body from [request]
     if (request is Request) {
-      modRequest.body = request.body;
+      modRequest.bodyBytes = request.bodyBytes;
     }
 
     /// send finalized request through [_innerClient] and return [StreamedResponse]
