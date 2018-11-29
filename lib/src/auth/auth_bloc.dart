@@ -57,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   /// POST /user/login and then GET /user to update the global [User] object
   Future<void> _postLogin(Login initEvent) async {
-    http.BaseRequest request = ApiRequest('POST', '/user/login', backend);
+    http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
     request.headers['Accept'] = 'text/plain';
     request.headers['Authorization'] = ('Basic ' +
         base64.encode(
