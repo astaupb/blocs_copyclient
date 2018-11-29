@@ -71,16 +71,6 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       } catch (e) {
         yield JobsState.error(e.toString());
       }
-    } else if (event is UploadJob) {
-      try {
-        await _uploadJob(event.file, event.filename, event.options);
-
-        /// TODO: only get single job by uid here and/or wait better
-        await _getJobs();
-        yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
-      }
     } else if (event is PrintJob) {
       try {
         await _printJob(event.deviceId,
@@ -151,13 +141,6 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   }
 
   onUpdateJob() => null;
-
-  onUpload({@required File file, String filename, JobOptions options}) =>
-      dispatch(UploadJob(
-        file: file,
-        filename: filename,
-        options: options,
-      ));
 
   Future<void> _deleteJob(String uid) async {
     Request request = ApiRequest('DELETE', '/jobs/$uid', _backend);
@@ -273,27 +256,6 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
         } else {
           throw Exception(
               'status code other than 202 received (${response.statusCode})');
-        }
-      },
-    );
-  }
-
-  Future<void> _uploadJob(
-      File file, String filename, JobOptions options) async {
-    Request request = ApiRequest('POST', '/jobs', _backend);
-    request.headers['Accept'] = 'application/pdf';
-    request.headers['Content-Type'] = 'application/pdf';
-    request.headers['X-Api-Key'] = _token;
-    request.body = file.readAsStringSync();
-
-    log.finer(request);
-
-    return await _backend.send(request).then(
-      (response) async {
-        if (response.statusCode == 202) {
-          _jobs.add(Job(uid: utf8.decode(await response.stream.toBytes())));
-        } else {
-          throw Exception('status code other than 202 received');
         }
       },
     );
