@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:quiver/cache.dart';
 
 import '../models/backend.dart';
 import '../models/job.dart';
-import '../models/joboptions.dart';
+import '../exceptions.dart';
 import 'jobs_events.dart';
 import 'jobs_state.dart';
 
@@ -51,8 +49,8 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       try {
         await _getJobs();
         yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JobsState.exception(e);
       }
     } else if (event is RefreshJobs) {
       try {
@@ -61,15 +59,15 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
         else
           await _getSingle(_jobs[event.index].uid);
         yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JobsState.exception(e);
       }
     } else if (event is GetPreviews) {
       try {
         await _getPreviews(event.uid);
         yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JobsState.exception(e);
       }
     } else if (event is PrintJob) {
       try {
@@ -80,23 +78,23 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
           _jobs.remove(index);
         }
         yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JobsState.exception(e);
       }
     } else if (event is DeleteJob) {
       try {
         await _deleteJob(
             ((event.uid != null) ? event.uid : _jobs[event.index].uid));
         yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JobsState.exception(e);
       }
     } else if (event is GetPdf) {
       try {
         await _getPdf(event.uid);
         yield JobsState.result(_jobs);
-      } catch (e) {
-        yield JobsState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JobsState.exception(e);
       }
     }
   }
@@ -146,14 +144,16 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     Request request = ApiRequest('DELETE', '/jobs/$uid', _backend);
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_deleteJob: $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_deleteJob: ${response.statusCode}');
         if (response.statusCode == 205) {
           _jobs.removeWhere((Job job) => job.uid == uid);
         } else {
-          throw Exception('status code other than 205 received');
+          throw ApiException(response.statusCode,
+              info: 'received status code other than 205');
         }
       },
     );
@@ -165,16 +165,18 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_getJobs: $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_getJobs: ${response.statusCode}');
         if (response.statusCode == 200) {
           _jobs = List.from(json
               .decode(utf8.decode(await response.stream.toBytes()))
               .map((value) => Job.fromMap(value)));
         } else {
-          throw Exception('status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
@@ -185,15 +187,17 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     request.headers['Accept'] = 'application/pdf';
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_getPdf: $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_getPdf: ${response.statusCode}');
         if (response.statusCode == 200) {
           _jobs[_jobs.indexWhere((job) => job.uid == uid)].pdfBytes =
               await response.stream.toBytes();
         } else {
-          throw Exception('status code other than 202 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
@@ -206,14 +210,16 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       request.headers['Accept'] = 'image/jpeg';
       request.headers['X-Api-Key'] = _token;
 
-      log.finer(request);
+      log.finer('_getPreviews: $request');
 
       await _backend.send(request).then(
         (response) async {
+          log.finer('_getPreviews: ${response.statusCode}');
           if (response.statusCode == 200) {
             _jobs[index].previews[i] = await response.stream.toBytes();
           } else {
-            throw Exception('status code other than 200 received');
+            throw ApiException(response.statusCode,
+                info: 'status code other than 200 received');
           }
         },
       );
@@ -225,15 +231,17 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_getSingle: $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_getSingle: ${response.statusCode}');
         if (response.statusCode == 200) {
           _jobs[_jobs.indexWhere((Job job) => job.uid == uid)] = Job.fromMap(
               json.decode(utf8.decode(await response.stream.toBytes())));
         } else {
-          throw Exception('status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
@@ -248,14 +256,15 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     );
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_printJob: $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_printJob: ${response.statusCode}');
         if (response.statusCode == 202) {
         } else {
-          throw Exception(
-              'status code other than 202 received (${response.statusCode})');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 202 received');
         }
       },
     );

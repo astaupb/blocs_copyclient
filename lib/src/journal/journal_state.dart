@@ -2,22 +2,23 @@ import 'package:meta/meta.dart';
 
 import '../models/transaction.dart';
 import '../common.dart';
+import '../exceptions.dart';
 
 class JournalState extends ResultState<JournalResult> {
   JournalState({
     JournalResult journalResult,
-    String error,
+    ApiException error,
     bool isInit = false,
     bool isBusy = false,
     bool isResult = false,
-    bool isError = false,
+    bool isException = false,
   }) : super(
           value: journalResult,
-          err: error,
+          error: error,
           isInit: isInit,
           isBusy: isBusy,
           isResult: isResult,
-          isError: isError,
+          isException: isException,
         );
 
   factory JournalState.init() => JournalState(isInit: true);
@@ -27,15 +28,15 @@ class JournalState extends ResultState<JournalResult> {
   factory JournalState.result(JournalResult result) =>
       JournalState(isResult: true, journalResult: result);
 
-  factory JournalState.error(String e) => JournalState(isError: true, error: e);
+  factory JournalState.exception(ApiException e) => JournalState(isException: true, error: e);
 
   Map<String, dynamic> toMap() => {
         'result': (value != null) ? value : 'null',
-        'error': (err != null) ? err : 'null',
+        'error': (error != null) ? error : 'null',
         'isInit': isInit,
         'isBusy': isBusy,
         'isResult': isResult,
-        'isError': isError
+        'isException': isException
       };
 
   @override

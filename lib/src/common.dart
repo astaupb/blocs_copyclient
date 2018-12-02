@@ -1,15 +1,15 @@
 abstract class CommonState {
-  final String err;
+  final Exception error;
 
   final bool isInit;
   final bool isBusy;
-  final bool isError;
+  final bool isException;
 
   CommonState({
-    this.err,
+    this.error,
     this.isInit,
     this.isBusy ,
-    this.isError,
+    this.isException,
   });
 }
 
@@ -23,14 +23,14 @@ abstract class ResultState<T> extends CommonState {
   ResultState({
     this.isResult,
     this.value,
-    String err,
+    Exception error,
     bool isInit,
     bool isBusy,
-    bool isError,
+    bool isException,
   }) : super(
-          err: err,
+          error: error,
           isInit: isInit,
           isBusy: isBusy,
-          isError: isError,
+          isException: isException,
         );
 }

@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
 import '../models/backend.dart';
+import '../exceptions.dart';
 import 'auth_events.dart';
 import 'auth_state.dart';
 
@@ -33,9 +34,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         await _postLogin(event);
         yield AuthState.authorized(_token);
-      } catch (e) {
-        log.severe(e);
-        yield AuthState.error(e.toString().split('Error:')[0]);
+      } on ApiException catch (e) {
+        log.severe(e.info);
+        yield AuthState.exception(e);
       }
     } else if (event is Logout && state.isAuthorized) {
       yield AuthState.busy();
@@ -43,8 +44,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         //delete token and database entry
         _token = '';
         yield AuthState.unauthorized();
-      } catch (e) {
-        yield AuthState.error(e.toString().split('Error:')[0]);
+      } on ApiException catch (e) {
+        log.severe(e.info);
+        yield AuthState.exception(e);
       }
     }
   }
@@ -70,8 +72,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (response.statusCode == 200) {
         _token = await response.stream.bytesToString();
       } else {
-        throw Exception(
-            '_postLogin: received response code other than 200 (${response.statusCode})');
+        throw ApiException(response.statusCode,
+            info: '_postLogin: received response code other than 200');
       }
     });
   }

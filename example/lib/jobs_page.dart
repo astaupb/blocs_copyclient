@@ -43,8 +43,8 @@ class _JobsPageState extends State<JobsPage> {
                   );
                 },
               );
-            } else if (state.isError) {
-              return Text('Ein Fehler ist aufgetreten: ${state.err}');
+            } else if (state.isException) {
+              return Text('Ein Fehler ist aufgetreten: ${state.error}');
             }
           },
         ),

@@ -1,24 +1,26 @@
 import '../models/backend.dart';
 import '../common.dart';
+import '../exceptions.dart';
 
 class BackendState extends ResultState<Backend> {
   BackendState({
     Backend backend,
-    String error,
+    ApiException error,
     bool isInit = false,
     bool isResult = false,
-    bool isError = false,
+    bool isException = false,
   }) : super(
           value: backend,
-          err: error,
+          error: error,
           isInit: isInit,
           isResult: isResult,
-          isError: isError,
+          isException: isException,
         );
 
   factory BackendState.init() => BackendState(isInit: true);
 
-  factory BackendState.error(String e) => BackendState(isError: true, error: e);
+  factory BackendState.exception(ApiException e) =>
+      BackendState(isException: true, error: e);
 
   factory BackendState.result(Backend backend) =>
       BackendState(isResult: true, backend: backend);
@@ -26,9 +28,9 @@ class BackendState extends ResultState<Backend> {
   Map<String, dynamic> toMap() => {
         'isInit': isInit,
         'isResult': isResult,
-        'isError': isError,
+        'isException': isException,
         'backend': (value != null) ? value.toMap() : {},
-        'error': (err != null) ? err.toString() : 'null',
+        'error': (error != null) ? error.toString() : 'null',
       };
 
   @override

@@ -1,21 +1,22 @@
 import '../common.dart';
+import '../exceptions.dart';
 import '../models/dispatcher_task.dart';
 
 class UploadState extends ResultState<List<DispatcherTask>> {
   UploadState({
     var queue,
-    String error,
+    ApiException error,
     bool isInit = false,
     bool isBusy = false,
     bool isResult = false,
-    bool isError = false,
+    bool isException = false,
   }) : super(
           value: queue,
-          err: error,
+          error: error,
           isInit: isInit,
           isBusy: isBusy,
           isResult: isResult,
-          isError: isError,
+          isException: isException,
         );
 
   factory UploadState.init() => UploadState(isInit: true);
@@ -25,15 +26,15 @@ class UploadState extends ResultState<List<DispatcherTask>> {
   factory UploadState.result(List<DispatcherTask> queue) =>
       UploadState(isResult: true, queue: queue);
 
-  factory UploadState.error(String e) => UploadState(isError: true, error: e);
+  factory UploadState.exception(ApiException e) => UploadState(isException: true, error: e);
 
   Map<String, dynamic> toMap() => {
         'queue': (value != null) ? value : 'null',
-        'error': (err != null) ? err : 'null',
+        'error': (error != null) ? error : 'null',
         'isInit': isInit,
         'isBusy': isBusy,
         'isResult': isResult,
-        'isError': isError
+        'isException': isException
       };
 
   @override

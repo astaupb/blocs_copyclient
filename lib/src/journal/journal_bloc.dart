@@ -7,6 +7,7 @@ import 'package:logging/logging.dart';
 
 import 'journal_events.dart';
 import 'journal_state.dart';
+import '../exceptions.dart';
 import '../models/backend.dart';
 import '../models/transaction.dart';
 
@@ -29,6 +30,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   @override
   Stream<JournalState> mapEventToState(
       JournalState state, JournalEvent event) async* {
+    log.fine(event);
     yield JournalState.busy();
 
     if (event is RefreshJournal || event is InitJournal) {
@@ -37,15 +39,14 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
         await _getCredit();
         yield JournalState.result(
             JournalResult(credit: _credit, transactions: _journal));
-      } catch (e) {
-        yield JournalState.error(e.toString());
+      } on ApiException catch (e) {
+        yield JournalState.exception(e);
       }
     }
   }
 
   @override
   void onTransition(Transition<JournalEvent, JournalState> transition) {
-    log.fine(transition.event);
     log.fine(transition.nextState);
 
     super.onTransition(transition);
@@ -62,16 +63,18 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_getJournal $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_getJournal: ${response.statusCode}');
         if (response.statusCode == 200) {
           _journal = List.from(json
               .decode(utf8.decode(await response.stream.toBytes()))
               .map((value) => Transaction.fromMap(value)));
         } else {
-          throw Exception('status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
@@ -82,17 +85,18 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
-    log.finer(request);
+    log.finer('_getCredit: $request');
 
     return await _backend.send(request).then(
       (response) async {
+        log.finer('_getCredit: ${response.statusCode}');
         if (response.statusCode == 200) {
           _credit = json.decode(utf8.decode(await response.stream.toBytes()));
         } else {
-          throw Exception('status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
   }
 }
-

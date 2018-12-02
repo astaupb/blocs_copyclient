@@ -1,4 +1,5 @@
 import '../common.dart';
+import '../exceptions.dart';
 
 class AuthState extends CommonState {
   final String token;
@@ -8,20 +9,25 @@ class AuthState extends CommonState {
 
   AuthState({
     this.token,
-    String error,
+    ApiException error,
     bool isInit = false,
     bool isBusy = false,
-    bool isError = false,
+    bool isException = false,
     this.isUnauthorized = false,
     this.isAuthorized = false,
-  }) : super(err: error, isInit: isInit, isBusy: isBusy, isError: isError);
+  }) : super(
+          error: error,
+          isInit: isInit,
+          isBusy: isBusy,
+          isException: isException,
+        );
 
   factory AuthState.authorized(String token) =>
       AuthState(isAuthorized: true, token: token);
 
   factory AuthState.busy() => AuthState(isBusy: true);
 
-  factory AuthState.error(String e) => AuthState(isError: true, error: e);
+  factory AuthState.exception(ApiException e) => AuthState(isException: true, error: e);
 
   factory AuthState.init() => AuthState(isInit: true);
 
@@ -32,9 +38,9 @@ class AuthState extends CommonState {
         'isBusy': isBusy,
         'isAuthorized': isAuthorized,
         'isUnauthorized': isUnauthorized,
-        'isError': isError,
+        'isException': isException,
         'token': token,
-        'error': err.toString(),
+        'error': error.toString(),
       };
 
   @override

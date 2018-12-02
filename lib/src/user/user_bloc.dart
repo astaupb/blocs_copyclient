@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 
 import '../models/user.dart';
 import '../models/backend.dart';
+import '../exceptions.dart';
 import 'user_events.dart';
 import 'user_state.dart';
 
@@ -41,9 +42,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       try {
         await _getUser();
         yield UserState.result(_user);
-      } catch (e) {
+      } on ApiException catch (e) {
         log.severe(e);
-        yield UserState.error(e);
+        yield UserState.exception(e);
       }
     }
 
@@ -51,9 +52,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       try {
         await _changeUsername(event);
         yield UserState.result(_user);
-      } catch (e) {
+      } on ApiException catch (e) {
         log.severe(e);
-        yield UserState.error(e);
+        yield UserState.exception(e);
       }
     }
   }
@@ -78,14 +79,15 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     request.headers['X-Api-Key'] = _token;
     request.body = json.encode(event.username);
 
-    log.finer(request);
+    log.finer('[_changeUsername] request: $request');
 
     return await _backend.send(request).then((response) {
+      log.finer('[_changeUsername] response: ${response.statusCode}');
       if (response.statusCode == 205) {
         _user.username = event.username;
       } else {
-        throw Exception(
-            '_changeUsername: received response code other than 205 (${response.statusCode})');
+        throw ApiException(response.statusCode,
+            info: '_changeUsername: received response code other than 205');
       }
     });
   }
@@ -96,18 +98,20 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     request.headers['X-Api-Key'] = _token;
     request.headers['Accept'] = 'application/json';
 
-    log.finer(request);
+    log.finer('[_getUser] request: $request');
 
     return await _backend.send(request).then(
       (response) async {
         if (response.statusCode == 200) {
+log.finer('[_getUser] response: ${response.statusCode}');
           /// move [responseMap] entries into the global [User] object
           _user = User.fromMap(
               json.decode(utf8.decode(await response.stream.toBytes())));
           _user.token = _token;
         } else {
-          throw Exception(
-              '_getUser: received response code other than 200 (${response.statusCode})');
+          throw ApiException(response.statusCode,
+              info:
+                  '_getUser: received response code other than 200');
         }
       },
     );

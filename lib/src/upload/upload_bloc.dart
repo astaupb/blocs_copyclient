@@ -8,8 +8,8 @@ import 'package:logging/logging.dart';
 
 import 'upload_events.dart';
 import 'upload_state.dart';
+import '../exceptions.dart';
 import '../models/backend.dart';
-import '../models/joboptions.dart';
 import '../models/dispatcher_task.dart';
 
 class UploadBloc extends Bloc<UploadEvent, UploadState> {
@@ -51,8 +51,12 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       UploadState state, UploadEvent event) async* {
     log.fine('Event: ${event}');
     if (event is InitUploads || event is RefreshUploads) {
-      await _getQueue();
-      yield UploadState.result(_queue);
+      try {
+        await _getQueue();
+        yield UploadState.result(_queue);
+      } on ApiException catch (e) {
+        yield UploadState.exception(e);
+      }
     }
     if (event is UploadFile) {
       _activeUploads++;
@@ -65,20 +69,24 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       ));
       yield UploadState.result(_queue);
 
-      await _postQueue(
-        event.file,
-        filename: event.filename,
-        color: event.color,
-        password: event.password,
-      ).then((String uid) {
-        _queue.forEach((task) {
-          if (task.localId == localId) {
-            task.uid = uid;
-            task.isUploading = false;
-          }
+      try {
+        await _postQueue(
+          event.file,
+          filename: event.filename,
+          color: event.color,
+          password: event.password,
+        ).then((String uid) {
+          _queue.forEach((task) {
+            if (task.localId == localId) {
+              task.uid = uid;
+              task.isUploading = false;
+            }
+          });
         });
-      });
-      yield UploadState.result(_queue);
+        yield UploadState.result(_queue);
+      } on ApiException catch (e) {
+        yield UploadState.exception(e);
+      }
     }
   }
 
@@ -123,8 +131,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response.statusCode == 202) {
           return json.decode(body);
         } else {
-          throw Exception(
-              'status code other than 202 received (${response.statusCode}');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 202 received');
         }
       },
     );
@@ -142,12 +150,11 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response.statusCode == 200) {
           String body = utf8.decode(await response.stream.toBytes());
           log.finest('[_getQueue] response: ${response.statusCode} $body');
-
           _queue = List<DispatcherTask>.from(
               json.decode(body).map((task) => DispatcherTask.fromMap(task)));
         } else {
-          throw Exception(
-              'status code other than 200 received (${response.statusCode})');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
