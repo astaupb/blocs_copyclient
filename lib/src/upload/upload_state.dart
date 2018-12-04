@@ -4,7 +4,7 @@ import '../models/dispatcher_task.dart';
 
 class UploadState extends ResultState<List<DispatcherTask>> {
   UploadState({
-    var queue,
+    List<DispatcherTask> queue,
     ApiException error,
     bool isInit = false,
     bool isBusy = false,

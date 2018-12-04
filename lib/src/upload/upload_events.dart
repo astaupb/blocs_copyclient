@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
-import '../models/joboptions.dart';
-
 class UploadEvent {}
 
 class InitUploads extends UploadEvent {}
@@ -33,3 +31,5 @@ class UploadFile extends UploadEvent {
   @override
   String toString() => toMap().toString();
 }
+
+/// TODO: cancel upload
