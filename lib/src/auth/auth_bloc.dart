@@ -24,6 +24,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   AuthState get initialState => AuthState.unauthorized();
 
+  @override
+  void dispose() {
+    log.info('disposing of $this');
+    backend.close();
+    super.dispose();
+  }
+
   void login(String user, String pw) =>
       dispatch(Login(username: user, password: pw));
 
@@ -74,7 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// POST /user/login and then GET /user to update the global [User] object
   Future<void> _postLogin(Login initEvent) async {
     http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
-    request.headers['Accept'] = 'text/plain';
+    request.headers['Accept'] = 'application/json';
     request.headers['Authorization'] = ('Basic ' +
         base64.encode(
             utf8.encode(initEvent.username + ':' + initEvent.password)));
@@ -84,7 +91,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await backend.send(request).then((response) async {
       log.finer('_postLogin: ${response.statusCode}');
       if (response.statusCode == 200) {
-        _token = await response.stream.bytesToString();
+        token = json.decode(await response.stream.bytesToString());
       } else {
         throw ApiException(response.statusCode,
             info: '_postLogin: received response code other than 200');
