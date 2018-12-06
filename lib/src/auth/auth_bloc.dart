@@ -7,7 +7,6 @@ import 'package:meta/meta.dart';
 
 import '../exceptions.dart';
 import '../models/backend.dart';
-export '../models/backend.dart';
 import 'auth_events.dart';
 import 'auth_state.dart';
 
@@ -31,8 +30,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     super.dispose();
   }
 
-  void login(String user, String pw) =>
-      dispatch(Login(username: user, password: pw));
+  void login(String user, String pw) => dispatch(
+        Login(username: user, password: pw),
+      );
 
   void logout() => dispatch(Logout());
 
