@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   static final http.Client client = http.Client();
   static final Backend backend = BackendSunrise(client);
   AuthBloc authBloc = AuthBloc(backend: backend);
-  JobsBloc jobsBloc;
+  JoblistBloc jobsBloc;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -65,8 +65,8 @@ class _HomePageState extends State<HomePage> {
             //return Center(child: CircularProgressIndicator());
           } else if (state.isAuthorized) {
             // AUTHORIZED AND READY TO HUSTLE
-            jobsBloc = JobsBloc(BackendSunrise(http.Client()), state.token);
-            return BlocProvider<JobsBloc>(
+            jobsBloc = JoblistBloc(BackendSunrise(http.Client()), state.token);
+            return BlocProvider<JoblistBloc>(
               bloc: jobsBloc,
               child: JobsPage(),
             );

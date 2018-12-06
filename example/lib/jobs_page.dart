@@ -11,14 +11,14 @@ class JobsPage extends StatefulWidget {
 class _JobsPageState extends State<JobsPage> {
   @override
   Widget build(BuildContext context) {
-    JobsBloc jobsBloc = BlocProvider.of<JobsBloc>(context);
+    JoblistBloc jobsBloc = BlocProvider.of<JoblistBloc>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('My Jobs'),
         ),
         body: BlocBuilder(
           bloc: jobsBloc,
-          builder: (BuildContext context, JobsState state) {
+          builder: (BuildContext context, JoblistState state) {
             if (state.isInit) {
               jobsBloc.onStart();
               return Container(width: 0.0, height: 0.0);

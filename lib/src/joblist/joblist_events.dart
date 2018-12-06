@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 import '../models/joboptions.dart';
 
 /// [DeleteJob] _needs_ to have either [uid] or [index] set
-class DeleteJob extends JobsEvent {
+class DeleteJob extends JoblistEvent {
   final String uid;
   final int index;
 
@@ -17,24 +17,12 @@ class DeleteJob extends JobsEvent {
   String toString() => toMap().toString();
 }
 
-class InitJobs extends JobsEvent {}
+class InitJobs extends JoblistEvent {}
 
-class GetPdf extends JobsEvent {
-  final String uid;
-
-  GetPdf(this.uid);
-}
-
-class GetPreviews extends JobsEvent {
-  final String uid;
-
-  GetPreviews(this.uid);
-}
-
-abstract class JobsEvent {}
+abstract class JoblistEvent {}
 
 /// [PrintJob] _needs_ to have either [uid] or [index] set
-class PrintJob extends JobsEvent {
+class PrintJob extends JoblistEvent {
   final String deviceId;
   final String uid;
   final int index;
@@ -52,16 +40,9 @@ class PrintJob extends JobsEvent {
 }
 
 /// Demand refreshing all jobs, or if [index] is set only that one
-class RefreshJobs extends JobsEvent {
-  final int index;
+class RefreshJobs extends JoblistEvent {}
 
-  RefreshJobs({this.index});
-
-  @override
-  String toString() => (index != null) ? index.toString() : super.toString();
-}
-
-class UploadJob extends JobsEvent {
+class UploadJob extends JoblistEvent {
   final File file;
   final String filename;
   final JobOptions options;

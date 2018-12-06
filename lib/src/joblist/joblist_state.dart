@@ -2,8 +2,8 @@ import '../models/job.dart';
 import '../common.dart';
 import '../exceptions.dart';
 
-class JobsState extends ResultState<List<Job>> {
-  JobsState({
+class JoblistState extends ResultState<List<Job>> {
+  JoblistState({
     List<Job> jobs,
     ApiException error,
     bool isInit = false,
@@ -19,14 +19,14 @@ class JobsState extends ResultState<List<Job>> {
           isException: isException,
         );
 
-  factory JobsState.init() => JobsState(isInit: true);
+  factory JoblistState.init() => JoblistState(isInit: true);
 
-  factory JobsState.busy() => JobsState(isBusy: true);
+  factory JoblistState.busy() => JoblistState(isBusy: true);
 
-  factory JobsState.exception(ApiException e) => JobsState(isException: true, error: e);
+  factory JoblistState.exception(ApiException e) => JoblistState(isException: true, error: e);
 
-  factory JobsState.result(List<Job> list) =>
-      JobsState(isResult: true, jobs: list);
+  factory JoblistState.result(List<Job> list) =>
+      JoblistState(isResult: true, jobs: list);
 
   Map<String, dynamic> toMap() => {
         'jobs': (value != null) ? value.length : 'null',

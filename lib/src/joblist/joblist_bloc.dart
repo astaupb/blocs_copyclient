@@ -9,11 +9,11 @@ import 'package:quiver/cache.dart';
 import '../models/backend.dart';
 import '../models/job.dart';
 import '../exceptions.dart';
-import 'jobs_events.dart';
-import 'jobs_state.dart';
+import 'joblist_events.dart';
+import 'joblist_state.dart';
 
-class JobsBloc extends Bloc<JobsEvent, JobsState> {
-  final log = Logger('JobsBloc');
+class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
+  final log = Logger('JoblistBloc');
 
   Backend _backend;
   String _token;
@@ -21,12 +21,12 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   List<Job> _jobs;
 
-  JobsBloc(this._backend, this._token, {this.cache}) {
+  JoblistBloc(this._backend, this._token, {this.cache}) {
     log.fine('$this started');
   }
 
   @override
-  JobsState get initialState => JobsState.init();
+  JoblistState get initialState => JoblistState.init();
 
   get jobs => _jobs;
 
@@ -39,35 +39,25 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   int getIndexByUid(String uid) => _jobs.indexWhere((job) => job.uid == uid);
 
   @override
-  Stream<JobsState> mapEventToState(JobsState state, JobsEvent event) async* {
+  Stream<JoblistState> mapEventToState(JoblistState state, JoblistEvent event) async* {
     log.fine('Event: ${event}');
 
     /// go into busy state to show busyness
-    yield JobsState.busy();
+    yield JoblistState.busy();
 
     if (event is InitJobs) {
       try {
         await _getJobs();
-        yield JobsState.result(_jobs);
+        yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
-        yield JobsState.exception(e);
+        yield JoblistState.exception(e);
       }
     } else if (event is RefreshJobs) {
       try {
-        if (event.index == null)
-          await _getJobs();
-        else
-          await _getSingle(_jobs[event.index].uid);
-        yield JobsState.result(_jobs);
+        await _getJobs();
+        yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
-        yield JobsState.exception(e);
-      }
-    } else if (event is GetPreviews) {
-      try {
-        await _getPreviews(event.uid);
-        yield JobsState.result(_jobs);
-      } on ApiException catch (e) {
-        yield JobsState.exception(e);
+        yield JoblistState.exception(e);
       }
     } else if (event is PrintJob) {
       try {
@@ -77,24 +67,17 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
         if (!_jobs[index].jobOptions.keep) {
           _jobs.remove(index);
         }
-        yield JobsState.result(_jobs);
+        yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
-        yield JobsState.exception(e);
+        yield JoblistState.exception(e);
       }
     } else if (event is DeleteJob) {
       try {
         await _deleteJob(
             ((event.uid != null) ? event.uid : _jobs[event.index].uid));
-        yield JobsState.result(_jobs);
+        yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
-        yield JobsState.exception(e);
-      }
-    } else if (event is GetPdf) {
-      try {
-        await _getPdf(event.uid);
-        yield JobsState.result(_jobs);
-      } on ApiException catch (e) {
-        yield JobsState.exception(e);
+        yield JoblistState.exception(e);
       }
     }
   }
@@ -102,10 +85,6 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   onDelete(int index) => dispatch(DeleteJob(index: index));
 
   onDeleteByUid(String uid) => dispatch(DeleteJob(uid: uid));
-
-  onGetPdf(String uid) => dispatch(GetPdf(uid));
-
-  onGetPreview(String uid) => dispatch(GetPreviews(uid));
 
   onPrint(String deviceId, int index) => dispatch(PrintJob(
         deviceId: deviceId,
@@ -119,12 +98,10 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   onRefresh() => dispatch(RefreshJobs());
 
-  onRefreshSingle(int index) => dispatch(RefreshJobs(index: index));
-
   onStart() => dispatch(InitJobs());
 
   @override
-  void onTransition(Transition<JobsEvent, JobsState> transition) {
+  void onTransition(Transition<JoblistEvent, JoblistState> transition) {
     log.fine('State: ${transition.nextState}');
     if (transition.nextState.isResult) {
       try {
@@ -174,71 +151,6 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
           _jobs = List.from(json
               .decode(utf8.decode(await response.stream.toBytes()))
               .map((value) => Job.fromMap(value)));
-        } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
-        }
-      },
-    );
-  }
-
-  Future<void> _getPdf(String uid) async {
-    Request request = ApiRequest('GET', '/jobs/$uid/pdf', _backend);
-    request.headers['Accept'] = 'application/pdf';
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('_getPdf: $request');
-
-    return await _backend.send(request).then(
-      (response) async {
-        log.finer('_getPdf: ${response.statusCode}');
-        if (response.statusCode == 200) {
-          _jobs[_jobs.indexWhere((job) => job.uid == uid)].pdfBytes =
-              await response.stream.toBytes();
-        } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
-        }
-      },
-    );
-  }
-
-  Future<void> _getPreviews(String uid) async {
-    int index = getIndexByUid(uid);
-    for (int i = 0; i < 4 && i < index; i++) {
-      Request request = ApiRequest('GET', '/jobs/$uid/previews/$i', _backend);
-      request.headers['Accept'] = 'image/jpeg';
-      request.headers['X-Api-Key'] = _token;
-
-      log.finer('_getPreviews: $request');
-
-      await _backend.send(request).then(
-        (response) async {
-          log.finer('_getPreviews: ${response.statusCode}');
-          if (response.statusCode == 200) {
-            _jobs[index].previews[i] = await response.stream.toBytes();
-          } else {
-            throw ApiException(response.statusCode,
-                info: 'status code other than 200 received');
-          }
-        },
-      );
-    }
-  }
-
-  Future<void> _getSingle(String uid) async {
-    Request request = ApiRequest('GET', '/jobs/$uid', _backend);
-    request.headers['Accept'] = 'application/json';
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('_getSingle: $request');
-
-    return await _backend.send(request).then(
-      (response) async {
-        log.finer('_getSingle: ${response.statusCode}');
-        if (response.statusCode == 200) {
-          _jobs[_jobs.indexWhere((Job job) => job.uid == uid)] = Job.fromMap(
-              json.decode(utf8.decode(await response.stream.toBytes())));
         } else {
           throw ApiException(response.statusCode,
               info: 'status code other than 200 received');
