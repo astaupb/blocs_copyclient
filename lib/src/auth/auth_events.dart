@@ -27,4 +27,15 @@ class Login extends AuthEvent {
   String toString() => 'Login ' + toMap().toString();
 }
 
+class TokenLogin extends AuthEvent {
+  final String token;
+
+  TokenLogin({@required this.token});
+
+  Map<String, dynamic> toMap() => {'token': token};
+
+  @override
+  String toString() => toMap().toString();
+}
+
 class Logout extends AuthEvent {}
