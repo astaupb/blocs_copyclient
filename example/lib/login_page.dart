@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  JobsBloc jobsBloc;
+  JoblistBloc jobsBloc;
 
   @override
   Widget build(BuildContext context) {
