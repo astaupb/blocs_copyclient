@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:meta/meta.dart';
 
 import '../models/joboptions.dart';
@@ -43,14 +41,14 @@ class PrintJob extends JoblistEvent {
 class RefreshJobs extends JoblistEvent {}
 
 class UploadJob extends JoblistEvent {
-  final File file;
+  final List<int> data;
   final String filename;
   final JobOptions options;
 
-  UploadJob({@required this.file, this.filename, this.options});
+  UploadJob({@required this.data, this.filename, this.options});
 
   Map<String, dynamic> toMap() => {
-        'file': file.path,
+        'file': data,
         'filename': filename,
         'options': options.toMap(),
       };

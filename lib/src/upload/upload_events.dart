@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:meta/meta.dart';
 
 class UploadEvent {}
@@ -9,20 +7,20 @@ class InitUploads extends UploadEvent {}
 class RefreshUploads extends UploadEvent {}
 
 class UploadFile extends UploadEvent {
-  final File file;
+  final List<int> data;
   final bool color;
   final String filename;
   final String password;
 
   UploadFile({
-    @required this.file,
+    @required this.data,
     this.color = true,
     this.filename = '',
     this.password = '',
   });
 
   Map<String, dynamic> toMap() => {
-        'file': file.path,
+        'data': data,
         'color': color,
         'filename': filename,
         'password': password,

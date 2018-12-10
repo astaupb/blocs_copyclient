@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
@@ -34,13 +33,13 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   onRefresh() => dispatch(RefreshUploads());
 
   onUpload(
-    File file, {
+    List<int> data, {
     String filename,
     bool color,
     String password,
   }) =>
       dispatch(UploadFile(
-        file: file,
+        data: data,
         filename: filename,
         color: color,
         password: password,
@@ -71,7 +70,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
       try {
         await _postQueue(
-          event.file,
+          event.data,
           filename: event.filename,
           color: event.color,
           password: event.password,
@@ -103,7 +102,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   }
 
   Future<String> _postQueue(
-    File file, {
+    List<int> data, {
     String filename = '',
     bool color = true,
     String password = '',
@@ -120,7 +119,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     );
     request.headers['Content-Type'] = 'application/pdf';
     request.headers['X-Api-Key'] = _token;
-    request.bodyBytes = file.readAsBytesSync();
+    request.bodyBytes = data;
 
     log.finer('[_postQueue] request: $request');
 
