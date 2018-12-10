@@ -4,14 +4,14 @@ import 'package:meta/meta.dart';
 
 import '../models/joboptions.dart';
 
-/// [DeleteJob] _needs_ to have either [uid] or [index] set
+/// [DeleteJob] _needs_ to have either [id] or [index] set
 class DeleteJob extends JoblistEvent {
-  final String uid;
+  final int id;
   final int index;
 
-  DeleteJob({this.uid, this.index});
+  DeleteJob({this.id, this.index});
 
-  Map<String, dynamic> toMap() => {'uid': uid, 'index': index};
+  Map<String, dynamic> toMap() => {'id': id, 'index': index};
 
   @override
   String toString() => toMap().toString();
@@ -21,17 +21,17 @@ class InitJobs extends JoblistEvent {}
 
 abstract class JoblistEvent {}
 
-/// [PrintJob] _needs_ to have either [uid] or [index] set
+/// [PrintJob] _needs_ to have either [id] or [index] set
 class PrintJob extends JoblistEvent {
   final String deviceId;
-  final String uid;
+  final int id;
   final int index;
 
-  PrintJob({@required this.deviceId, this.uid, this.index});
+  PrintJob({@required this.deviceId, this.id, this.index});
 
   Map<String, dynamic> toMap() => {
         'deviceId': deviceId,
-        'uid': uid,
+        'id': id,
         'index': index,
       };
 

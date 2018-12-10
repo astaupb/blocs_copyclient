@@ -33,7 +33,7 @@ class _JobsPageState extends State<JobsPage> {
                     onTap: () async {
                       try {
                         String target = await BarcodeScanner.scan();
-                        jobsBloc.onPrintbyUid(target, state.value[index].uid);
+                        jobsBloc.onPrintbyId(target, state.value[index].id);
                       } catch (e) {
                         print('Jobs: $e');
                         Scaffold.of(context).showSnackBar(

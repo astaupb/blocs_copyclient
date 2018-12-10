@@ -28,7 +28,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
   @override
   JoblistState get initialState => JoblistState.init();
 
-  get jobs => _jobs;
+  List<Job> get jobs => _jobs;
 
   @override
   void dispose() {
@@ -36,7 +36,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     super.dispose();
   }
 
-  int getIndexByUid(String uid) => _jobs.indexWhere((job) => job.uid == uid);
+  int getIndexById(int id) => _jobs.indexWhere((job) => job.id == id);
 
   @override
   Stream<JoblistState> mapEventToState(JoblistState state, JoblistEvent event) async* {
@@ -62,8 +62,8 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     } else if (event is PrintJob) {
       try {
         await _printJob(event.deviceId,
-            ((event.uid != null) ? event.uid : _jobs[event.index].uid));
-        int index = getIndexByUid(event.uid);
+            ((event.id != null) ? event.id : _jobs[event.index].id));
+        int index = getIndexById(event.id);
         if (!_jobs[index].jobOptions.keep) {
           _jobs.remove(index);
         }
@@ -74,7 +74,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     } else if (event is DeleteJob) {
       try {
         await _deleteJob(
-            ((event.uid != null) ? event.uid : _jobs[event.index].uid));
+            ((event.id != null) ? event.id : _jobs[event.index].id));
         yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
         yield JoblistState.exception(e);
@@ -84,16 +84,16 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   onDelete(int index) => dispatch(DeleteJob(index: index));
 
-  onDeleteByUid(String uid) => dispatch(DeleteJob(uid: uid));
+  onDeleteById(int id) => dispatch(DeleteJob(id: id));
 
   onPrint(String deviceId, int index) => dispatch(PrintJob(
         deviceId: deviceId,
         index: index,
       ));
 
-  onPrintbyUid(String deviceId, String uid) => dispatch(PrintJob(
+  onPrintbyId(String deviceId, int id) => dispatch(PrintJob(
         deviceId: deviceId,
-        uid: uid,
+        id: id,
       ));
 
   onRefresh() => dispatch(RefreshJobs());
@@ -117,8 +117,8 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   onUpdateJob() => null;
 
-  Future<void> _deleteJob(String uid) async {
-    Request request = ApiRequest('DELETE', '/jobs/$uid', _backend);
+  Future<void> _deleteJob(int id) async {
+    Request request = ApiRequest('DELETE', '/jobs/$id', _backend);
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_deleteJob: $request');
@@ -127,7 +127,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       (response) async {
         log.finer('_deleteJob: ${response.statusCode}');
         if (response.statusCode == 205) {
-          _jobs.removeWhere((Job job) => job.uid == uid);
+          _jobs.removeWhere((Job job) => job.id == id);
         } else {
           throw ApiException(response.statusCode,
               info: 'received status code other than 205');
@@ -159,12 +159,12 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     );
   }
 
-  Future<void> _printJob(String deviceId, String uid) async {
+  Future<void> _printJob(String deviceId, int id) async {
     Request request = ApiRequest(
       'POST',
       '/printers/$deviceId/queue',
       _backend,
-      queryParameters: {'uid': uid},
+      queryParameters: {'id': id.toString()},
     );
     request.headers['X-Api-Key'] = _token;
 

@@ -6,7 +6,7 @@ import 'joboptions.dart';
 const String scope = 'Job:';
 
 class Job {
-  final String uid;
+  final int id;
   final int timestamp;
   final int userId;
   final JobOptions jobOptions;
@@ -15,7 +15,7 @@ class Job {
   Uint8List pdfBytes;
   List<Uint8List> previews;
 
-  Job({this.uid, this.timestamp, this.userId, this.jobOptions, this.jobInfo});
+  Job({this.id, this.timestamp, this.userId, this.jobOptions, this.jobInfo});
 
   factory Job.fromMap(Map<String, dynamic> jobs) {
     JobOptions _jobOptions;
@@ -33,7 +33,7 @@ class Job {
     }
 
     return Job(
-      uid: jobs['uid'],
+      id: jobs['id'],
       timestamp: jobs['timestamp'],
       userId: jobs['user_id'],
       jobOptions: _jobOptions,
@@ -42,7 +42,7 @@ class Job {
   }
 
   Map<String, dynamic> toMap() => {
-        'uid': uid,
+        'id': id,
         'timestamp': timestamp,
         'user_id': userId,
         'info': jobInfo.toMap(),
