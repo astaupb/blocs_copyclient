@@ -19,7 +19,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
   int _activeUploads = 0;
 
-  List<DispatcherTask> _queue;
+  List<DispatcherTask> _queue = new List<DispatcherTask>();
 
   UploadBloc(this._backend, this._token) {
     log.fine('$this started');
