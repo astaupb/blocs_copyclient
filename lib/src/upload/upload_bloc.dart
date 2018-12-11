@@ -147,7 +147,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     return await request.send().then(
       (response) async {
         if (response.statusCode == 200) {
-          String body = utf8.decode(await response.stream.toBytes());
+          final String body = await utf8.decode(await response.stream.toBytes());
           log.finest('[_getQueue] response: ${response.statusCode} $body');
           _queue = List<DispatcherTask>.from(
               json.decode(body).map((task) => DispatcherTask.fromMap(task)));
