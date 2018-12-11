@@ -11,6 +11,7 @@ class Job {
   final int userId;
   JobOptions jobOptions;
   final JobInfo jobInfo;
+  int priceEstimation;
 
   Uint8List pdfBytes;
   List<Uint8List> previews;
