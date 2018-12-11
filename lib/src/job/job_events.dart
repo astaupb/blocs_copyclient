@@ -1,4 +1,5 @@
 import '../models/job.dart';
+import '../models/joboptions.dart';
 
 class GetPreviews extends JobEvent {}
 
@@ -19,4 +20,10 @@ class InitJob extends JobEvent {
 
 abstract class JobEvent {}
 
-class RefreshJob extends JobEvent {}
+class RefreshOptions extends JobEvent {}
+
+class UpdateOptions extends JobEvent {
+  final JobOptions options;
+
+  UpdateOptions(this.options);
+}

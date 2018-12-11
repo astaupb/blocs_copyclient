@@ -9,7 +9,7 @@ class Job {
   final int id;
   final int timestamp;
   final int userId;
-  final JobOptions jobOptions;
+  JobOptions jobOptions;
   final JobInfo jobInfo;
 
   Uint8List pdfBytes;
