@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../models/job.dart';
 
 class GetPreviews extends JobEvent {}
@@ -8,7 +6,7 @@ class InitJob extends JobEvent {
   final Job job;
   final String token;
 
-  InitJob({@required this.job, @required this.token});
+  InitJob(this.job,this.token);
 
   Map<String, dynamic> toMap() => {
     'job':  (job ?? Job()).toMap(),

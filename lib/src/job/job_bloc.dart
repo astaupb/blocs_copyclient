@@ -21,7 +21,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
   JobBloc(this._backend);
 
-  onStart(Job job, String token) => dispatch(InitJob(job: job, token: token));
+  onStart(Job job, String token) => dispatch(InitJob(job, token));
 
   onRefresh() => dispatch(RefreshJob());
 

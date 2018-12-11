@@ -2,7 +2,15 @@ import 'package:meta/meta.dart';
 
 class UploadEvent {}
 
-class InitUploads extends UploadEvent {}
+class InitUploads extends UploadEvent {
+  final String token;
+  InitUploads(this.token);
+
+  Map<String, dynamic> toMap() => {'token': token};
+
+  @override
+  String toString() => toMap().toString();
+}
 
 class RefreshUploads extends UploadEvent {}
 

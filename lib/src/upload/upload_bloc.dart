@@ -28,7 +28,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   @override
   get initialState => UploadState.init();
 
-  onStart() => dispatch(InitUploads());
+  onStart(String token) => dispatch(InitUploads(token));
 
   onRefresh() => dispatch(RefreshUploads());
 

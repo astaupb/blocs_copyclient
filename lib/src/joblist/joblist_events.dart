@@ -17,7 +17,13 @@ class DeleteJob extends JoblistEvent {
 
 class InitJobs extends JoblistEvent {
   final String token;
-  InitJobs({@required this.token});
+
+  InitJobs(this.token);
+
+  Map<String, dynamic> toMap() => {'token': token};
+
+  @override
+  String toString() => toMap().toString();
 }
 
 abstract class JoblistEvent {}

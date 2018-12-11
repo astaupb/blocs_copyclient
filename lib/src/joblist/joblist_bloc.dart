@@ -99,7 +99,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   onRefresh() => dispatch(RefreshJobs());
 
-  onStart(String token) => dispatch(InitJobs(token: token));
+  onStart(String token) => dispatch(InitJobs(token));
 
   @override
   void onTransition(Transition<JoblistEvent, JoblistState> transition) {
