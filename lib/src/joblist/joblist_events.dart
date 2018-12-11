@@ -15,7 +15,10 @@ class DeleteJob extends JoblistEvent {
   String toString() => toMap().toString();
 }
 
-class InitJobs extends JoblistEvent {}
+class InitJobs extends JoblistEvent {
+  final String token;
+  InitJobs({@required this.token});
+}
 
 abstract class JoblistEvent {}
 

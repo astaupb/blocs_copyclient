@@ -14,24 +14,18 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   final Logger log = Logger('JobBloc');
 
   final Backend _backend;
-  final String _token;
+  String _token;
 
   int id;
   Job job;
 
-  JobBloc(this._backend, this._token, {this.job, this.id}) {
-    if (job == null) {
-      _getJob(id);
-    } else {
-      id = job.id;
-    }
-  }
+  JobBloc(this._backend);
 
-  onStart() => _getJob(id);
+  onStart(Job job, String token) => dispatch(InitJob(job: job, token: token));
 
   onRefresh() => dispatch(RefreshJob());
 
-  onSetOption() => null;
+  onSetOption() => print('take the job as it is');
 
   @override
   JobState get initialState => JobState.init();
@@ -45,6 +39,10 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       } on ApiException catch (e) {
         yield JobState.exception(e);
       }
+    } else if (event is InitJob) {
+      _token = event.token; 
+      job = event.job;
+      id = job.id;
     }
   }
 

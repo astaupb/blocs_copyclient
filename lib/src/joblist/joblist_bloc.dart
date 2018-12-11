@@ -21,7 +21,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   List<Job> _jobs;
 
-  JoblistBloc(this._backend, this._token, {this.cache}) {
+  JoblistBloc(this._backend) {
     log.fine('$this started');
   }
 
@@ -46,6 +46,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     yield JoblistState.busy();
 
     if (event is InitJobs) {
+      _token = event.token;
       try {
         await _getJobs();
         yield JoblistState.result(_jobs);
@@ -98,7 +99,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   onRefresh() => dispatch(RefreshJobs());
 
-  onStart() => dispatch(InitJobs());
+  onStart(String token) => dispatch(InitJobs(token: token));
 
   @override
   void onTransition(Transition<JoblistEvent, JoblistState> transition) {

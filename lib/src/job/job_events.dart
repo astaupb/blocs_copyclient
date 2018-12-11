@@ -1,18 +1,24 @@
+import 'package:meta/meta.dart';
+
 import '../models/job.dart';
 
-abstract class JobEvent {}
-
-class RefreshJob extends JobEvent {}
+class GetPreviews extends JobEvent {}
 
 class InitJob extends JobEvent {
   final Job job;
+  final String token;
 
-  InitJob({this.job});
+  InitJob({@required this.job, @required this.token});
 
-  Map<String, dynamic> toMap() => (job ?? Job()).toMap();
+  Map<String, dynamic> toMap() => {
+    'job':  (job ?? Job()).toMap(),
+    'token': token,
+  };
 
   @override
   String toString() => toMap().toString();
 }
 
-class GetPreviews extends JobEvent {}
+abstract class JobEvent {}
+
+class RefreshJob extends JobEvent {}
