@@ -20,9 +20,11 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   List<Transaction> _journal;
   double _credit;
 
-  JournalBloc() {
+  JournalBloc(this._backend) {
     log.fine('$this started');
   }
+
+  onStart(String token) => dispatch(InitJournal(token));
 
   @override
   get initialState => JournalState.init();
@@ -31,7 +33,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   Stream<JournalState> mapEventToState(
       JournalState state, JournalEvent event) async* {
     log.fine(event);
-    yield JournalState.busy();
+    if (event is InitJournal) _token = event.token;
 
     if (event is RefreshJournal || event is InitJournal) {
       try {
@@ -81,7 +83,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   }
 
   Future<void> _getCredit() async {
-    Request request = new ApiRequest('GET', '/credit', _backend);
+    Request request = new ApiRequest('GET', '/journal/credit', _backend);
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
