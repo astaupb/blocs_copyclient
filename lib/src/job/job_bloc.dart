@@ -63,15 +63,24 @@ class JobBloc extends Bloc<JobEvent, JobState> {
         yield JobState.exception(e);
       }
     } else if (event is UpdateOptions) {
-      job.jobOptions = event.options;
+      try {
+        await _putJobOptions(event.options);
+        job.priceEstimation = _estimatePrice();
+        yield JobState.result(job);
+      } on ApiException catch (e) {
+        yield JobState.exception(e);
+      }
       job.priceEstimation = _estimatePrice();
+      yield JobState.result(job);
     } else if (event is InitJob) {
-      _token = event.token; 
+      _token = event.token;
       job = event.job;
       job.priceEstimation = _estimatePrice();
       id = job.id;
+      yield JobState.result(job);
     }
   }
+
   Future<void> _getOptions(int id) async {
     Request request = ApiRequest('GET', '/jobs/$id/options', _backend);
     request.headers['Accept'] = 'application/json';
@@ -92,6 +101,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       },
     );
   }
+
   Future<void> _getJob(int id) async {
     Request request = ApiRequest('GET', '/jobs/$id', _backend);
     request.headers['Accept'] = 'application/json';
@@ -113,25 +123,23 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     );
   }
 
-  Future<void> _updateJobOptions(JobOptions options) async {
+  Future<void> _putJobOptions(JobOptions options) async {
     Request request = ApiRequest('PUT', '/jobs/$id/options', _backend);
 
     request.headers['Accept'] = 'application/json';
     request.headers['Content-Type'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
-    request.body = job.jobOptions.toString();
+    request.bodyBytes = utf8.encode(job.jobOptions.toString());
 
-    return await _backend.send(request).then(
-      (response) async {
-        if (response.statusCode == 205) {
-          job.jobOptions = options;
-        } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 205 received');
-        }
-      });
-
+    return await _backend.send(request).then((response) async {
+      if (response.statusCode == 205) {
+        job.jobOptions = options;
+      } else {
+        throw ApiException(response.statusCode,
+            info: 'status code other than 205 received');
+      }
+    });
   }
 
   Future<void> _getPreview() async {
