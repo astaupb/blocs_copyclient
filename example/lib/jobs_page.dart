@@ -20,7 +20,6 @@ class _JobsPageState extends State<JobsPage> {
           bloc: jobsBloc,
           builder: (BuildContext context, JoblistState state) {
             if (state.isInit) {
-              jobsBloc.onStart();
               return Container(width: 0.0, height: 0.0);
             } else if (state.isBusy) {
               return Center(child: CircularProgressIndicator());
