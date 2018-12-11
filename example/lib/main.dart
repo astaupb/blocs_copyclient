@@ -65,7 +65,8 @@ class _HomePageState extends State<HomePage> {
             //return Center(child: CircularProgressIndicator());
           } else if (state.isAuthorized) {
             // AUTHORIZED AND READY TO HUSTLE
-            jobsBloc = JoblistBloc(BackendSunrise(http.Client()), state.token);
+            jobsBloc = JoblistBloc(BackendSunrise(http.Client()));
+            jobsBloc.onStart(state.token);
             return BlocProvider<JoblistBloc>(
               bloc: jobsBloc,
               child: JobsPage(),
