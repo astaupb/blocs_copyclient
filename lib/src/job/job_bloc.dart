@@ -24,7 +24,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
   onStart(Job job, String token) => dispatch(InitJob(job, token));
 
-  onRefresh() => dispatch(RefreshJob());
+  onRefresh() => dispatch(RefreshOptions());
 
   onSetOption() => print('take the job as it is');
 
