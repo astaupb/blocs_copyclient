@@ -1,7 +1,5 @@
 import 'package:meta/meta.dart';
 
-class UserEvent {}
-
 class ChangeUsername extends UserEvent {
   final String username;
 
@@ -13,6 +11,17 @@ class ChangeUsername extends UserEvent {
   String toString() => toMap().toString();
 }
 
+class InitUser extends UserEvent {
+  String token;
+  
+  InitUser(this.token);
+
+  Map<String, dynamic> toMap() => {'token': token};
+
+  @override
+  toString() => toMap().toString();
+}
+
 class RefreshUser extends UserEvent {}
 
-class InitUser extends UserEvent {}
+class UserEvent {}

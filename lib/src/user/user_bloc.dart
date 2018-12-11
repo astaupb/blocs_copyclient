@@ -20,7 +20,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   String _token;
   Backend _backend;
 
-  UserBloc(this._backend, this._token) {
+  UserBloc(this._backend) {
     log.fine('$this started');
   }
 
@@ -36,6 +36,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   @override
   Stream<UserState> mapEventToState(UserState state, UserEvent event) async* {
     log.fine(event);
+
+    if (event is InitUser) _token = event.token;
 
     if (event is RefreshUser || event is InitUser) {
       yield UserState.busy();
@@ -64,7 +66,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   onRefresh() => dispatch(RefreshUser());
 
-  onStart() => dispatch(InitUser());
+  onStart(String token) => dispatch(InitUser(token));
 
   @override
   void onTransition(Transition<UserEvent, UserState> transition) {
