@@ -21,7 +21,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
   List<DispatcherTask> _queue = new List<DispatcherTask>();
 
-  UploadBloc(this._backend, this._token) {
+  UploadBloc(this._backend) {
     log.fine('$this started');
   }
 
@@ -49,6 +49,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   Stream<UploadState> mapEventToState(
       UploadState state, UploadEvent event) async* {
     log.fine('Event: ${event}');
+
+    if (event is InitUploads) _token = event.token;
+
     if (event is InitUploads || event is RefreshUploads) {
       try {
         await _getQueue();
