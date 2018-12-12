@@ -10,6 +10,7 @@ class JobState extends ResultState<Job> {
     bool isBusy = false,
     bool isResult = false,
     bool isException = false,
+    bool isDeleted = false,
   }) : super(
           value: job,
           error: error,
@@ -22,6 +23,8 @@ class JobState extends ResultState<Job> {
   factory JobState.init() => JobState(isInit: true);
 
   factory JobState.busy() => JobState(isBusy: true);
+
+  factory JobState.deleted() => JobState();
 
   factory JobState.result(Job result) => JobState(isResult: true, job: result);
 

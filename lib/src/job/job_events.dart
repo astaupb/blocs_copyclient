@@ -1,6 +1,8 @@
 import '../models/job.dart';
 import '../models/joboptions.dart';
 
+class Delete extends JobEvent {}
+
 class GetPreviews extends JobEvent {}
 
 class InitJob extends JobEvent {

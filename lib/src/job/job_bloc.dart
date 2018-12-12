@@ -28,6 +28,8 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
   onSetOption() => print('take the job as it is');
 
+  onDelete() => dispatch(Delete());
+
   @override
   JobState get initialState => JobState.init();
 
@@ -57,7 +59,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
   Stream<JobState> mapEventToState(JobState state, JobEvent event) async* {
     if (event is RefreshOptions) {
       try {
-        _getOptions(id);
+        await _getOptions(id);
         yield JobState.result(job);
       } on ApiException catch (e) {
         yield JobState.exception(e);
@@ -78,6 +80,13 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       job.priceEstimation = _estimatePrice();
       id = job.id;
       yield JobState.result(job);
+    } else if (event is Delete) {
+       try {
+         await _deleteJob();
+         yield JobState.deleted();
+       } on ApiException catch(e) {
+         yield JobState.exception(e);
+       }
     }
   }
 
@@ -122,6 +131,27 @@ class JobBloc extends Bloc<JobEvent, JobState> {
       },
     );
   }
+
+  Future<void> _deleteJob() async {
+    Request request = ApiRequest('DELETE', '/jobs/$id', _backend);
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_deleteJob: $request');
+
+    return await _backend.send(request).then(
+      (response) async {
+        log.finer('_getSingle: ${response.statusCode}');
+        if (response.statusCode == 205) {
+          job = null;
+        } else {
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
+        }
+      },
+    );
+  }
+
+
 
   Future<void> _putJobOptions(JobOptions options) async {
     Request request = ApiRequest('PUT', '/jobs/$id/options', _backend);
