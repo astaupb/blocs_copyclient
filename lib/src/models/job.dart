@@ -14,7 +14,8 @@ class Job {
   int priceEstimation;
 
   Uint8List pdfBytes;
-  List<Uint8List> previews;
+  List<List<int>> previews = [];
+  bool hasPreview = false;
 
   Job({this.id, this.timestamp, this.userId, this.jobOptions, this.jobInfo});
 
@@ -47,7 +48,10 @@ class Job {
         'timestamp': timestamp,
         'user_id': userId,
         'info': jobInfo.toMap(),
-        'options': jobOptions.toMap()
+        'options': jobOptions.toMap(),
+        'estimation': priceEstimation,
+        'hasPreview': hasPreview,
+        'previews': previews?.length,
       };
 
   @override
