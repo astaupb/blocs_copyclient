@@ -16,7 +16,7 @@ class Job {
   List<List<int>> previews = [];
   bool hasPreview = false;
 
-  Job({this.id, this.timestamp, this.userId, this.jobOptions, this.jobInfo});
+  Job({this.id, this.timestamp, this.jobOptions, this.jobInfo});
 
   factory Job.fromMap(Map<String, dynamic> jobs) {
     JobOptions _jobOptions;
@@ -36,7 +36,6 @@ class Job {
     return Job(
       id: jobs['id'],
       timestamp: jobs['timestamp'],
-      userId: jobs['user_id'],
       jobOptions: _jobOptions,
       jobInfo: _jobInfo,
     );
@@ -45,7 +44,6 @@ class Job {
   Map<String, dynamic> toMap() => {
         'id': id,
         'timestamp': timestamp,
-        'user_id': userId,
         'info': jobInfo.toMap(),
         'options': jobOptions.toMap(),
         'estimation': priceEstimation,
