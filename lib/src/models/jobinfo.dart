@@ -2,6 +2,7 @@
 /// Those are most commonly determined at upload/dispatching time
 class JobInfo {
   final String filename;
+  final String title;
   final int pagecount;
   final int colored;
   final bool a3;
@@ -10,6 +11,7 @@ class JobInfo {
   /// JobInfo with default values
   JobInfo(
       {this.filename: '',
+      this.title: '',
       this.pagecount: 0,
       this.colored: 0,
       this.a3: false,

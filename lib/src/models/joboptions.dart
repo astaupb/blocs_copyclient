@@ -12,7 +12,8 @@ class JobOptions {
 
   /// JobOptions with default values
   JobOptions(
-      {this.duplex: 0,
+      {this.color: false,
+      this.duplex: 0,
       this.copies: 1,
       this.collate: false,
       this.a3: false,
