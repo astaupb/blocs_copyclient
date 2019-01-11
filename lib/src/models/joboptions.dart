@@ -1,5 +1,6 @@
 /// JobOptions holds options that can generally be modified by the user at any time
 class JobOptions {
+  bool color;
   int duplex;
   int copies;
   bool collate;
@@ -22,6 +23,7 @@ class JobOptions {
 
   /// Build JobOptions object from map
   factory JobOptions.fromMap(Map<String, dynamic> options) => JobOptions(
+        color: options['color'],
         duplex: options['duplex'],
         copies: options['copies'],
         collate: options['collate'],
@@ -33,6 +35,7 @@ class JobOptions {
       );
 
   Map<String, dynamic> toMap() => {
+        'color': color,
         'duplex': duplex,
         'copies': copies,
         'collate': collate,

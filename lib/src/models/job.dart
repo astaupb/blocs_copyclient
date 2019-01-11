@@ -8,7 +8,6 @@ const String scope = 'Job:';
 class Job {
   final int id;
   final int timestamp;
-  final int userId;
   JobOptions jobOptions;
   final JobInfo jobInfo;
   int priceEstimation;

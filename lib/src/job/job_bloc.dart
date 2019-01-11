@@ -109,7 +109,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
     int _basePrice = basePrice;
     int _totalPages = job.jobInfo.pagecount;
 
-    if (job.jobInfo.color) _basePrice = 10;
+    if (job.jobInfo.colored > 0) _basePrice = 10;
 
     if (job.jobOptions.a3 || job.jobInfo.a3) _basePrice *= 2;
 

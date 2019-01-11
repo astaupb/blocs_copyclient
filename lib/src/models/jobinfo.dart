@@ -3,7 +3,7 @@
 class JobInfo {
   final String filename;
   final int pagecount;
-  final bool color;
+  final int colored;
   final bool a3;
   final String password;
 
@@ -11,7 +11,7 @@ class JobInfo {
   JobInfo(
       {this.filename: '',
       this.pagecount: 0,
-      this.color: true,
+      this.colored: 0,
       this.a3: false,
       this.password: ''});
 
@@ -19,7 +19,7 @@ class JobInfo {
   factory JobInfo.fromMap(Map<String, dynamic> info) => JobInfo(
         filename: info['filename'],
         pagecount: info['pagecount'],
-        color: info['color'],
+        colored: info['colored'],
         a3: info['a3'],
         password: info['password'],
       );
@@ -27,7 +27,7 @@ class JobInfo {
   Map<String, dynamic> toMap() => {
         'filename': filename,
         'pagecount': pagecount,
-        'color': color,
+        'colored': colored,
         'a3': a3,
         'password': password
       };
