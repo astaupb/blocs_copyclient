@@ -35,13 +35,11 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   onUpload(
     List<int> data, {
     String filename,
-    bool color,
     String password,
   }) =>
       dispatch(UploadFile(
         data: data,
         filename: filename,
-        color: color,
         password: password,
       ));
 
@@ -65,7 +63,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       int localId = _activeUploads;
       _queue.add(DispatcherTask(
         filename: event.filename,
-        color: event.color,
         isUploading: true,
         localId: localId,
       ));
@@ -75,7 +72,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         await _postQueue(
           event.data,
           filename: event.filename,
-          color: event.color,
           password: event.password,
         ).then((String uid) {
           _queue.forEach((task) {
@@ -107,7 +103,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   Future<String> _postQueue(
     List<int> data, {
     String filename = '',
-    bool color = true,
     String password = '',
   }) async {
     Request request = ApiRequest(
@@ -115,7 +110,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       '/jobs/queue',
       _backend,
       queryParameters: {
-        'color': color.toString(),
         'filename': filename,
         //'password': password,
       },
