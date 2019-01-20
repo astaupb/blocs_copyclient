@@ -1,0 +1,68 @@
+import 'package:bloc/bloc.dart';
+import 'package:http/http.dart';
+import 'package:logging/logging.dart';
+
+import '../exceptions.dart';
+import '../models/backend.dart';
+import '../models/job.dart';
+import 'preview_events.dart';
+import 'preview_state.dart';
+
+class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
+  final log = Logger('PreviewBloc');
+
+  final Backend _backend;
+  String _token;
+
+  List<PreviewSet> previewSets = [];
+
+  PreviewBloc(this._backend);
+
+  @override
+  PreviewState get initialState => PreviewState.init();
+
+  void getPreview(Job job) => dispatch(GetPreview(job));
+
+  @override
+  Stream<PreviewState> mapEventToState(
+      PreviewState currentState, PreviewEvent event) async* {
+    if (event is InitPreviews) {
+      _token = event.token;
+    } else if (event is GetPreview) {
+      try {
+        _getPreview(event.job);
+        yield PreviewState.result(previewSets);
+      } on ApiException catch (e) {
+        yield PreviewState.exception(e);
+      }
+    }
+  }
+
+  void onStart(String token) => dispatch(InitPreviews(token));
+
+  Future<void> _getPreview(Job job) async {
+    List<List<int>> files = [];
+    for (int i in Iterable.generate(job.jobInfo.pagecount)) {
+      Request request =
+          ApiRequest('GET', '/jobs/${job.id}/preview/$i', _backend);
+      request.headers['Accept'] = 'image/jpeg';
+      request.headers['X-Api-Key'] = _token;
+
+      log.finer('_getPreview: $request');
+
+      await _backend.send(request).then(
+        (response) async {
+          log.finer('_getPreview: ${response.statusCode}');
+          if (response.statusCode == 200) {
+            files.add(await response.stream.toBytes());
+          } else {
+            throw ApiException(response.statusCode,
+                info: 'status code other than 200 received');
+          }
+        },
+      );
+    }
+    previewSets.add(PreviewSet(job.id, files));
+    return;
+  }
+}
