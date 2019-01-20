@@ -16,16 +16,25 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
 
   List<PreviewSet> previewSets = [];
 
-  PreviewBloc(this._backend);
+  PreviewBloc(this._backend) {
+    log.fine('$this started');
+  }
 
   @override
   PreviewState get initialState => PreviewState.init();
+
+  @override
+  void dispose() {
+    log.fine('disposing of $this');
+    super.dispose();
+  }
 
   void getPreview(Job job) => dispatch(GetPreview(job));
 
   @override
   Stream<PreviewState> mapEventToState(
       PreviewState currentState, PreviewEvent event) async* {
+    log.fine('Event: $event');
     if (event is InitPreviews) {
       _token = event.token;
     } else if (event is GetPreview) {
@@ -39,6 +48,12 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
   }
 
   void onStart(String token) => dispatch(InitPreviews(token));
+
+  @override
+  void onTransition(Transition<PreviewEvent, PreviewState> transition) {
+    log.fine('State: ${transition.nextState}');
+    super.onTransition(transition);
+  }
 
   Future<void> _getPreview(Job job) async {
     List<List<int>> files = [];
