@@ -39,7 +39,7 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
       _token = event.token;
     } else if (event is GetPreview) {
       try {
-        _getPreview(event.job);
+        await _getPreview(event.job);
         yield PreviewState.result(previewSets);
       } on ApiException catch (e) {
         yield PreviewState.exception(e);
