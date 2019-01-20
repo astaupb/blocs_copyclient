@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'jobinfo.dart';
 import 'joboptions.dart';
 
@@ -11,10 +9,6 @@ class Job {
   JobOptions jobOptions;
   final JobInfo jobInfo;
   int priceEstimation;
-
-  Uint8List pdfBytes;
-  List<List<int>> previews = [];
-  bool hasPreview = false;
 
   Job({this.id, this.timestamp, this.jobOptions, this.jobInfo});
 
@@ -47,8 +41,6 @@ class Job {
         'info': jobInfo.toMap(),
         'options': jobOptions.toMap(),
         'estimation': priceEstimation,
-        'hasPreview': hasPreview,
-        'previews': previews?.length,
       };
 
   @override

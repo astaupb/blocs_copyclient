@@ -49,17 +49,32 @@ class PrintJob extends JoblistEvent {
 /// Demand refreshing all jobs, or if [index] is set only that one
 class RefreshJobs extends JoblistEvent {}
 
-class UploadJob extends JoblistEvent {
-  final List<int> data;
-  final String filename;
+class UpdateOptions extends JoblistEvent {
   final JobOptions options;
+  final int index;
+  final int id;
 
-  UploadJob({@required this.data, this.filename, this.options});
+  UpdateOptions({@required this.options, this.id, this.index});
 
   Map<String, dynamic> toMap() => {
-        'file': data,
-        'filename': filename,
         'options': options.toMap(),
+        'id': id,
+        'index': index,
+      };
+
+  @override
+  String toString() => toMap().toString();
+}
+
+class RefreshOptions extends JoblistEvent {
+  final int index;
+  final int id;
+
+  RefreshOptions({this.id, this.index});
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'index': index,
       };
 
   @override
