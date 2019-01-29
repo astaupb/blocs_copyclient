@@ -105,15 +105,15 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     return await _backend.send(request).then(
       (response) async {
         if (response.statusCode == 200) {
-log.finer('[_getUser] response: ${response.statusCode}');
+          log.finer('[_getUser] response: ${response.statusCode}');
+
           /// move [responseMap] entries into the global [User] object
           _user = User.fromMap(
               json.decode(utf8.decode(await response.stream.toBytes())));
           _user.token = _token;
         } else {
           throw ApiException(response.statusCode,
-              info:
-                  '_getUser: received response code other than 200');
+              info: '_getUser: received response code other than 200');
         }
       },
     );

@@ -27,7 +27,8 @@ class AuthState extends CommonState {
 
   factory AuthState.busy() => AuthState(isBusy: true);
 
-  factory AuthState.exception(ApiException e) => AuthState(isException: true, error: e);
+  factory AuthState.exception(ApiException e) =>
+      AuthState(isException: true, error: e);
 
   factory AuthState.init() => AuthState(isInit: true);
 

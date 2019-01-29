@@ -18,7 +18,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   String _token;
 
   List<Transaction> _journal;
-  double _credit;
+  int _credit;
 
   JournalBloc(this._backend) {
     log.fine('$this started');

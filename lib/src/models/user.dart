@@ -3,7 +3,7 @@ class User {
   int userId;
   int activeTokens;
   String _token;
-  double credit;
+  int credit;
 
   User({this.username, this.userId, this.activeTokens, this.credit});
 

@@ -8,13 +8,13 @@ abstract class CommonState {
   CommonState({
     this.error,
     this.isInit,
-    this.isBusy ,
+    this.isBusy,
     this.isException,
   });
 }
 
 abstract class ResultState<T> extends CommonState {
-  /// value the result holds 
+  /// value the result holds
   final T value;
 
   /// state identifier

@@ -13,7 +13,7 @@ class ChangeUsername extends UserEvent {
 
 class InitUser extends UserEvent {
   String token;
-  
+
   InitUser(this.token);
 
   Map<String, dynamic> toMap() => {'token': token};

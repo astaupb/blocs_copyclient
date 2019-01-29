@@ -26,7 +26,8 @@ class UploadState extends ResultState<List<DispatcherTask>> {
   factory UploadState.result(List<DispatcherTask> queue) =>
       UploadState(isResult: true, queue: queue);
 
-  factory UploadState.exception(ApiException e) => UploadState(isException: true, error: e);
+  factory UploadState.exception(ApiException e) =>
+      UploadState(isException: true, error: e);
 
   Map<String, dynamic> toMap() => {
         'queue': (value != null) ? value : 'null',

@@ -1,14 +1,14 @@
 class JournalEvent {}
 
 class InitJournal extends JournalEvent {
-    String token;
+  String token;
 
-    InitJournal(this.token);
+  InitJournal(this.token);
 
-    Map<String, dynamic> toMap() => {'token': token};
+  Map<String, dynamic> toMap() => {'token': token};
 
-    @override
-    toString() => toMap().toString();
+  @override
+  toString() => toMap().toString();
 }
 
 class RefreshJournal extends JournalEvent {}

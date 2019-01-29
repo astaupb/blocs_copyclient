@@ -28,7 +28,8 @@ class JournalState extends ResultState<JournalResult> {
   factory JournalState.result(JournalResult result) =>
       JournalState(isResult: true, journalResult: result);
 
-  factory JournalState.exception(ApiException e) => JournalState(isException: true, error: e);
+  factory JournalState.exception(ApiException e) =>
+      JournalState(isException: true, error: e);
 
   Map<String, dynamic> toMap() => {
         'result': (value != null) ? value : 'null',
@@ -44,7 +45,7 @@ class JournalState extends ResultState<JournalResult> {
 }
 
 class JournalResult {
-  final double credit;
+  final int credit;
   final List<Transaction> transactions;
 
   JournalResult({@required this.credit, @required this.transactions});
