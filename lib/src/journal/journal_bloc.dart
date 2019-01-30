@@ -26,6 +26,8 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
 
   onStart(String token) => dispatch(InitJournal(token));
 
+  void onAddTransaction(String token) => dispatch(AddTransaction(token));
+
   @override
   get initialState => JournalState.init();
 
@@ -44,12 +46,19 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       } on ApiException catch (e) {
         yield JournalState.exception(e);
       }
+    } else if (event is AddTransaction) {
+      try {
+        await _postJournal(event.token);
+        dispatch(RefreshJournal());
+      } on ApiException catch (e) {
+        yield JournalState.exception(e);
+      }
     }
   }
 
   @override
   void onTransition(Transition<JournalEvent, JournalState> transition) {
-    log.fine(transition.nextState);
+    log.fine('State: ${transition.nextState}');
 
     super.onTransition(transition);
   }
@@ -100,5 +109,23 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
         }
       },
     );
+  }
+
+  Future<void> _postJournal(String token) {
+    log.fine('_postJournal: $token');
+    ApiRequest request = ApiRequest('POST', '/journal', _backend);
+    request.headers['Content-Type'] = 'application/json';
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_postJournal: $request');
+
+    _backend.send(request).then((StreamedResponse response) {
+      if (response.statusCode == 204) {
+        return;
+      } else {
+        throw ApiException(response.statusCode,
+            info: 'status code other than 204 received');
+      }
+    });
   }
 }
