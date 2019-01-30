@@ -30,8 +30,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     super.dispose();
   }
 
-  void login(String user, String pw) => dispatch(
-        Login(username: user, password: pw),
+  void login(String user, String pw, {bool persistent = false}) => dispatch(
+        Login(username: user, password: pw, persistent: persistent),
       );
 
   void logout() => dispatch(Logout());
@@ -43,7 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield AuthState.busy();
       try {
         await _postLogin(event);
-        yield AuthState.authorized(token);
+        yield AuthState.authorized(token, persistent: event.persistent);
       } on ApiException catch (e) {
         log.severe(e.info);
         yield AuthState.exception(e);

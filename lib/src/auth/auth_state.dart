@@ -3,12 +3,14 @@ import '../exceptions.dart';
 
 class AuthState extends CommonState {
   final String token;
+  final bool persistent;
 
   final bool isUnauthorized;
   final bool isAuthorized;
 
   AuthState({
     this.token,
+    this.persistent,
     ApiException error,
     bool isInit = false,
     bool isBusy = false,
@@ -22,8 +24,8 @@ class AuthState extends CommonState {
           isException: isException,
         );
 
-  factory AuthState.authorized(String token) =>
-      AuthState(isAuthorized: true, token: token);
+  factory AuthState.authorized(String token, {bool persistent = false}) =>
+      AuthState(isAuthorized: true, token: token, persistent: persistent);
 
   factory AuthState.busy() => AuthState(isBusy: true);
 
@@ -41,6 +43,7 @@ class AuthState extends CommonState {
         'isUnauthorized': isUnauthorized,
         'isException': isException,
         'token': token,
+        'persistent': persistent,
         'error': error.toString(),
       };
 
