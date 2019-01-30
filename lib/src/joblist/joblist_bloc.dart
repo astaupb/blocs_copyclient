@@ -166,9 +166,9 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     );
   }
 
-  int _estimatePrice(Job job, {basePrice: 2}) {
+  int _estimatePrice(Job job, {basePrice: 5}) {
     int _basePrice = basePrice;
-    int _colorPrice = 10;
+    int _colorPrice = 20;
     int _colorPages = job.jobInfo.colored;
     int _totalPages = job.jobInfo.pagecount;
 
