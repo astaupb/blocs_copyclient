@@ -57,9 +57,9 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
 
   Future<void> _getPreview(Job job) async {
     List<List<int>> files = [];
-    for (int i in Iterable.generate(job.jobInfo.pagecount)) {
+    for (int i = 1; i < ((job.jobInfo.pagecount > 4) ? 4 : job.jobInfo.pagecount); i++) {
       Request request =
-          ApiRequest('GET', '/jobs/${job.id}/preview/$i', _backend);
+          ApiRequest('GET', '/jobs/${job.id}/preview/${i-1}', _backend);
       request.headers['Accept'] = 'image/jpeg';
       request.headers['X-Api-Key'] = _token;
 
