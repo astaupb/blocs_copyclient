@@ -206,6 +206,8 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         if (response.statusCode == 200) {
           _jobs[getIndexById(id)] = Job.fromMap(
               json.decode(utf8.decode(await response.stream.toBytes())));
+          _jobs[getIndexById(id)].priceEstimation =
+              _estimatePrice(jobs[getIndexById(id)]);
         } else {
           throw ApiException(response.statusCode,
               info: 'status code other than 200 received');
@@ -226,9 +228,15 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       (response) async {
         log.finer('_getJobs: ${response.statusCode}');
         if (response.statusCode == 200) {
-          _jobs = List.from(json
-              .decode(utf8.decode(await response.stream.toBytes()))
-              .map((value) => Job.fromMap(value)));
+          _jobs = List.from(
+              json.decode(utf8.decode(await response.stream.toBytes())).map(
+            (value) {
+              Job job = Job.fromMap(value);
+              job.priceEstimation = _estimatePrice(job);
+              return job;
+            },
+          ));
+          return;
         } else {
           throw ApiException(response.statusCode,
               info: 'status code other than 200 received');
