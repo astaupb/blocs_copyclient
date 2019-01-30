@@ -67,6 +67,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         log.severe(e.info);
         yield AuthState.exception(e);
       }
+    } else if (event is Register) {
+      try {
+        await _postUser(event.username, event.password);
+        dispatch(Login(username: event.username, password: event.password));
+      } catch (e) {
+        yield AuthState.exception(e);
+      }
     }
   }
 
@@ -76,10 +83,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     super.onTransition(transition);
   }
 
+  void register(String username, String password) =>
+      dispatch(Register(username, password));
+
   void tokenLogin(String token) => dispatch(TokenLogin(token: token));
 
   /// POST /user/login and then GET /user to update the global [User] object
   Future<void> _postLogin(Login initEvent) async {
+    log.fine('_postLogin: ${initEvent.toString()}');
     http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
     request.headers['Accept'] = 'application/json';
     request.headers['Authorization'] = ('Basic ' +
@@ -97,5 +108,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             info: '_postLogin: received response code other than 200');
       }
     });
+  }
+
+  Future<void> _postUser(String username, String password) async {
+    http.Request request = ApiRequest('POST', '/user', backend);
+    request.headers['Content-Type'] = 'application/json';
+
+    request.body = json.encode({
+      'username': username,
+      'password': password,
+    });
+
+    log.finer('_postUser: $request');
+
+    await backend.send(request).then(
+      (http.StreamedResponse response) async {
+        if (response.statusCode == 204) {
+          log.fine('_postUser: 204');
+          return;
+        } else {
+          log.severe('_postUser: ${(await response.stream.bytesToString())}');
+          throw ApiException(response.statusCode);
+        }
+      },
+    );
   }
 }
