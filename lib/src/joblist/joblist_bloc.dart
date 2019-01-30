@@ -186,9 +186,11 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     if (job.jobOptions.nup == 2 && _totalPages > 1)
       _totalPages = _totalPages ~/ 2 + _totalPages % 2;
 
+    if (!job.jobOptions.color) {
+      _colorPages = 0;
+    }
     _basePrice *= ((_totalPages - _colorPages) * job.jobOptions.copies);
-    if (_colorPages > 0 && job.jobOptions.color)
-      _basePrice += (_colorPages * job.jobOptions.copies * _colorPrice);
+    _basePrice += (_colorPages * job.jobOptions.copies * _colorPrice);
 
     return _basePrice;
   }
