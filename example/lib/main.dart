@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   static final Backend backend = BackendSunrise(client);
   AuthBloc authBloc = AuthBloc(backend: backend);
   JoblistBloc jobsBloc;
+  PrintQueueBloc printQueueBloc = PrintQueueBloc(backend);
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

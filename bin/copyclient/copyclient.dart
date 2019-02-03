@@ -9,8 +9,13 @@ class Copyclient {
   JoblistBloc joblistBloc;
   JournalBloc journalBloc;
   UploadBloc uploadBloc;
+  PrintQueueBloc printQueueBloc;
 
-  int tokenId;
+  int _tokenId;
+  String _token;
+
+  int get tokenId => _tokenId;
+  String get token => _token;
 
   bool authorized = false;
 
@@ -25,6 +30,7 @@ class Copyclient {
     uploadBloc = UploadBloc(backend);
     joblistBloc = JoblistBloc(backend);
     journalBloc = JournalBloc(backend);
+    printQueueBloc = PrintQueueBloc(backend);
 
     authBloc.state.listen((AuthState state) {
       if (state.isAuthorized) {
@@ -38,7 +44,7 @@ class Copyclient {
 
     userBloc.state.listen((UserState state) {
       if (state.isResult) {
-        tokenId = state.value.tokenId;
+        _tokenId = state.value.tokenId;
         print(state.value);
       }
     });
@@ -56,6 +62,12 @@ class Copyclient {
     });
 
     journalBloc.state.listen((JournalState state) {
+      if (state.isResult) {
+        print(state.value);
+      }
+    });
+
+    printQueueBloc.state.listen((PrintQueueState state) {
       if (state.isResult) {
         print(state.value);
       }
@@ -80,10 +92,12 @@ class Copyclient {
   }
 
   void propagateToken(String token) {
+    _token = token;
     userBloc.onStart(token);
     joblistBloc.onStart(token);
     journalBloc.onStart(token);
     uploadBloc.onStart(token);
+    printQueueBloc.onStart(token);
   }
 
   Future<void> upload(String path) async {

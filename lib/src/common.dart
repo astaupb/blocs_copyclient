@@ -13,11 +13,11 @@ abstract class CommonState {
   });
 
   Map<String, dynamic> toMap() => {
-    'error': error,
-    'isInit': isInit,
-    'isBusy': isBusy,
-    'isException': isException,
-  };
+        'error': error,
+        'isInit': isInit,
+        'isBusy': isBusy,
+        'isException': isException,
+      };
 }
 
 abstract class ResultState<T> extends CommonState {
@@ -42,8 +42,8 @@ abstract class ResultState<T> extends CommonState {
         );
 
   Map<String, dynamic> toMap() => {
-    'value': value,
-  }..addAll(super.toMap());
+        'value': value,
+      }..addAll(super.toMap());
 
   @override
   String toString() => toMap().toString();

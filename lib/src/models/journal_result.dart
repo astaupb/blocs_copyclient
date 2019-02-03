@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import '../models/transaction.dart';
+
 class JournalResult {
   final int credit;
   final List<Transaction> transactions;

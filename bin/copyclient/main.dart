@@ -43,6 +43,18 @@ main(List<String> args) async {
           copyclient.uploadBloc.onRefresh();
         }
         break;
+      case "printer":
+        if (args.length == 2) {
+          int id = int.tryParse(args[1]);
+          if (id != null) {
+            copyclient.printQueueBloc.onRefresh(deviceId: id);
+          } else {
+            stdout.write("pass valid deviceId");
+          }
+        } else {
+          stdout.write("pass deviceId\n");
+        }
+        break;
       case "exit":
         await copyclient.authBloc.deleteToken(copyclient.tokenId);
         break;
