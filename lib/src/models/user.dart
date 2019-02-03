@@ -1,17 +1,19 @@
 class User {
-  String username;
+  String name;
   int userId;
   int activeTokens;
   String _token;
+  int tokenId;
   int credit;
 
-  User({this.username, this.userId, this.activeTokens, this.credit});
+  User({this.name, this.userId, this.activeTokens, this.tokenId, this.credit});
 
   factory User.fromMap(dynamic obj) => User(
-        username: obj['name'],
+        name: obj['name'],
         userId: obj['id'],
         credit: obj['credit'],
         activeTokens: obj['tokens'],
+        tokenId: obj['token_id'],
       );
 
   String get token => _token;
@@ -19,10 +21,11 @@ class User {
   bool tokenExists() => (_token != null);
 
   Map<String, dynamic> toMap() => {
-        'name': username,
+        'name': name,
         'id': userId,
         'credit': credit,
-        'tokens': activeTokens
+        'tokens': activeTokens,
+        'tokenId': tokenId,
       };
 
   @override

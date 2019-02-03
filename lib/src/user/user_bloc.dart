@@ -86,7 +86,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     return await _backend.send(request).then((response) {
       log.finer('[_changeUsername] response: ${response.statusCode}');
       if (response.statusCode == 205) {
-        _user.username = event.username;
+        _user.name = event.username;
       } else {
         throw ApiException(response.statusCode,
             info: '_changeUsername: received response code other than 205');
