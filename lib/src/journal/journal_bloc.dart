@@ -26,6 +26,8 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
 
   onStart(String token) => dispatch(InitJournal(token));
 
+  onRefresh() => dispatch(RefreshJournal());
+
   void onAddTransaction(String token) => dispatch(AddTransaction(token));
 
   @override

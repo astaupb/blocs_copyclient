@@ -30,9 +30,18 @@ class Login extends AuthEvent {
 
   @override
   String toString() => 'Login ' + toMap().toString();
-} 
+}
 
-class Logout extends AuthEvent {}
+class DeleteToken extends AuthEvent {
+  final int id;
+
+  DeleteToken(this.id);
+
+  Map<String, dynamic> toMap() => {'id': id};
+
+  @override
+  String toString() => 'Delete Token ' + toMap().toString();
+}
 
 class Register extends AuthEvent {
   final String username;
@@ -45,6 +54,7 @@ class Register extends AuthEvent {
         'password': password,
       };
 
+  @override
   String toString() => toMap().toString();
 }
 

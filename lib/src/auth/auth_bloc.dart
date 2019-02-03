@@ -34,7 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         Login(username: user, password: pw, persistent: persistent),
       );
 
-  void logout() => dispatch(Logout());
+  void deleteToken(int id) => dispatch(DeleteToken(id));
 
   @override
   Stream<AuthState> mapEventToState(AuthState state, AuthEvent event) async* {
@@ -42,7 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is Login) {
       yield AuthState.busy();
       try {
-        await _postLogin(event);
+        await _postToken(event);
         yield AuthState.authorized(token, persistent: event.persistent);
       } on ApiException catch (e) {
         log.severe(e.info);
@@ -57,11 +57,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         log.severe(e.info);
         yield AuthState.exception(e);
       }
-    } else if (event is Logout) {
+    } else if (event is DeleteToken) {
       yield AuthState.busy();
       try {
-        //delete token and database entry
-        token = '';
+        await _deleteToken(event.id);
         yield AuthState.unauthorized();
       } on ApiException catch (e) {
         log.severe(e.info);
@@ -88,24 +87,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void tokenLogin(String token) => dispatch(TokenLogin(token: token));
 
-  /// POST /user/login and then GET /user to update the global [User] object
-  Future<void> _postLogin(Login initEvent) async {
-    log.fine('_postLogin: ${initEvent.toString()}');
+  /// POST /user/tokens and then GET /user to update the global [User] object
+  Future<void> _postToken(Login initEvent) async {
+    log.fine('_postToken: ${initEvent.toString()}');
     http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
     request.headers['Accept'] = 'application/json';
     request.headers['Authorization'] = ('Basic ' +
         base64.encode(
             utf8.encode(initEvent.username + ':' + initEvent.password)));
 
-    log.finer('_postLogin: $request');
+    log.finer('_postToken: $request');
 
     await backend.send(request).then((response) async {
-      log.finer('_postLogin: ${response.statusCode}');
+      log.finer('_postToken: ${response.statusCode}');
       if (response.statusCode == 200) {
         token = json.decode(await response.stream.bytesToString());
       } else {
         throw ApiException(response.statusCode,
-            info: '_postLogin: received response code other than 200');
+            info: '_postToken: received response code other than 200');
+      }
+    });
+  }
+
+  Future<void> _deleteToken(int id) async {
+    log.fine('_deleteToken: $id');
+    http.BaseRequest request = ApiRequest('DELETE', '/user/tokens', backend);
+    request.headers['X-Api-Key'] = token;
+
+    log.finer('_deleteToken: $request');
+
+    await backend.send(request).then((response) async {
+      log.finer('_deleteToken: ${response.statusCode}');
+      if (response.statusCode == 205) {
+        token = '';
+      } else {
+        throw ApiException(response.statusCode,
+            info: '_postToken: received response code other than 205');
       }
     });
   }
