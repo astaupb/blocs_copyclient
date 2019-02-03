@@ -10,6 +10,7 @@ import 'journal_state.dart';
 import '../exceptions.dart';
 import '../models/backend.dart';
 import '../models/transaction.dart';
+import '../models/journal_result.dart';
 
 class JournalBloc extends Bloc<JournalEvent, JournalState> {
   final Logger log = Logger('JournalBloc');
