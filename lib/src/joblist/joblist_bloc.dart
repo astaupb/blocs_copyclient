@@ -172,7 +172,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     int _colorPages = job.jobInfo.colored;
     int _totalPages = job.jobInfo.pagecount;
 
-    if (job.jobOptions.a3 || job.jobInfo.a3) {
+    if (job.jobOptions.a3) {
       _basePrice *= 2;
       _colorPrice *= 2;
     }
