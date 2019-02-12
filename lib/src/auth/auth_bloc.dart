@@ -34,7 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         Login(username: user, password: pw, persistent: persistent),
       );
 
-  void deleteToken(int id) => dispatch(DeleteToken(id));
+  void deleteToken() => dispatch(DeleteToken());
 
   @override
   Stream<AuthState> mapEventToState(AuthState state, AuthEvent event) async* {
@@ -60,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is DeleteToken) {
       yield AuthState.busy();
       try {
-        await _deleteToken(event.id);
+        await _deleteToken();
         yield AuthState.unauthorized();
       } on ApiException catch (e) {
         log.severe(e.info);
@@ -109,8 +109,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  Future<void> _deleteToken(int id) async {
-    log.fine('_deleteToken: $id');
+  Future<void> _deleteToken() async {
+    log.fine('_deleteToken');
     http.BaseRequest request = ApiRequest('DELETE', '/user/tokens', backend);
     request.headers['X-Api-Key'] = token;
 
