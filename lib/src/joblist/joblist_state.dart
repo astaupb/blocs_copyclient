@@ -1,6 +1,6 @@
 import '../models/job.dart';
 import '../common.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
 class JoblistState extends ResultState<List<Job>> {
   JoblistState({

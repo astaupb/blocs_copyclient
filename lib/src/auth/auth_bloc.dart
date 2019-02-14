@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
-import '../exceptions.dart';
+import '../../exceptions.dart';
 import '../models/backend.dart';
 import 'auth_events.dart';
 import 'auth_state.dart';

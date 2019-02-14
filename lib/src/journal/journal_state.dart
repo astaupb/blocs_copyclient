@@ -1,6 +1,6 @@
 import '../models/journal_result.dart';
 import '../common.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
 class JournalState extends ResultState<JournalResult> {
   JournalState({

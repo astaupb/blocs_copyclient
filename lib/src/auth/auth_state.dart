@@ -1,5 +1,5 @@
 import '../common.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
 class AuthState extends CommonState {
   final String token;

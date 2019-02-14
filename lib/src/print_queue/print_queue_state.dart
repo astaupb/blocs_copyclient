@@ -1,7 +1,7 @@
 import '../models/print_queue_task.dart';
 import '../models/print_queue_result.dart';
 import '../common.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
 class PrintQueueState extends ResultState<PrintQueueResult> {
   PrintQueueState({

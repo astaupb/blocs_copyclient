@@ -6,7 +6,7 @@ import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 import 'package:quiver/cache.dart';
 
-import '../exceptions.dart';
+import '../../exceptions.dart';
 import '../models/backend.dart';
 import '../models/job.dart';
 import '../models/joboptions.dart';

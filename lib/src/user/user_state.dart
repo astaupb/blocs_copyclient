@@ -1,6 +1,6 @@
 import '../models/user.dart';
 import '../common.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
 class UserState extends ResultState<User> {
   UserState({

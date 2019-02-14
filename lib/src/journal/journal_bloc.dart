@@ -7,7 +7,7 @@ import 'package:logging/logging.dart';
 
 import 'journal_events.dart';
 import 'journal_state.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 import '../models/backend.dart';
 import '../models/transaction.dart';
 import '../models/journal_result.dart';

@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import '../common.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
 class PreviewSet {
   final int jobId;

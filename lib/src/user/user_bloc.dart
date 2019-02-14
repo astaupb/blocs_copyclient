@@ -6,7 +6,7 @@ import 'package:logging/logging.dart';
 
 import '../models/user.dart';
 import '../models/backend.dart';
-import '../exceptions.dart';
+import '../../exceptions.dart';
 import 'user_events.dart';
 import 'user_state.dart';
 
