@@ -132,7 +132,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     request.headers['Content-Type'] = 'application/json';
 
     request.body = json.encode({
-      'username': username,
+      'name': username,
       'password': password,
     });
 
