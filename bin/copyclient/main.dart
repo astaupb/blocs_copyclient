@@ -7,7 +7,7 @@ import './backend.dart';
 import './copyclient.dart';
 
 main(List<String> args) async {
-  final copyclient = Copyclient(BackendSunrise(Client()));
+  final copyclient = Copyclient(BackendShiva(Client()));
 
   switch (args.length) {
     case 1:
