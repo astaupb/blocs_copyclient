@@ -62,8 +62,17 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
     if (event is AppendJob) {
       try {
-        await _postQueue(event.jobId);
+        await _postQueue(jobId: event.jobId);
         yield PrintQueueState.result(PrintQueueResult(_incoming, _processing));
+      } on ApiException catch (e) {
+        yield PrintQueueState.exception(e);
+      }
+    }
+
+    if (event is LockQueue) {
+      try {
+        await _postQueue();
+        yield PrintQueueState.locked();
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
       }

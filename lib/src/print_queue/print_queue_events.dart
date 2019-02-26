@@ -31,6 +31,17 @@ class AppendJob extends PrintQueueEvent {
   String toString() => toMap().toString();
 }
 
+class LockQueue extends PrintQueueEvent {
+  String queueUid;
+
+  LockQueue({this.queueUid});
+
+  Map<String, dynamic> toMap() => {'queueUid': queueUid};
+
+  @override
+  String toString() => toMap().toString();
+}
+
 class CancelJob extends PrintQueueEvent {
   String uid;
 

@@ -11,6 +11,7 @@ class PrintQueueState extends ResultState<PrintQueueResult> {
     bool isBusy = false,
     bool isException = false,
     bool isResult = false,
+    bool isLocked = false,
   }) : super(
           value: queue,
           error: error,
@@ -29,4 +30,6 @@ class PrintQueueState extends ResultState<PrintQueueResult> {
 
   factory PrintQueueState.result(PrintQueueResult queue) =>
       PrintQueueState(queue: queue, isResult: true);
+
+  factory PrintQueueState.locked() => PrintQueueState(isLocked: true);
 }
