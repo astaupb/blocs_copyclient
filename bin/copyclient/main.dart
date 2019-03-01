@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cli_repl/cli_repl.dart';
 import 'package:http/http.dart';
 
+import 'package:blocs_copyclient/blocs.dart';
 import './backend.dart';
 import './copyclient.dart';
 
@@ -32,6 +33,23 @@ main(List<String> args) async {
         break;
       case "jobs":
         await copyclient.joblistBloc.onRefresh();
+        switch (args.length) {
+          case 1:
+            copyclient.showJobs();
+            break;
+          case 2:
+            int id = int.tryParse(args[1]);
+            copyclient.showJobDetails(id);
+            break;
+          case 5:
+            int id = int.tryParse(args[1]);
+            if (args[2] == "options") {
+              if (args[3] == "range") {
+                copyclient.updatePageRange(id, args[4]);
+              }
+            }
+            break;
+        }
         break;
       case "journal":
         await copyclient.journalBloc.onRefresh();

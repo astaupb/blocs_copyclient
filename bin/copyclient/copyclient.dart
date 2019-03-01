@@ -10,6 +10,7 @@ class Copyclient {
   JournalBloc journalBloc;
   UploadBloc uploadBloc;
   PrintQueueBloc printQueueBloc;
+  File logFile = new File('.copyclient_cli.log');
 
   int _tokenId;
   String _token;
@@ -22,7 +23,8 @@ class Copyclient {
   Copyclient(Backend backend) {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      stderr.write('[${record.loggerName}] ${record.message}');
+      logFile.writeAsString('[${record.loggerName}] ${record.message}',
+          mode: FileMode.append);
     });
 
     authBloc = AuthBloc(backend: backend);
@@ -41,37 +43,6 @@ class Copyclient {
         if (authorized) exit(0);
       }
     });
-
-    userBloc.state.listen((UserState state) {
-      if (state.isResult) {
-        _tokenId = state.value.tokenId;
-        print(state.value);
-      }
-    });
-
-    uploadBloc.state.listen((UploadState state) {
-      if (state.isResult) {
-        print(state.value);
-      }
-    });
-
-    joblistBloc.state.listen((JoblistState state) {
-      if (state.isResult) {
-        print(state.value);
-      }
-    });
-
-    journalBloc.state.listen((JournalState state) {
-      if (state.isResult) {
-        print(state.value);
-      }
-    });
-
-    printQueueBloc.state.listen((PrintQueueState state) {
-      if (state.isResult) {
-        print(state.value);
-      }
-    });
   }
 
   Future<void> login({String username, String password}) async {
@@ -84,6 +55,45 @@ class Copyclient {
     } else {
       authBloc.login(username, password);
     }
+  }
+
+  Future<void> showJobs() async {
+    var listener;
+    listener = joblistBloc.state.listen(
+      (JoblistState state) {
+        if (state.isResult)
+          state.value.forEach((Job job) {
+            print(
+                '${job.id}: ${job.jobInfo.filename}, Pages: ${job.jobInfo.pagecount}');
+          });
+        listener.cancel();
+      },
+    );
+  }
+
+  Future<void> showJobDetails(int id) async {
+    var listener;
+    joblistBloc.onRefreshOptions(id);
+    listener = joblistBloc.state.listen((JoblistState state) {
+      if (state.isResult) {
+        print(state.value[joblistBloc.getIndexById(id)]);
+        listener.cancel();
+      }
+    });
+  }
+
+  Future<void> updatePageRange(int id, String range) {
+    var listener;
+    final index = joblistBloc.getIndexById(id);
+    var options = joblistBloc.jobs[index].jobOptions;
+    options.range = range;
+    joblistBloc.onUpdateOptionsById(id, options);
+    listener = joblistBloc.state.listen((JoblistState state) {
+      if (state.isResult) {
+        showJobDetails(id);
+        listener.cancel();
+      }
+    });
   }
 
   String prompt_for(String prompt) {
