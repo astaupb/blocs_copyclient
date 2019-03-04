@@ -1,9 +1,10 @@
-import '../models/print_queue_task.dart';
 import '../models/print_queue_result.dart';
 import '../common.dart';
 import '../../exceptions.dart';
 
 class PrintQueueState extends ResultState<PrintQueueResult> {
+  bool isLocked;
+
   PrintQueueState({
     PrintQueueResult queue,
     ApiException error,
@@ -11,7 +12,7 @@ class PrintQueueState extends ResultState<PrintQueueResult> {
     bool isBusy = false,
     bool isException = false,
     bool isResult = false,
-    bool isLocked = false,
+    this.isLocked = false,
   }) : super(
           value: queue,
           error: error,
