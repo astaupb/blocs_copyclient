@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 
 import '../../exceptions.dart';
 import '../models/backend.dart';
-import '../models/print_queue_task.dart';
 import '../models/print_queue_result.dart';
-
+import '../models/print_queue_task.dart';
 import 'print_queue_events.dart';
 import 'print_queue_state.dart';
 
@@ -25,16 +26,14 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     log.fine('$this started');
   }
 
-  onStart(String token) => dispatch(InitPrintQueue(token));
-
-  onRefresh({int deviceId}) => dispatch(GetQueue(deviceId ?? _deviceId));
-
-  setDeviceId(int deviceId) => dispatch(SetDeviceId(deviceId));
-
-  onLockDevice({String queueUid}) => dispatch(LockQueue(queueUid: queueUid));
-
   @override
   get initialState => PrintQueueState.init();
+
+  @override
+  dispose() {
+    log.fine('disposing of $this');
+    super.dispose();
+  }
 
   @override
   Stream<PrintQueueState> mapEventToState(
@@ -53,7 +52,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
       }
     }
 
-    if (event is GetQueue || event is SetDeviceId || event is InitPrintQueue) {
+    if (event is GetQueue || event is InitPrintQueue) {
       try {
         await _getQueue();
         yield PrintQueueState.result(PrintQueueResult(_incoming, _processing));
@@ -73,8 +72,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
     if (event is LockQueue) {
       try {
-        await _postQueue();
-        yield PrintQueueState.locked();
+        String lockUid = await _postQueue();
+        yield PrintQueueState.locked(lockUid);
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
       }
@@ -90,6 +89,12 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     }
   }
 
+  onLockDevice({String queueUid}) => dispatch(LockQueue(queueUid: queueUid));
+
+  onRefresh({int deviceId}) => dispatch(GetQueue(deviceId ?? _deviceId));
+
+  onStart(String token) => dispatch(InitPrintQueue(token));
+
   @override
   onTransition(Transition<PrintQueueEvent, PrintQueueState> transition) {
     log.fine(transition.nextState);
@@ -97,10 +102,23 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     super.onTransition(transition);
   }
 
-  @override
-  dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
+  setDeviceId(int deviceId) => dispatch(SetDeviceId(deviceId));
+
+  Future<void> _deleteQueue(String uid) async {
+    Request request =
+        new ApiRequest('POST', '/printers/$_deviceId/queue/$uid', _backend);
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_deleteQueue $request');
+
+    return await _backend.send(request).then((response) async {
+      log.finer('_deleteQueue: ${response.statusCode}');
+      if (response.statusCode == 205) {
+        return;
+      } else {
+        throw ApiException(response.statusCode, info: 'not 205');
+      }
+    });
   }
 
   Future<void> _getQueue() async {
@@ -118,13 +136,14 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
             body['incoming'].map((value) => PrintQueueTask.fromMap(value)));
         _processing = List.from(
             body['processing'].map((value) => PrintQueueTask.fromMap(value)));
+        return;
       } else {
         throw ApiException(response.statusCode, info: 'not 200');
       }
     });
   }
 
-  Future<void> _postQueue({int jobId}) async {
+  Future<String> _postQueue({int jobId}) async {
     String path = '/printers/$_deviceId/queue';
     if (jobId != null) {
       path += '?id=$jobId';
@@ -137,26 +156,9 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     return await _backend.send(request).then((response) async {
       log.finer('_postQueue: ${response.statusCode}');
       if (response.statusCode == 202) {
-        await _getQueue();
+        return await response.stream.bytesToString();
       } else {
         throw ApiException(response.statusCode, info: 'not 202');
-      }
-    });
-  }
-
-  Future<void> _deleteQueue(String uid) async {
-    Request request =
-        new ApiRequest('POST', '/printers/$_deviceId/queue/$uid', _backend);
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('_deleteQueue $request');
-
-    return await _backend.send(request).then((response) async {
-      log.finer('_deleteQueue: ${response.statusCode}');
-      if (response.statusCode == 205) {
-        await _getQueue();
-      } else {
-        throw ApiException(response.statusCode, info: 'not 205');
       }
     });
   }

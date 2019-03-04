@@ -4,6 +4,7 @@ import '../../exceptions.dart';
 
 class PrintQueueState extends ResultState<PrintQueueResult> {
   bool isLocked;
+  String lockUid;
 
   PrintQueueState({
     PrintQueueResult queue,
@@ -13,6 +14,7 @@ class PrintQueueState extends ResultState<PrintQueueResult> {
     bool isException = false,
     bool isResult = false,
     this.isLocked = false,
+    this.lockUid,
   }) : super(
           value: queue,
           error: error,
@@ -32,5 +34,5 @@ class PrintQueueState extends ResultState<PrintQueueResult> {
   factory PrintQueueState.result(PrintQueueResult queue) =>
       PrintQueueState(queue: queue, isResult: true);
 
-  factory PrintQueueState.locked() => PrintQueueState(isLocked: true);
+  factory PrintQueueState.locked(String uid) => PrintQueueState(isLocked: true, lockUid: uid);
 }
