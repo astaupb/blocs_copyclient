@@ -38,7 +38,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   @override
   Stream<PrintQueueState> mapEventToState(
       PrintQueueState state, PrintQueueEvent event) async* {
-    log.fine(event);
+    log.fine('Event: ${event.runtimeType} $event');
 
     if (event is InitPrintQueue) {
       _token = event.token;
@@ -97,7 +97,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
   @override
   onTransition(Transition<PrintQueueEvent, PrintQueueState> transition) {
-    log.fine(transition.nextState);
+    log.fine('State: ${transition.nextState.runtimeType} ${transition.nextState}');
 
     super.onTransition(transition);
   }
