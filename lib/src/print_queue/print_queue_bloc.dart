@@ -31,6 +31,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
   setDeviceId(int deviceId) => dispatch(SetDeviceId(deviceId));
 
+  onLockDevice({String queueUid}) => dispatch(LockQueue(queueUid: queueUid));
+
   @override
   get initialState => PrintQueueState.init();
 
