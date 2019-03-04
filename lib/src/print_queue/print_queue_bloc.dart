@@ -72,7 +72,11 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
     if (event is LockQueue) {
       try {
-        String lockUid = await _postQueue(jobId: int.tryParse(event.queueUid));
+        String lockUid;
+        if (event.queueUid != null)
+          lockUid = await _postQueue(jobId: int.tryParse(event.queueUid));
+        else
+          lockUid = await _postQueue();
         yield PrintQueueState.locked(lockUid);
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
@@ -154,9 +158,10 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     log.finer('_postQueue $request');
 
     return await _backend.send(request).then((response) async {
-      log.finer('_postQueue: ${response.statusCode}');
+      String stringResponse = await response.stream.bytesToString();
+      log.finer('_postQueue: ${response.statusCode} $stringResponse');
       if (response.statusCode == 202) {
-        return await response.stream.bytesToString();
+        return stringResponse;
       } else {
         throw ApiException(response.statusCode, info: 'not 202');
       }
