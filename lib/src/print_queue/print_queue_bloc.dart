@@ -72,7 +72,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
     if (event is LockQueue) {
       try {
-        String lockUid = await _postQueue();
+        String lockUid = await _postQueue(jobId: int.tryParse(event.queueUid));
         yield PrintQueueState.locked(lockUid);
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
