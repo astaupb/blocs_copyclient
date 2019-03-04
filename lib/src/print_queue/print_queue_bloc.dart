@@ -52,7 +52,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
       }
     }
 
-    if (event is GetQueue) {
+    if (event is GetQueue || event is SetDeviceId) {
       try {
         await _getQueue();
         yield PrintQueueState.result(PrintQueueResult(_incoming, _processing));
