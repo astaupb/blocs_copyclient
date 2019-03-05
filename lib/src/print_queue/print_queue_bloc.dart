@@ -74,7 +74,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
       try {
         String lockUid;
         if (event.queueUid != null)
-          lockUid = await _postQueue(jobId: int.tryParse(event.queueUid));
+          lockUid = await _postQueue(lockUid: event.queueUid);
         else
           lockUid = await _postQueue();
         yield PrintQueueState.locked(lockUid);
@@ -147,8 +147,9 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     });
   }
 
-  Future<String> _postQueue({int jobId}) async {
+  Future<String> _postQueue({int jobId, String lockUid}) async {
     String path = '/printers/$_deviceId/queue';
+    if (lockUid.isNotEmpty) path += '/$lockUid';
     Request request = new ApiRequest('POST', path, _backend,
         queryParameters: (jobId != null) ? {'id': jobId.toString()} : null);
     request.headers['X-Api-Key'] = _token;
