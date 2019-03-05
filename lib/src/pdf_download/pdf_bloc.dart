@@ -16,7 +16,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
   final Backend _backend;
   String _token;
 
-  List<PdfFile> _pdfs;
+  List<PdfFile> _pdfs = [];
 
   PdfBloc(this._backend) {
     log.fine('$this started');
