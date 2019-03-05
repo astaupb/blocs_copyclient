@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cli_repl/cli_repl.dart';
 import 'package:http/http.dart';
 
-import 'package:blocs_copyclient/blocs.dart';
 import './backend.dart';
 import './copyclient.dart';
 

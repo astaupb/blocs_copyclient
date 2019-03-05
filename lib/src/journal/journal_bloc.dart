@@ -122,7 +122,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
 
     log.finer('_postJournal: $request');
 
-    _backend.send(request).then((StreamedResponse response) {
+    return _backend.send(request).then((StreamedResponse response) {
       if (response.statusCode == 204) {
         return;
       } else {

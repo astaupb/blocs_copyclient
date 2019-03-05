@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:blocs_copyclient/blocs.dart';
@@ -94,6 +95,7 @@ class Copyclient {
         listener.cancel();
       }
     });
+    return null;
   }
 
   String prompt_for(String prompt) {

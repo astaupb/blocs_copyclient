@@ -15,6 +15,17 @@ class AuthInit extends AuthEvent {
   String toString() => 'AuthInit ' + toMap().toString();
 }
 
+class DeleteToken extends AuthEvent {
+  final int id;
+
+  DeleteToken({this.id});
+
+  Map<String, dynamic> toMap() => {'id': id};
+
+  @override
+  String toString() => 'Delete Token ' + toMap().toString();
+}
+
 class Login extends AuthEvent {
   final String username;
   final String password;
@@ -32,7 +43,7 @@ class Login extends AuthEvent {
   String toString() => 'Login ' + toMap().toString();
 }
 
-class DeleteToken extends AuthEvent {}
+class Logout extends AuthEvent {}
 
 class Register extends AuthEvent {
   final String username;

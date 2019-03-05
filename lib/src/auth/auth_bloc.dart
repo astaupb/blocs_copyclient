@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
@@ -36,6 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void deleteToken() => dispatch(DeleteToken());
 
+  void logout() => dispatch(Logout());
+
   @override
   Stream<AuthState> mapEventToState(AuthState state, AuthEvent event) async* {
     log.fine('Event: $event');
@@ -60,7 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is DeleteToken) {
       yield AuthState.busy();
       try {
-        await _deleteToken();
+        await _deleteToken(id: event.id);
         yield AuthState.unauthorized();
       } on ApiException catch (e) {
         log.severe(e.info);
@@ -70,7 +73,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         await _postUser(event.username, event.password);
         dispatch(Login(username: event.username, password: event.password));
-      } catch (e) {
+      } on ApiException catch (e) {
+        yield AuthState.exception(e);
+      }
+    } else if (event is Logout) {
+      try {
+        await _logout();
+        yield AuthState.unauthorized();
+      } on ApiException catch (e) {
         yield AuthState.exception(e);
       }
     }
@@ -109,17 +119,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  Future<void> _deleteToken() async {
+  Future<void> _logout() async {
+    log.fine('_logout');
+    http.BaseRequest request = ApiRequest('POST', '/user/logout', backend);
+
+    request.headers['X-Api-Key'] = token;
+
+    log.finer('_logout: $request');
+
+    return await backend.send(request).then((response) async {
+      log.finer('_logout: ${response.statusCode}');
+      if (response.statusCode == 205) {
+        token = '';
+        return;
+      } else {
+        throw ApiException(response.statusCode,
+            info: '_logout: received status code other than 205');
+      }
+    });
+  }
+
+  Future<void> _deleteToken({int id}) async {
     log.fine('_deleteToken');
-    http.BaseRequest request = ApiRequest('DELETE', '/user/tokens', backend);
+    String path = '/user/tokens';
+    if (id != null) path += '/$id';
+    http.BaseRequest request = ApiRequest('DELETE', path, backend);
+
     request.headers['X-Api-Key'] = token;
 
     log.finer('_deleteToken: $request');
 
-    await backend.send(request).then((response) async {
+    return await backend.send(request).then((response) async {
       log.finer('_deleteToken: ${response.statusCode}');
       if (response.statusCode == 205) {
         token = '';
+        return;
       } else {
         throw ApiException(response.statusCode,
             info: '_postToken: received response code other than 205');
@@ -140,8 +174,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     await backend.send(request).then(
       (http.StreamedResponse response) async {
+        log.finer('_postUser: ${response.statusCode}');
         if (response.statusCode == 204) {
-          log.fine('_postUser: 204');
           return;
         } else {
           log.severe('_postUser: ${(await response.stream.bytesToString())}');
