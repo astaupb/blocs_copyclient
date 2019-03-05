@@ -13,12 +13,12 @@ import 'pdf_state.dart';
 class PdfBloc extends Bloc<PdfEvent, PdfState> {
   final Logger log = Logger('PdfBloc');
 
-  Backend _backend;
+  final Backend _backend;
   String _token;
 
   List<PdfFile> _pdfs;
 
-  PdfBloc();
+  PdfBloc(this._backend);
 
   onGetPdf(int id) => dispatch(GetPdf(id));
 
@@ -28,7 +28,6 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
   @override
   Stream<PdfState> mapEventToState(PdfState state, PdfEvent event) async* {
     if (event is InitPdf) {
-      _backend = event.backend;
       _token = event.token;
     }
 

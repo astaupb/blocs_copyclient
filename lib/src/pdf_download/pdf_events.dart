@@ -1,5 +1,3 @@
-import '../models/backend.dart';
-
 abstract class PdfEvent {}
 
 class GetPdf extends PdfEvent {
@@ -15,13 +13,11 @@ class GetPdf extends PdfEvent {
 
 class InitPdf extends PdfEvent {
   final String token;
-  final Backend backend;
 
-  InitPdf(this.token, this.backend);
+  InitPdf(this.token);
 
   Map<String, dynamic> toMap() => {
         'token': token,
-        'backend': backend.toMap(),
       };
 
   @override
