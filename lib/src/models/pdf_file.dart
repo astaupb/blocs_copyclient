@@ -1,13 +1,13 @@
 class PdfFile {
   final List<int> file;
-  final String uid;
+  final int id;
   final String name;
 
-  PdfFile(this.file, this.uid, {this.name});
+  PdfFile(this.file, this.id, {this.name});
 
   Map<String, dynamic> toMap() => {
         'file.length)': file.length,
-        'uid': uid,
+        'id': id,
         'name': name,
       };
 
