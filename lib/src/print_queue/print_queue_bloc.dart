@@ -149,10 +149,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
   Future<String> _postQueue({int jobId}) async {
     String path = '/printers/$_deviceId/queue';
-    if (jobId != null) {
-      path += '?id=$jobId';
-    }
-    Request request = new ApiRequest('POST', path, _backend);
+    Request request = new ApiRequest('POST', path, _backend,
+        queryParameters: (jobId != null) ? {'id': jobId.toString()} : null);
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_postQueue $request');
