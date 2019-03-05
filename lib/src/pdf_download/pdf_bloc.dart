@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 
+import '../../exceptions.dart';
 import '../models/backend.dart';
 import '../models/pdf_file.dart';
-import '../../exceptions.dart';
 import 'pdf_events.dart';
 import 'pdf_state.dart';
 
@@ -18,15 +18,23 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
 
   List<PdfFile> _pdfs;
 
-  PdfBloc(this._backend);
-
-  onGetPdf(int id) => dispatch(GetPdf(id));
+  PdfBloc(this._backend) {
+    log.fine('$this started');
+  }
 
   @override
   PdfState get initialState => PdfState.init();
 
   @override
+  void dispose() {
+    log.fine('disposing of $this');
+    super.dispose();
+  }
+
+  @override
   Stream<PdfState> mapEventToState(PdfState state, PdfEvent event) async* {
+    log.fine('Event: $event');
+
     if (event is InitPdf) {
       _token = event.token;
     }
@@ -39,6 +47,17 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
         yield PdfState.exception(e);
       }
     }
+  }
+
+  void onGetPdf(int id) => dispatch(GetPdf(id));
+
+  void onStart(String token) => dispatch(InitPdf(token));
+
+  @override
+  void onTransition(Transition<PdfEvent, PdfState> transition) {
+    log.finer('State: ${transition.nextState}');
+
+    super.onTransition(transition);
   }
 
   Future<void> _getPdf(int id) async {
