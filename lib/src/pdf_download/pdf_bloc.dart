@@ -48,16 +48,20 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
 
     log.finer('_getPdf: $request');
 
-    return await _backend.send(request).then(
-      (response) async {
-        log.finer('_getPdf: ${response.statusCode}');
-        if (response.statusCode == 200) {
-          _pdfs.add(PdfFile(await response.stream.toBytes(), id));
-        } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
-        }
-      },
-    );
+    if (!_pdfs.contains((PdfFile pdf) => pdf.id == id)) {
+      return await _backend.send(request).then(
+        (response) async {
+          log.finer('_getPdf: ${response.statusCode}');
+          if (response.statusCode == 200) {
+            _pdfs.add(PdfFile(await response.stream.toBytes(), id));
+            return;
+          } else {
+            throw ApiException(response.statusCode,
+                info: 'status code other than 200 received');
+          }
+        },
+      );
+    } else
+      return;
   }
 }
