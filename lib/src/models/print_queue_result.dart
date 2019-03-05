@@ -8,8 +8,8 @@ class PrintQueueResult {
   PrintQueueResult(this.incoming, this.processing);
 
   Map<String, dynamic> toMap() => {
-        'incoming': incoming,
-        'processing': processing,
+        'incoming': incoming.toString(),
+        'processing': processing.toString(),
       };
 
   @override
