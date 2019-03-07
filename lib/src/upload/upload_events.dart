@@ -28,7 +28,7 @@ class UploadFile extends UploadEvent {
   });
 
   Map<String, dynamic> toMap() => {
-        'data': data,
+        'data': data.length,
         'color': color,
         'filename': filename,
         'password': password,
