@@ -167,32 +167,67 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
   }
 
   int _estimatePrice(Job job, {basePrice: 5}) {
+    int _price = 0;
     int _basePrice = basePrice;
-    int _colorPrice = 20;
+    int _colorPrice = _basePrice * 4;
     int _colorPages = job.jobInfo.colored;
     int _totalPages = job.jobInfo.pagecount;
+    int _bwPages = _totalPages - _colorPages;
 
+    // adjust prices if medium is A3
     if (job.jobOptions.a3) {
       _basePrice *= 2;
       _colorPrice *= 2;
     }
 
-    if (job.jobOptions.nup == 4 && _totalPages > 3) {
-      _totalPages = _totalPages ~/ 4 + ((_totalPages % 4 > 0) ? 1 : 0);
-    } else if (job.jobOptions.nup == 4 && _totalPages <= 4) {
-      _totalPages = 1;
-    }
-
-    if (job.jobOptions.nup == 2 && _totalPages > 1)
-      _totalPages = _totalPages ~/ 2 + _totalPages % 2;
-
+    // take colored pages out of calculation if color is turned off and vice versa
     if (!job.jobOptions.color) {
       _colorPages = 0;
+      _bwPages = _totalPages;
     }
-    _basePrice *= ((_totalPages - _colorPages) * job.jobOptions.copies);
-    _basePrice += (_colorPages * job.jobOptions.copies * _colorPrice);
 
-    return _basePrice;
+    if (job.jobOptions.nup == 4) {
+      if (_totalPages <= 4) {
+        if (job.jobOptions.color && _colorPages >= 1) {
+          _bwPages = 0;
+          _colorPages = 1;
+        } else {
+          _bwPages = 1;
+        }
+      } else {
+        if (job.jobOptions.color) {
+          _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
+          _colorPages = _colorPages ~/ 4 + ((_colorPages % 4 > 0) ? 1 : 0);
+        } else {
+          _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
+        }
+      }
+    }
+
+    if (job.jobOptions.nup == 2) {
+      if (_totalPages == 1) {
+        if (job.jobOptions.color && _colorPages == 1) {
+          _colorPages = 1;
+        } else {
+          _bwPages = 1;
+        }
+      } else {
+        if (job.jobOptions.color) {
+          _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
+          _colorPages = _colorPages ~/ 2 + (_colorPages % 2);
+        } else {
+          _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
+        }
+      }
+    }
+    
+    // add price of all b/w pages
+    _price += _bwPages * _basePrice * job.jobOptions.copies;
+
+    // add price of all color pages
+    _price += _colorPages * job.jobOptions.copies * _colorPrice;
+
+    return _price;
   }
 
   Future<void> _getJob(int id) async {
