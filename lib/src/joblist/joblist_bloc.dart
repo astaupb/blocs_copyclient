@@ -196,8 +196,9 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         }
       } else {
         if (job.jobOptions.color) {
-          _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
-          _colorPages = _colorPages ~/ 4 + ((_colorPages % 4 > 0) ? 1 : 0);
+          if (_bwPages >= _colorPages) _bwPages -= _colorPages;
+          //if (_bwPages > _colorPages * 3)
+            _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
         } else {
           _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
         }
@@ -205,22 +206,23 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     }
 
     if (job.jobOptions.nup == 2) {
-      if (_totalPages == 1) {
-        if (job.jobOptions.color && _colorPages == 1) {
+      if (_totalPages <= 2) {
+        if (job.jobOptions.color && _colorPages >  0) {
           _colorPages = 1;
         } else {
           _bwPages = 1;
         }
       } else {
         if (job.jobOptions.color) {
-          _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
-          _colorPages = _colorPages ~/ 2 + (_colorPages % 2);
+          if (_bwPages >= _colorPages) _bwPages -= _colorPages;
+          //if (_bwPages > _colorPages) 
+            _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
         } else {
           _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
         }
       }
     }
-    
+
     // add price of all b/w pages
     _price += _bwPages * _basePrice * job.jobOptions.copies;
 
