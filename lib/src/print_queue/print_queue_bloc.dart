@@ -72,7 +72,6 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
     if (event is LockQueue) {
       try {
-        print('ayyyyyyyy');
         String lockUid = '';
         if (event.queueUid != null) {
           lockUid = await _postQueue(lockUid: event.queueUid);
