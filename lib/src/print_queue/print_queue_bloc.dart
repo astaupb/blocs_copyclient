@@ -100,6 +100,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
   onRefresh({int deviceId}) => dispatch(GetQueue(deviceId ?? _deviceId));
 
+  onDelete(String uid) => dispatch(CancelJob(uid));
+
   onStart(String token) => dispatch(InitPrintQueue(token));
 
   @override
