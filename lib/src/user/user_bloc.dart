@@ -5,9 +5,9 @@ import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 
-import '../models/user.dart';
-import '../models/backend.dart';
 import '../../exceptions.dart';
+import '../models/backend.dart';
+import '../models/user.dart';
 import 'user_events.dart';
 import 'user_state.dart';
 
@@ -16,17 +16,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   User _user;
 
-  get user => _user;
-
   String _token;
-  Backend _backend;
 
+  Backend _backend;
   UserBloc(this._backend) {
     log.fine('$this started');
   }
 
   @override
   UserState get initialState => UserState.init();
+
+  get user => _user;
 
   @override
   void dispose() {
@@ -53,14 +53,27 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     if (event is ChangeUsername) {
       try {
-        await _changeUsername(event);
+        await _putUsername(event.username);
         yield UserState.result(_user);
       } on ApiException catch (e) {
         log.severe(e);
         yield UserState.exception(e);
       }
     }
+
+    if (event is ChangePassword) {
+      try {
+        await _putPassword(event.oldPassword, event.newPassword);
+        yield UserState.result(user);
+      } on ApiException catch (e) {
+        log.severe(e);
+        yield UserState.exception(e);
+      }
+    }
   }
+
+  onChangePassword(String oldPassword, String newPassword) =>
+      dispatch(ChangePassword(oldPassword, newPassword));
 
   onChangeUsername(String username) =>
       dispatch(ChangeUsername(username: username));
@@ -73,26 +86,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onTransition(Transition<UserEvent, UserState> transition) {
     log.fine(transition.nextState);
     super.onTransition(transition);
-  }
-
-  /// PUT /user/username
-  Future<void> _changeUsername(ChangeUsername event) async {
-    Request request = ApiRequest('PUT', '/user/username', _backend);
-    request.headers['Content-Type'] = 'application/json';
-    request.headers['X-Api-Key'] = _token;
-    request.body = json.encode(event.username);
-
-    log.finer('[_changeUsername] request: $request');
-
-    return await _backend.send(request).then((response) {
-      log.finer('[_changeUsername] response: ${response.statusCode}');
-      if (response.statusCode == 205) {
-        _user.name = event.username;
-      } else {
-        throw ApiException(response.statusCode,
-            info: '_changeUsername: received response code other than 205');
-      }
-    });
   }
 
   /// GET /user
@@ -118,5 +111,49 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       },
     );
+  }
+
+  /// POST /user/password
+  Future<void> _putPassword(String oldPassword, String newPassword) async {
+    Request request = ApiRequest('PUT', '/user/password', _backend);
+    request.headers['Content-Type'] = 'application/json';
+    request.headers['X-Api-Key'] = _token;
+    request.body = json.encode({
+      'password': {
+        'old': oldPassword,
+        'new': newPassword,
+      }
+    });
+
+    log.finer('[_putPassword] request: $request');
+
+    return await _backend.send(request).then((response) {
+      log.finer('[_putPassword] response: ${response.statusCode}');
+      if (response.statusCode == 204) {
+      } else {
+        throw ApiException(response.statusCode,
+            info: '_putPassword: received response code other than 204');
+      }
+    });
+  }
+
+  /// PUT /user/username
+  Future<void> _putUsername(String username) async {
+    Request request = ApiRequest('PUT', '/user/name', _backend);
+    request.headers['Content-Type'] = 'application/json';
+    request.headers['X-Api-Key'] = _token;
+    request.body = json.encode(username);
+
+    log.finer('[_putUsername] request: $request');
+
+    return await _backend.send(request).then((response) {
+      log.finer('[_putUsername] response: ${response.statusCode}');
+      if (response.statusCode == 205) {
+        _user.name = username;
+      } else {
+        throw ApiException(response.statusCode,
+            info: '_putUsername: received response code other than 205');
+      }
+    });
   }
 }

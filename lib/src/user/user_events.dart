@@ -1,5 +1,22 @@
 import 'package:meta/meta.dart';
 
+class ChangePassword extends UserEvent {
+  final String oldPassword;
+  final String newPassword;
+
+  ChangePassword(this.oldPassword, this.newPassword);
+
+  Map<String, dynamic> toMap() => {
+        'password': {
+          'old': oldPassword,
+          'new': newPassword,
+        }
+      };
+
+  @override
+  String toString() => toMap().toString();
+}
+
 class ChangeUsername extends UserEvent {
   final String username;
 
