@@ -40,6 +40,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     }
 
     if (event is GetPdf) {
+      yield PdfState.busy();
       try {
         await _getPdf(event.id);
         yield PdfState.result(_pdfs);
