@@ -116,7 +116,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw ApiException(response.statusCode,
             info: '_postToken: received response code other than 200');
       }
-    });
+    }).timeout(Duration(seconds: 10), onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
   Future<void> _logout() async {
