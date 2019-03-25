@@ -11,8 +11,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   blocs_copyclient:
     path: ../
-  barcode_scan: ^0.0.7
-  flutter_bloc: ^0.7.0
+  barcode_scan: ^1.0.0
+  flutter_bloc: ^0.8.0
 
 dev_dependencies:
   flutter_test:
