@@ -120,6 +120,8 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     request.headers['Content-Type'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
+    request.body = token;
+
     log.finer('_postJournal: $request');
 
     return _backend.send(request).then((StreamedResponse response) {
