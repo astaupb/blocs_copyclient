@@ -112,8 +112,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   setDeviceId(int deviceId) => dispatch(SetDeviceId(deviceId));
 
   Future<void> _deleteQueue(String uid) async {
-    Request request =
-        new ApiRequest('DELETE', '/printers/$_deviceId/queue/$uid', _backend);
+    Request request = new ApiRequest('DELETE',
+        '/printers/$_deviceId/queue${(uid != null) ? '/$uid' : ''}', _backend);
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_deleteQueue $request');
