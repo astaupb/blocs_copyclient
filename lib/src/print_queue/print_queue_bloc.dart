@@ -113,7 +113,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
   Future<void> _deleteQueue(String uid) async {
     Request request =
-        new ApiRequest('POST', '/printers/$_deviceId/queue/$uid', _backend);
+        new ApiRequest('DELETE', '/printers/$_deviceId/queue/$uid', _backend);
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_deleteQueue $request');
