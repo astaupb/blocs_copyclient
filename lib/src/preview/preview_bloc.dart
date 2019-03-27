@@ -34,8 +34,7 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
   void getPreview(Job job) => dispatch(GetPreview(job));
 
   @override
-  Stream<PreviewState> mapEventToState(
-      PreviewState currentState, PreviewEvent event) async* {
+  Stream<PreviewState> mapEventToState(PreviewEvent event) async* {
     log.fine('Event: $event');
     if (event is InitPreviews) {
       _token = event.token;

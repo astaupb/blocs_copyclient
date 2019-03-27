@@ -32,7 +32,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
   }
 
   @override
-  Stream<PdfState> mapEventToState(PdfState state, PdfEvent event) async* {
+  Stream<PdfState> mapEventToState(PdfEvent event) async* {
     log.fine('Event: $event');
 
     if (event is InitPdf) {

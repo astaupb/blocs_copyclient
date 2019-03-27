@@ -40,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void logout() => dispatch(Logout());
 
   @override
-  Stream<AuthState> mapEventToState(AuthState state, AuthEvent event) async* {
+  Stream<AuthState> mapEventToState(AuthEvent event) async* {
     log.fine('Event: $event');
     if (event is Login) {
       yield AuthState.busy();
@@ -116,7 +116,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw ApiException(response.statusCode,
             info: '_postToken: received response code other than 200');
       }
-    }).timeout(Duration(seconds: 10), onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
+    }).timeout(Duration(seconds: 10),
+        onTimeout: () =>
+            throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
   Future<void> _logout() async {

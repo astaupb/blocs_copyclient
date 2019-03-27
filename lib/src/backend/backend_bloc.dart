@@ -28,8 +28,7 @@ class BackendBloc extends Bloc<BackendEvent, BackendState> {
   }
 
   @override
-  Stream<BackendState> mapEventToState(
-      BackendState state, BackendEvent event) async* {
+  Stream<BackendState> mapEventToState(BackendEvent event) async* {
     log.fine(event);
     if (event is SetBackend) {
       _backend = event.backend;

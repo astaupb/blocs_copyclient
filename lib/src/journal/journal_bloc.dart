@@ -35,8 +35,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   get initialState => JournalState.init();
 
   @override
-  Stream<JournalState> mapEventToState(
-      JournalState state, JournalEvent event) async* {
+  Stream<JournalState> mapEventToState(JournalEvent event) async* {
     log.fine(event);
     if (event is InitJournal) _token = event.token;
 

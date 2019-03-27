@@ -40,8 +40,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
   int getIndexById(int id) => _jobs.indexWhere((job) => job.id == id);
 
   @override
-  Stream<JoblistState> mapEventToState(
-      JoblistState state, JoblistEvent event) async* {
+  Stream<JoblistState> mapEventToState(JoblistEvent event) async* {
     log.fine('Event: ${event}');
 
     /// go into busy state to show busyness
@@ -198,7 +197,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         if (job.jobOptions.color) {
           if (_bwPages >= _colorPages) _bwPages -= _colorPages;
           //if (_bwPages > _colorPages * 3)
-            _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
+          _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
         } else {
           _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
         }
@@ -207,7 +206,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
     if (job.jobOptions.nup == 2) {
       if (_totalPages <= 2) {
-        if (job.jobOptions.color && _colorPages >  0) {
+        if (job.jobOptions.color && _colorPages > 0) {
           _colorPages = 1;
         } else {
           _bwPages = 1;
@@ -215,8 +214,8 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       } else {
         if (job.jobOptions.color) {
           if (_bwPages >= _colorPages) _bwPages -= _colorPages;
-          //if (_bwPages > _colorPages) 
-            _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
+          //if (_bwPages > _colorPages)
+          _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
         } else {
           _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
         }

@@ -36,8 +36,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   }
 
   @override
-  Stream<PrintQueueState> mapEventToState(
-      PrintQueueState state, PrintQueueEvent event) async* {
+  Stream<PrintQueueState> mapEventToState(PrintQueueEvent event) async* {
     log.fine('Event: $event');
 
     if (event is InitPrintQueue) {

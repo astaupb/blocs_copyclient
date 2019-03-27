@@ -35,7 +35,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   @override
-  Stream<UserState> mapEventToState(UserState state, UserEvent event) async* {
+  Stream<UserState> mapEventToState(UserEvent event) async* {
     log.fine(event);
 
     if (event is InitUser) _token = event.token;

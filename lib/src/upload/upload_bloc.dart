@@ -44,8 +44,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       ));
 
   @override
-  Stream<UploadState> mapEventToState(
-      UploadState state, UploadEvent event) async* {
+  Stream<UploadState> mapEventToState(UploadEvent event) async* {
     log.fine('Event: ${event}');
 
     if (event is InitUploads) _token = event.token;
