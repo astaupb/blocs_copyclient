@@ -45,7 +45,7 @@ class LockQueue extends PrintQueueEvent {
 class CancelJob extends PrintQueueEvent {
   String uid;
 
-  CancelJob(this.uid);
+  CancelJob({this.uid});
 
   Map<String, dynamic> toMap() => {'uid': uid};
 
