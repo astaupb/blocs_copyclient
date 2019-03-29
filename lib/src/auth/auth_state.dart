@@ -47,9 +47,11 @@ class AuthState extends CommonState {
         'isBusy': isBusy,
         'isAuthorized': isAuthorized,
         'isUnauthorized': isUnauthorized,
+        'isRegistered': isRegistered,
         'isException': isException,
         'token': token,
         'persistent': persistent,
+        'username': username,
         'error': error.toString(),
       };
 
