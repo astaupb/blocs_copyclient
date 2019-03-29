@@ -1,5 +1,5 @@
-import '../common.dart';
 import '../../exceptions.dart';
+import '../common.dart';
 
 class AuthState extends CommonState {
   final String token;
@@ -19,8 +19,8 @@ class AuthState extends CommonState {
     bool isException = false,
     this.isUnauthorized = false,
     this.isAuthorized = false,
-    this.username,
-    this.isRegistered,
+    this.username = '',
+    this.isRegistered = false,
   }) : super(
           error: error,
           isInit: isInit,
@@ -31,14 +31,14 @@ class AuthState extends CommonState {
   factory AuthState.authorized(String token, {bool persistent = false}) =>
       AuthState(isAuthorized: true, token: token, persistent: persistent);
 
-  factory AuthState.registered(String username) =>
-      AuthState(isRegistered: true, username: username);
-
   factory AuthState.busy() => AuthState(isBusy: true);
 
   factory AuthState.exception(ApiException e) => AuthState(isException: true, error: e);
 
   factory AuthState.init() => AuthState(isInit: true);
+
+  factory AuthState.registered(String username) =>
+      AuthState(isRegistered: true, username: username);
 
   factory AuthState.unauthorized() => AuthState(isUnauthorized: true);
 
