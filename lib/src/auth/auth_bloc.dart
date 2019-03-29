@@ -72,7 +72,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is Register) {
       try {
         await _postUser(event.username, event.password);
-        dispatch(Login(username: event.username, password: event.password));
+        yield AuthState.registered(event.username);
       } on ApiException catch (e) {
         yield AuthState.exception(e);
       }
@@ -92,8 +92,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     super.onTransition(transition);
   }
 
-  void register(String username, String password) =>
-      dispatch(Register(username, password));
+  void register(String username, String password) => dispatch(Register(username, password));
 
   void tokenLogin(String token) => dispatch(TokenLogin(token: token));
 
@@ -102,9 +101,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     log.fine('_postToken: ${initEvent.toString()}');
     http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
     request.headers['Accept'] = 'application/json';
-    request.headers['Authorization'] = ('Basic ' +
-        base64.encode(
-            utf8.encode(initEvent.username + ':' + initEvent.password)));
+    request.headers['Authorization'] =
+        ('Basic ' + base64.encode(utf8.encode(initEvent.username + ':' + initEvent.password)));
 
     log.finer('_postToken: $request');
 
@@ -117,8 +115,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             info: '_postToken: received response code other than 200');
       }
     }).timeout(Duration(seconds: 10),
-        onTimeout: () =>
-            throw ApiException(0, info: '_postToken: connection timed out'));
+        onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
   Future<void> _logout() async {
