@@ -4,7 +4,7 @@ import '../../exceptions.dart';
 
 class PdfState extends ResultState<List<PdfFile>> {
   PdfState({
-    List<PdfFile> pdfs,
+    List<PdfFile> pdfs = const [],
     ApiException error,
     bool isInit = false,
     bool isBusy = false,
