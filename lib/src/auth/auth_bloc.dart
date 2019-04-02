@@ -106,15 +106,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     log.finer('_postToken: $request');
 
-    await backend.send(request).then((response) async {
-      log.finer('_postToken: ${response.statusCode}');
-      if (response.statusCode == 200) {
-        token = json.decode(await response.stream.bytesToString());
-      } else {
-        throw ApiException(response.statusCode,
-            info: '_postToken: received response code other than 200');
-      }
-    }).timeout(Duration(seconds: 10),
+    await backend.send(request).then(
+      (response) async {
+        log.finer('_postToken: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          token = json.decode(await response.stream.bytesToString());
+        } else {
+          throw ApiException(response.statusCode,
+              info: '_postToken: received response code other than 200');
+        }
+      },
+    ).timeout(Duration(seconds: 10),
         onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
@@ -126,16 +128,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     log.finer('_logout: $request');
 
-    return await backend.send(request).then((response) async {
-      log.finer('_logout: ${response.statusCode}');
-      if (response.statusCode == 205) {
-        token = '';
-        return;
-      } else {
-        throw ApiException(response.statusCode,
-            info: '_logout: received status code other than 205');
-      }
-    });
+    return await backend.send(request).then(
+      (response) async {
+        log.finer('_logout: ${response.statusCode}');
+        if (response.statusCode == 205) {
+          token = '';
+          return;
+        } else {
+          throw ApiException(response.statusCode,
+              info: '_logout: received status code other than 205');
+        }
+      },
+    ).timeout(Duration(seconds: 10),
+        onTimeout: () => throw ApiException(0, info: '_logout: connection timed out'));
   }
 
   Future<void> _deleteToken({int id}) async {
@@ -148,16 +153,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     log.finer('_deleteToken: $request');
 
-    return await backend.send(request).then((response) async {
-      log.finer('_deleteToken: ${response.statusCode}');
-      if (response.statusCode == 205) {
-        token = '';
-        return;
-      } else {
-        throw ApiException(response.statusCode,
-            info: '_postToken: received response code other than 205');
-      }
-    });
+    return await backend.send(request).then(
+      (response) async {
+        log.finer('_deleteToken: ${response.statusCode}');
+        if (response.statusCode == 205) {
+          token = '';
+          return;
+        } else {
+          throw ApiException(response.statusCode,
+              info: '_postToken: received response code other than 205');
+        }
+      },
+    ).timeout(Duration(seconds: 10),
+        onTimeout: () => throw ApiException(0, info: '_deleteToken: connection timed out'));
   }
 
   Future<void> _postUser(String username, String password) async {
@@ -181,6 +189,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           throw ApiException(response.statusCode);
         }
       },
-    );
+    ).timeout(Duration(seconds: 10),
+        onTimeout: () => throw ApiException(0, info: '_postUser: connection timed out'));
   }
 }
