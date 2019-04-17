@@ -72,6 +72,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield UserState.result(_user);
       } on ApiException catch (e) {
         _log.severe(e);
+        yield UserState.exception(e);
       }
     } else if (event is ChangeOptions) {
       try {
@@ -79,6 +80,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield UserState.result(_user);
       } on ApiException catch (e) {
         _log.severe(e);
+        yield UserState.exception(e);
       }
     }
   }
@@ -98,7 +100,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   @override
   void onTransition(Transition<UserEvent, UserState> transition) {
-    _log.fine(transition.nextState);
+    _log.fine('Transition from ${transition.currentState} to ${transition.nextState}');
     super.onTransition(transition);
   }
 
@@ -113,12 +115,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     return await _backend.send(request).then(
       (response) async {
         if (response.statusCode == 200) {
-          _log.finer(
-              '[_getOptions] response: ${response.statusCode} ${await response.stream.bytesToString()}');
+          String responseString = await response.stream.bytesToString();
+          _log.finer('[_getOptions] response: ${response.statusCode} $responseString');
 
-          /// move [responseMap] entries into the global [User].[options] object
-          _user.options =
-              JobOptions.fromMap(json.decode(utf8.decode(await response.stream.toBytes())));
+          _user.options = JobOptions.fromMap(json.decode(responseString));
+          return;
         } else {
           throw ApiException(response.statusCode,
               info: '_getOptions: received response code other than 200');
@@ -165,6 +166,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       _log.finer('[_putOptions] response: ${response.statusCode}');
       if (response.statusCode == 205) {
         _user.options = options;
+        return;
       } else {
         throw ApiException(response.statusCode,
             info: '_putOptions: received response code other than 205');
