@@ -1,4 +1,16 @@
+import 'package:blocs_copyclient/src/models/joboptions.dart';
 import 'package:meta/meta.dart';
+
+class ChangeOptions extends UserEvent {
+  final JobOptions options;
+
+  ChangeOptions(this.options);
+
+  Map<String, dynamic> toMap() => {'options': options.toMap()};
+
+  @override
+  String toString() => toMap().toString();
+}
 
 class ChangePassword extends UserEvent {
   final String oldPassword;
@@ -27,6 +39,8 @@ class ChangeUsername extends UserEvent {
   @override
   String toString() => toMap().toString();
 }
+
+class GetOptions extends UserEvent {}
 
 class InitUser extends UserEvent {
   String token;
