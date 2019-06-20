@@ -38,7 +38,7 @@ class BackendShiva implements Backend {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = new Map();
+    Map<String, dynamic> map = Map();
     map['host'] = host;
     map['basePath'] = basePath;
     return map;
@@ -83,7 +83,7 @@ class BackendSunrise implements Backend {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = new Map();
+    Map<String, dynamic> map = Map();
     map['host'] = host;
     map['basePath'] = basePath;
     return map;

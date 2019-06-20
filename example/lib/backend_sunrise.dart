@@ -10,11 +10,10 @@ class BackendSunrise implements Backend {
   final String basePath = '/astaprint';
   final Client _innerClient;
 
-  Logger _log = new Logger('BackendSunrise');
+  Logger _log = Logger('BackendSunrise');
 
   BackendSunrise(this._innerClient) {
-    _log.fine(
-        'Creating Backend with ${_innerClient.toString()} as innerClient');
+    _log.fine('Creating Backend with ${_innerClient.toString()} as innerClient');
   }
 
   @override
@@ -46,7 +45,7 @@ class BackendSunrise implements Backend {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = new Map();
+    Map<String, dynamic> map = Map();
     map['host'] = host;
     map['basePath'] = basePath;
     return map;

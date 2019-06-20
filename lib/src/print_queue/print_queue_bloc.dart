@@ -93,8 +93,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     }
   }
 
-  onLockDevice({String queueUid}) =>
-      dispatch(LockQueue(queueUid: queueUid ?? null));
+  onLockDevice({String queueUid}) => dispatch(LockQueue(queueUid: queueUid ?? null));
 
   onRefresh({int deviceId}) => dispatch(GetQueue(deviceId ?? _deviceId));
 
@@ -112,8 +111,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   setDeviceId(int deviceId) => dispatch(SetDeviceId(deviceId));
 
   Future<void> _deleteQueue(String uid) async {
-    Request request = new ApiRequest('DELETE',
-        '/printers/$_deviceId/queue${(uid != null) ? '/$uid' : ''}', _backend);
+    Request request =
+        ApiRequest('DELETE', '/printers/$_deviceId/queue${(uid != null) ? '/$uid' : ''}', _backend);
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_deleteQueue $request');
@@ -129,8 +128,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   }
 
   Future<void> _getQueue() async {
-    Request request =
-        new ApiRequest('GET', '/printers/$_deviceId/queue', _backend);
+    Request request = ApiRequest('GET', '/printers/$_deviceId/queue', _backend);
     request.headers['X-Api-Key'] = _token;
     request.headers['Accept'] = 'application/json';
 
@@ -139,10 +137,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
       log.finer('_getQueue: ${response.statusCode}');
       if (response.statusCode == 200) {
         var body = json.decode(utf8.decode(await response.stream.toBytes()));
-        _incoming = List.from(
-            body['incoming'].map((value) => PrintQueueTask.fromMap(value)));
-        _processing = List.from(
-            body['processing'].map((value) => PrintQueueTask.fromMap(value)));
+        _incoming = List.from(body['incoming'].map((value) => PrintQueueTask.fromMap(value)));
+        _processing = List.from(body['processing'].map((value) => PrintQueueTask.fromMap(value)));
         return;
       } else {
         throw ApiException(response.statusCode, info: 'not 200');
@@ -153,7 +149,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   Future<String> _postQueue({int jobId, String lockUid}) async {
     String path = '/printers/$_deviceId/queue';
     if (lockUid != null && lockUid.isNotEmpty) path += '/$lockUid';
-    Request request = new ApiRequest('POST', path, _backend,
+    Request request = ApiRequest('POST', path, _backend,
         queryParameters: (jobId != null) ? {'id': jobId.toString()} : null);
     request.headers['X-Api-Key'] = _token;
 

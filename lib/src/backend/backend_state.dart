@@ -19,11 +19,9 @@ class BackendState extends ResultState<Backend> {
 
   factory BackendState.init() => BackendState(isInit: true);
 
-  factory BackendState.exception(ApiException e) =>
-      BackendState(isException: true, error: e);
+  factory BackendState.exception(ApiException e) => BackendState(isException: true, error: e);
 
-  factory BackendState.result(Backend backend) =>
-      BackendState(isResult: true, backend: backend);
+  factory BackendState.result(Backend backend) => BackendState(isResult: true, backend: backend);
 
   Map<String, dynamic> toMap() => {
         'isInit': isInit,

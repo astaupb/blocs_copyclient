@@ -11,7 +11,7 @@ class Copyclient {
   JournalBloc journalBloc;
   UploadBloc uploadBloc;
   PrintQueueBloc printQueueBloc;
-  File logFile = new File('.copyclient_cli.log');
+  File logFile = File('.copyclient_cli.log');
 
   int _tokenId;
   String _token;
@@ -24,8 +24,7 @@ class Copyclient {
   Copyclient(Backend backend) {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      logFile.writeAsString('[${record.loggerName}] ${record.message}',
-          mode: FileMode.append);
+      logFile.writeAsString('[${record.loggerName}] ${record.message}', mode: FileMode.append);
     });
 
     authBloc = AuthBloc(backend: backend);
@@ -64,8 +63,7 @@ class Copyclient {
       (JoblistState state) {
         if (state.isResult)
           state.value.forEach((Job job) {
-            print(
-                '${job.id}: ${job.jobInfo.filename}, Pages: ${job.jobInfo.pagecount}');
+            print('${job.id}: ${job.jobInfo.filename}, Pages: ${job.jobInfo.pagecount}');
           });
         listener.cancel();
       },

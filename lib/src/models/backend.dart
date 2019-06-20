@@ -10,8 +10,7 @@ class ApiRequest extends Request {
   final Map<String, String> queryParameters;
 
   ApiRequest(this.method, this.path, this.backend, {this.queryParameters})
-      : super(method,
-            Uri.https(backend.host, backend.basePath + path, queryParameters));
+      : super(method, Uri.https(backend.host, backend.basePath + path, queryParameters));
 
   Map<String, dynamic> toMap() => {
         'method': method,

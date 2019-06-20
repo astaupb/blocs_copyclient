@@ -12,15 +12,15 @@ class JobOptions {
 
   /// JobOptions with default values
   JobOptions(
-      {this.color: false,
-      this.duplex: 0,
-      this.copies: 1,
-      this.collate: false,
-      this.a3: false,
-      this.range: '',
-      this.nup: 1,
-      this.nupPageOrder: 0,
-      this.keep: false});
+      {this.color = false,
+      this.duplex = 0,
+      this.copies = 1,
+      this.collate = false,
+      this.a3 = false,
+      this.range = '',
+      this.nup = 1,
+      this.nupPageOrder = 0,
+      this.keep = false});
 
   /// Build JobOptions object from map
   factory JobOptions.fromMap(Map<String, dynamic> options) => JobOptions(

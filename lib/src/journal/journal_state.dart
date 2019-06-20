@@ -26,6 +26,5 @@ class JournalState extends ResultState<JournalResult> {
   factory JournalState.result(JournalResult result) =>
       JournalState(isResult: true, journalResult: result);
 
-  factory JournalState.exception(ApiException e) =>
-      JournalState(isException: true, error: e);
+  factory JournalState.exception(ApiException e) => JournalState(isException: true, error: e);
 }

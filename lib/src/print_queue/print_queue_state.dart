@@ -28,8 +28,7 @@ class PrintQueueState extends ResultState<PrintQueueResult> {
 
   factory PrintQueueState.busy() => PrintQueueState(isBusy: true);
 
-  factory PrintQueueState.exception(ApiException e) =>
-      PrintQueueState(isException: true, error: e);
+  factory PrintQueueState.exception(ApiException e) => PrintQueueState(isException: true, error: e);
 
   factory PrintQueueState.result(PrintQueueResult queue) =>
       PrintQueueState(queue: queue, isResult: true);

@@ -43,8 +43,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       try {
         await _getJournal();
         await _getCredit();
-        yield JournalState.result(
-            JournalResult(credit: _credit, transactions: _journal));
+        yield JournalState.result(JournalResult(credit: _credit, transactions: _journal));
       } on ApiException catch (e) {
         yield JournalState.exception(e);
       }
@@ -72,7 +71,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   }
 
   Future<void> _getJournal() async {
-    Request request = new ApiRequest('GET', '/journal', _backend);
+    Request request = ApiRequest('GET', '/journal', _backend);
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
@@ -86,15 +85,14 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
               .decode(utf8.decode(await response.stream.toBytes()))
               .map((value) => Transaction.fromMap(value)));
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
   }
 
   Future<void> _getCredit() async {
-    Request request = new ApiRequest('GET', '/journal/credit', _backend);
+    Request request = ApiRequest('GET', '/journal/credit', _backend);
     request.headers['Accept'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 
@@ -106,8 +104,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
         if (response.statusCode == 200) {
           _credit = json.decode(utf8.decode(await response.stream.toBytes()));
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
@@ -127,8 +124,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       if (response.statusCode == 204) {
         return;
       } else {
-        throw ApiException(response.statusCode,
-            info: 'status code other than 204 received');
+        throw ApiException(response.statusCode, info: 'status code other than 204 received');
       }
     });
   }

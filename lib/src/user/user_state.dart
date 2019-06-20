@@ -23,8 +23,7 @@ class UserState extends ResultState<User> {
 
   factory UserState.result(User user) => UserState(isResult: true, user: user);
 
-  factory UserState.exception(ApiException e) =>
-      UserState(isException: true, error: e);
+  factory UserState.exception(ApiException e) => UserState(isException: true, error: e);
 
   Map<String, dynamic> toMap() => {
         'user': (value != null) ? value : 'null',

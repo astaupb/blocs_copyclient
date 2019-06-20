@@ -11,16 +11,15 @@ class User {
   int credit;
   JobOptions options;
 
-  User({
-    this.name,
-    this.userId,
-    this.card,
-    this.pin,
-    this.activeTokens,
-    this.tokenId,
-    this.credit,
-    this.options
-  });
+  User(
+      {this.name,
+      this.userId,
+      this.card,
+      this.pin,
+      this.activeTokens,
+      this.tokenId,
+      this.credit,
+      this.options});
 
   factory User.fromMap(dynamic obj) => User(
         name: obj['name'],

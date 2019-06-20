@@ -37,8 +37,7 @@ class PreviewState extends ResultState<List<PreviewSet>> {
 
   factory PreviewState.busy() => PreviewState(isBusy: true);
 
-  factory PreviewState.exception(ApiException e) =>
-      PreviewState(isException: true, error: e);
+  factory PreviewState.exception(ApiException e) => PreviewState(isException: true, error: e);
 
   factory PreviewState.init() => PreviewState(isInit: true);
 

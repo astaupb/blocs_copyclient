@@ -9,11 +9,11 @@ class JobInfo {
 
   /// JobInfo with default values
   JobInfo({
-    this.filename: '',
-    this.title: '',
-    this.pagecount: 0,
-    this.colored: 0,
-    this.a3: false,
+    this.filename = '',
+    this.title = '',
+    this.pagecount = 0,
+    this.colored = 0,
+    this.a3 = false,
   });
 
   /// Build JobInfo object from map

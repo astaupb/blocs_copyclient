@@ -34,8 +34,8 @@ class _JobsPageState extends State<JobsPage> {
                         String target = await BarcodeScanner.scan();
                       } catch (e) {
                         print('Jobs: $e');
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('No printer was selected')));
+                        Scaffold.of(context)
+                            .showSnackBar(SnackBar(content: Text('No printer was selected')));
                       }
                     },
                   );

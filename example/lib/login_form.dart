@@ -9,7 +9,7 @@ class LoginForm extends StatefulWidget {
 
   @override
   LoginFormState createState() {
-    return new LoginFormState();
+    return LoginFormState();
   }
 }
 

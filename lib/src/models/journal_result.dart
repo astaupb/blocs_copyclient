@@ -7,8 +7,7 @@ class JournalResult {
 
   JournalResult({@required this.credit, @required this.transactions});
 
-  Map<String, dynamic> toMap() =>
-      {'credit': credit, 'transactions': transactions.length};
+  Map<String, dynamic> toMap() => {'credit': credit, 'transactions': transactions.length};
 
   @override
   String toString() => toMap().toString();

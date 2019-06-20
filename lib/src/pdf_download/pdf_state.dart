@@ -23,11 +23,9 @@ class PdfState extends ResultState<List<PdfFile>> {
 
   factory PdfState.busy() => PdfState(isBusy: true);
 
-  factory PdfState.result(List<PdfFile> result) =>
-      PdfState(isResult: true, pdfs: result);
+  factory PdfState.result(List<PdfFile> result) => PdfState(isResult: true, pdfs: result);
 
-  factory PdfState.exception(ApiException e) =>
-      PdfState(isException: true, error: e);
+  factory PdfState.exception(ApiException e) => PdfState(isException: true, error: e);
 
   Map<String, dynamic> toMap() => {
         'isInit': isInit,

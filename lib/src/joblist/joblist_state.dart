@@ -23,11 +23,9 @@ class JoblistState extends ResultState<List<Job>> {
 
   factory JoblistState.busy() => JoblistState(isBusy: true);
 
-  factory JoblistState.exception(ApiException e) =>
-      JoblistState(isException: true, error: e);
+  factory JoblistState.exception(ApiException e) => JoblistState(isException: true, error: e);
 
-  factory JoblistState.result(List<Job> list) =>
-      JoblistState(isResult: true, jobs: list);
+  factory JoblistState.result(List<Job> list) => JoblistState(isResult: true, jobs: list);
 
   Map<String, dynamic> toMap() => {
         'jobs': (value != null) ? value.length : 'null',

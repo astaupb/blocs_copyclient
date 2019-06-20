@@ -76,8 +76,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
             _pdfs.add(PdfFile(await response.stream.toBytes(), id));
             return;
           } else {
-            throw ApiException(response.statusCode,
-                info: 'status code other than 200 received');
+            throw ApiException(response.statusCode, info: 'status code other than 200 received');
           }
         },
       );

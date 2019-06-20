@@ -8,8 +8,7 @@ class SetBackend extends BackendEvent {
 
   SetBackend({@required this.backend});
 
-  Map<String, dynamic> toMap() =>
-      {'backend': (backend != null) ? backend.toMap() : {}};
+  Map<String, dynamic> toMap() => {'backend': (backend != null) ? backend.toMap() : {}};
 
   @override
   String toString() => toMap().toString();

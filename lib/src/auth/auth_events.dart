@@ -31,10 +31,7 @@ class Login extends AuthEvent {
   final String password;
   final bool persistent;
 
-  Login(
-      {@required this.username,
-      @required this.password,
-      this.persistent = false});
+  Login({@required this.username, @required this.password, this.persistent = false});
 
   Map<String, dynamic> toMap() =>
       {'username': username, 'password': password, 'persistent': persistent};
