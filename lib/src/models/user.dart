@@ -1,3 +1,5 @@
+import 'joboptions.dart';
+
 class User {
   String name;
   int userId;
@@ -7,6 +9,7 @@ class User {
   String _token;
   int tokenId;
   int credit;
+  JobOptions options;
 
   User({
     this.name,
@@ -16,6 +19,7 @@ class User {
     this.activeTokens,
     this.tokenId,
     this.credit,
+    this.options
   });
 
   factory User.fromMap(dynamic obj) => User(
