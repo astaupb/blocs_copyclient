@@ -126,8 +126,14 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
       return ClientType.dartio;
     } else if (userAgent.contains('AStACopyclient')) {
       return ClientType.electron;
-    } else if (userAgent.contains('Chrome')) {
+    } else if (userAgent.contains('Chrome/')) {
       return ClientType.chrome;
+    } else if (userAgent.contains('Firefox/') && userAgent.contains('Gecko/')) {
+      return ClientType.firefox;
+    } else if (userAgent.contains('Safari/')) {
+      return ClientType.safari;
+    } else if (userAgent.contains('curl/')) {
+      return ClientType.curl;
     }
 
     return ClientType.unknown;

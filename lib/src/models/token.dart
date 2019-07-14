@@ -2,6 +2,7 @@ enum ClientType {
   unknown,
   firefox,
   chrome,
+  safari,
   electron,
   dartio,
   curl,
