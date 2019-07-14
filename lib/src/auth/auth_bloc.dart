@@ -35,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         Login(username: user, password: pw, persistent: persistent),
       );
 
-  void deleteToken() => dispatch(DeleteToken());
+  void deleteToken() => dispatch(LogoutToken());
 
   void logout() => dispatch(Logout());
 
@@ -60,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         log.severe(e.info);
         yield AuthState.exception(e);
       }
-    } else if (event is DeleteToken) {
+    } else if (event is LogoutToken) {
       yield AuthState.busy();
       try {
         await _deleteToken(id: event.id);

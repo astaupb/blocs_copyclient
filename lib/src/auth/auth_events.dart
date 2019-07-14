@@ -15,10 +15,10 @@ class AuthInit extends AuthEvent {
   String toString() => 'AuthInit ' + toMap().toString();
 }
 
-class DeleteToken extends AuthEvent {
+class LogoutToken extends AuthEvent {
   final int id;
 
-  DeleteToken({this.id});
+  LogoutToken({this.id});
 
   Map<String, dynamic> toMap() => {'id': id};
 

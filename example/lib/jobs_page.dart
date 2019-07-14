@@ -48,9 +48,9 @@ class _JobsPageState extends State<JobsPage> {
         ),
         floatingActionButton: Builder(
           builder: (BuildContext context) => FloatingActionButton(
-                onPressed: () => jobsBloc.onRefresh(),
-                child: Icon(Icons.refresh),
-              ),
+            onPressed: () => jobsBloc.onRefresh(),
+            child: Icon(Icons.refresh),
+          ),
         ));
   }
 }
