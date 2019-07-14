@@ -109,6 +109,7 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
               (item) {
                 Token temp = Token.fromMap(item);
                 temp.clientType = _parseClientType(temp.userAgent);
+                return temp;
               },
             ),
           );
