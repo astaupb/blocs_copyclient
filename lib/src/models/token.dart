@@ -13,7 +13,7 @@ class Token {
       map['user_agent'],
       map['ip'],
       map['location'],
-      map['created'],
+      DateTime.parse(map['created']),
     );
   }
 
