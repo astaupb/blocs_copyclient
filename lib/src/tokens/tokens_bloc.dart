@@ -104,14 +104,31 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
       (response) async {
         log.finer('_getTokens: ${response.statusCode}');
         if (response.statusCode == 200) {
-          _tokens = List.from(json
-              .decode(await response.stream.bytesToString())
-              .map((item) => Token.fromMap(item)));
+          _tokens = List.from(
+            json.decode(await response.stream.bytesToString()).map(
+              (item) {
+                Token temp = Token.fromMap(item);
+                temp.clientType = _parseClientType(temp.userAgent);
+              },
+            ),
+          );
           return;
         } else {
           throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
+  }
+
+  ClientType _parseClientType(String userAgent) {
+    if (userAgent.contains('(dart:io)')) {
+      return ClientType.dartio;
+    } else if (userAgent.contains('AStACopyclient')) {
+      return ClientType.electron;
+    } else if (userAgent.contains('Chrome')) {
+      return ClientType.chrome;
+    }
+
+    return ClientType.unknown;
   }
 }

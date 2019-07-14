@@ -1,9 +1,20 @@
+enum ClientType {
+  unknown,
+  firefox,
+  chrome,
+  electron,
+  dartio,
+  curl,
+}
+
 class Token {
   final int id;
   final String userAgent;
   final String ip;
   final String location;
   final DateTime created;
+
+  var clientType;
 
   Token(this.id, this.userAgent, this.ip, this.location, this.created);
 
