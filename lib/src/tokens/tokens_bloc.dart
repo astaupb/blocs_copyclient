@@ -59,9 +59,22 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
         yield TokensState.exception(e);
       }
     }
+
+    if (event is DeleteTokens) {
+      yield TokensState.busy();
+      try {
+        await _deleteTokens();
+        await _getTokens();
+        yield TokensState.result(_tokens);
+      } on ApiException catch (e) {
+        yield TokensState.exception(e);
+      }
+    }
   }
 
   void onDeleteToken(int id) => dispatch(DeleteToken(id));
+
+  void onDeleteTokens() => dispatch(DeleteTokens());
 
   void onGetTokens() => dispatch(GetTokens());
 
@@ -85,6 +98,25 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
         log.finer('_deleteToken: ${response.statusCode}');
         if (response.statusCode == 205) {
           _tokens.removeWhere((Token tok) => tok.id == id);
+          return;
+        } else {
+          throw ApiException(response.statusCode, info: 'status code other than 205 received');
+        }
+      },
+    );
+  }
+
+  Future<void> _deleteTokens() async {
+    Request request = ApiRequest('DELETE', '/user/tokens', _backend);
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_deleteTokens: $request');
+
+    return await _backend.send(request).then(
+      (response) async {
+        log.finer('_deleteTokens: ${response.statusCode}');
+        if (response.statusCode == 205) {
+          _tokens = [];
           return;
         } else {
           throw ApiException(response.statusCode, info: 'status code other than 205 received');
