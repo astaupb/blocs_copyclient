@@ -85,8 +85,6 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
           ((event.id != null) ? event.id : _jobs[event.index].id),
           event.options,
         );
-        _jobs[getIndexById(event.id)].priceEstimation =
-            _estimatePrice(jobs[getIndexById(event.id)]);
         yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
         yield JoblistState.exception(e);
@@ -161,72 +159,6 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     );
   }
 
-  int _estimatePrice(Job job, {basePrice = 5}) {
-    int _price = 0;
-    int _basePrice = basePrice;
-    int _colorPrice = _basePrice * 4;
-    int _colorPages = job.jobInfo.colored;
-    int _totalPages = job.jobInfo.pagecount;
-    int _bwPages = _totalPages - _colorPages;
-
-    // adjust prices if medium is A3
-    if (job.jobOptions.a3) {
-      _basePrice *= 2;
-      _colorPrice *= 2;
-    }
-
-    // take colored pages out of calculation if color is turned off and vice versa
-    if (!job.jobOptions.color) {
-      _colorPages = 0;
-      _bwPages = _totalPages;
-    }
-
-    if (job.jobOptions.nup == 4) {
-      if (_totalPages <= 4) {
-        if (job.jobOptions.color && _colorPages >= 1) {
-          _bwPages = 0;
-          _colorPages = 1;
-        } else {
-          _bwPages = 1;
-        }
-      } else {
-        if (job.jobOptions.color) {
-          if (_bwPages >= _colorPages) _bwPages -= _colorPages;
-          //if (_bwPages > _colorPages * 3)
-          _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
-        } else {
-          _bwPages = _bwPages ~/ 4 + ((_bwPages % 4 > 0) ? 1 : 0);
-        }
-      }
-    }
-
-    if (job.jobOptions.nup == 2) {
-      if (_totalPages <= 2) {
-        if (job.jobOptions.color && _colorPages > 0) {
-          _colorPages = 1;
-        } else {
-          _bwPages = 1;
-        }
-      } else {
-        if (job.jobOptions.color) {
-          if (_bwPages >= _colorPages) _bwPages -= _colorPages;
-          //if (_bwPages > _colorPages)
-          _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
-        } else {
-          _bwPages = _bwPages ~/ 2 + (_bwPages % 2);
-        }
-      }
-    }
-
-    // add price of all b/w pages
-    _price += _bwPages * _basePrice * job.jobOptions.copies;
-
-    // add price of all color pages
-    _price += _colorPages * job.jobOptions.copies * _colorPrice;
-
-    return _price;
-  }
-
   Future<void> _getJob(int id) async {
     Request request = ApiRequest('GET', '/jobs/$id', _backend);
     request.headers['Accept'] = 'application/json';
@@ -240,7 +172,6 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         if (response.statusCode == 200) {
           _jobs[getIndexById(id)] =
               Job.fromMap(json.decode(utf8.decode(await response.stream.toBytes())));
-          _jobs[getIndexById(id)].priceEstimation = _estimatePrice(jobs[getIndexById(id)]);
         } else {
           throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
@@ -263,7 +194,6 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
           _jobs = List.from(json.decode(utf8.decode(await response.stream.toBytes())).map(
             (value) {
               Job job = Job.fromMap(value);
-              job.priceEstimation = _estimatePrice(job);
               return job;
             },
           ));
