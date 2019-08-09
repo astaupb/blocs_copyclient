@@ -32,6 +32,7 @@ class _JobsPageState extends State<JobsPage> {
                     onTap: () async {
                       try {
                         String target = await BarcodeScanner.scan();
+                        jobsBloc.onPrintById(target, state.value[index].id);
                       } catch (e) {
                         print('Jobs: $e');
                         Scaffold.of(context)
@@ -44,6 +45,7 @@ class _JobsPageState extends State<JobsPage> {
             } else if (state.isException) {
               return Text('Ein Fehler ist aufgetreten: ${state.error}');
             }
+            return Container(width: 0.0, height: 0.0);
           },
         ),
         floatingActionButton: Builder(

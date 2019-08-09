@@ -72,6 +72,7 @@ class _HomePageState extends State<HomePage> {
               child: JobsPage(),
             );
           }
+          return Container(width: 0.0, height: 0.0);
         },
       ),
     );
