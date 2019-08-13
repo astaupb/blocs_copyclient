@@ -6,6 +6,8 @@ import "package:test/test.dart";
 const String jobMap =
     '{"id":134818,"info":{"filename":"AStA Copyclient Benutzeranleitung.pdf","title":"","pagecount":4,"colored":4,"a3":false},"options":{"color":false,"duplex":0,"copies":1,"collate":false,"bypass":false,"keep":false,"a3":false,"nup":1,"nuppageorder":0,"range":""},"timestamp":1564768316,"created":1564768316,"updated":1565274503}';
 
+const String longerJobMap = '{"id":134818,"info":{"filename":"AStA Copyclient Benutzeranleitung.pdf","title":"","pagecount":8,"colored":4,"a3":false},"options":{"color":false,"duplex":0,"copies":1,"collate":false,"bypass":false,"keep":false,"a3":false,"nup":1,"nuppageorder":0,"range":""},"timestamp":1564768316,"created":1564768316,"updated":1565274503}';
+
 void main() {
   test('Fill Job with json data and get stringified map', () {
     final Job job = Job.fromMap(json.decode(jobMap));
@@ -16,7 +18,7 @@ void main() {
   });
 
   test('calculate price before and after pagerange', () {
-    final Job job = Job.fromMap(json.decode(jobMap));
+    Job job = Job.fromMap(json.decode(jobMap));
 
     print(
         'testing ${job.jobInfo.pagecount} pages with ${job.jobInfo.colored} color pages\n range: ${job.jobOptions.range}');
@@ -51,11 +53,48 @@ void main() {
 
     job.jobOptions.color = false;
     expect(job.priceEstimation, 20);
+
+    print('testing same stuff with NuP 2 and 4 now');
+    
+    job.jobOptions.nup = 2;
+
+    job.jobOptions.color = false;
+    job.jobOptions.a3 = false;
+    expect(job.priceEstimation, 5);
+
+    job.jobOptions.color = true;
+    expect(job.priceEstimation, 20);
+
+    job.jobOptions.a3 = true;
+    expect(job.priceEstimation, 40);
+
+    job.jobOptions.color = false;
+    expect(job.priceEstimation, 10);
+
+
+    // also increase pages to nupping makes sense
+    job = Job.fromMap(json.decode(longerJobMap));
+    job.jobOptions.nup = 4;
+    job.jobOptions.range = '2-6';
+
+    job.jobOptions.color = false;
+    job.jobOptions.a3 = false;
+    expect(job.priceEstimation, 10);
+
+    job.jobOptions.color = true;
+    expect(job.priceEstimation, 40);
+
+    job.jobOptions.a3 = true;
+    expect(job.priceEstimation, 80);
+
+    job.jobOptions.color = false;
+    expect(job.priceEstimation, 20);
   });
 
   test('Get number of pages according to pagerange', () {
     final Job job = Job.fromMap(json.decode(jobMap));
 
+    // test various pagerange combinations
     job.jobOptions.range = '1-2';
     expect(job.pageRangeCount, 2);
 
