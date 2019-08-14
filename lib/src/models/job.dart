@@ -133,7 +133,6 @@ class Job {
       } else {
         if (_colorPages > 0) {
           final int _nuppedTotal = _totalPages ~/ 2 + (_totalPages % 2);
-          print('_nuppedtotal $_nuppedTotal');
           if (_nuppedTotal <= _colorPages) {
             // is there is a colored page for every page in the final nup, assume that every page has 1 collored member
             _colorPages = _nuppedTotal;
@@ -147,8 +146,6 @@ class Job {
         }
       }
     }
-
-    print('bw: $_bwPages - color: $_colorPages');
 
     // add price of all b/w pages
     _price += _bwPages * _basePrice * jobOptions.copies;
