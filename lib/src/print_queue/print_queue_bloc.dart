@@ -119,10 +119,10 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
     return await _backend.send(request).then((response) async {
       log.finer('_deleteQueue: ${response.statusCode}');
-      if (response.statusCode == 202) {
+      if (response.statusCode == 205) {
         return;
       } else {
-        throw ApiException(response.statusCode, info: 'not 202');
+        throw ApiException(response.statusCode, info: 'not 205');
       }
     });
   }
