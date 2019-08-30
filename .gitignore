@@ -27,3 +27,6 @@ doc/api/
 
 ### Mac OS ###
 .DS_Store
+
+# Debug Output
+test/out
