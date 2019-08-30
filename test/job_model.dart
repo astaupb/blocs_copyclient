@@ -3,10 +3,7 @@ import 'dart:convert';
 import 'package:blocs_copyclient/src/models/job.dart';
 import "package:test/test.dart";
 
-const String jobMap =
-    '{"id":134818,"info":{"filename":"AStA Copyclient Benutzeranleitung.pdf","title":"","pagecount":4,"colored":4,"a3":false},"options":{"color":false,"duplex":0,"copies":1,"collate":false,"bypass":false,"keep":false,"a3":false,"nup":1,"nuppageorder":0,"range":""},"timestamp":1564768316,"created":1564768316,"updated":1565274503}';
-
-const String longerJobMap = '{"id":134818,"info":{"filename":"AStA Copyclient Benutzeranleitung.pdf","title":"","pagecount":8,"colored":4,"a3":false},"options":{"color":false,"duplex":0,"copies":1,"collate":false,"bypass":false,"keep":false,"a3":false,"nup":1,"nuppageorder":0,"range":""},"timestamp":1564768316,"created":1564768316,"updated":1565274503}';
+import 'example_data.dart';
 
 void main() {
   test('Fill Job with json data and get stringified map', () {
