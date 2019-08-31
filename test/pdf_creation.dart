@@ -1,13 +1,15 @@
-import 'dart:async';
 @TestOn("vm")
+import 'dart:async';
 import 'dart:io';
 
 import 'package:blocs_copyclient/pdf_creation.dart';
+import 'package:blocs_copyclient/src/journal/journal_bloc.dart';
 import 'package:image/image.dart';
 import 'package:logging/logging.dart';
 import 'package:pdf/widgets.dart';
-
 import "package:test/test.dart";
+
+import 'example_data.dart';
 
 void main() {
   Logger.root.level = Level.ALL;
@@ -69,5 +71,29 @@ void main() {
     bloc.onCreateFromImage(
         decodeImage(File('test/in/asta.jpg').readAsBytesSync()),
         orientation: PageOrientation.landscape);
+  });
+
+  test('create pdf file from lorem ipsum and save it to testdir', () {
+    bloc = PdfCreationBloc();
+
+    String csvJournal = journalToCsv(exampleJournal);
+
+    // start a listener that saves the result document in test folder
+    StreamSubscription listener;
+    listener = bloc.state.listen(
+      expectAsync1((PdfCreationState state) {
+        if (state.isResult) {
+          final File file = File('test/out/journal.pdf');
+          file.createSync(recursive: true);
+          file.writeAsBytesSync(state.value, flush: true);
+
+          listener.cancel();
+          bloc.dispose();
+        }
+      }, count: 3),
+    );
+
+    bloc.onCreateFromCsv(csvJournal,
+        titles: ['Wert in €', 'Beschreibung', 'Zeit']);
   });
 }

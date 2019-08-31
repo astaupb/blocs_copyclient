@@ -1,6 +1,19 @@
 import 'package:image/image.dart';
 import 'package:pdf/widgets.dart' as pdf;
 
+class CreateFromCsv extends PdfCreationEvent {
+  final String csv;
+  final List<String> titles;
+
+  CreateFromCsv(
+      this.csv, this.titles, bool center, pdf.PageOrientation orientation)
+      : super(center, orientation);
+
+  @override
+  String toString() =>
+      '[CreateFromCsv with titles: $titles "${csv.substring(0, 32)}"]';
+}
+
 class CreateFromImage extends PdfCreationEvent {
   final Image image;
 

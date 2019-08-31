@@ -17,7 +17,7 @@ import '../models/journal_result.dart';
 String journalToCsv(List<Transaction> journal) {
   return ListToCsvConverter().convert(List.from(journal.map(
       (Transaction item) =>
-          [item.description, item.admin_id, item.timestamp, item.value])));
+          [(item.value / 100.0).toStringAsFixed(2), item.description, item.timestamp])));
 }
 
 class JournalBloc extends Bloc<JournalEvent, JournalState> {

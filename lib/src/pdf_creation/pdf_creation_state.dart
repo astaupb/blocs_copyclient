@@ -1,5 +1,3 @@
-import 'package:pdf/widgets.dart';
-
 import '../../exceptions.dart';
 import '../common.dart';
 
