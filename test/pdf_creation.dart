@@ -47,7 +47,7 @@ void main() {
       }, count: 3),
     );
 
-    bloc.onCreateFromText(loremIpsum);
+    bloc.onCreateFromText(loremIpsum, showPageCount: true);
   });
 
   test('create pdf file from asta logo and save it to testdir', () {
@@ -73,7 +73,7 @@ void main() {
         orientation: PageOrientation.landscape);
   });
 
-  test('create pdf file from lorem ipsum and save it to testdir', () {
+  test('create pdf file from journal csv and save it to testdir', () {
     bloc = PdfCreationBloc();
 
     String csvJournal = journalToCsv(exampleJournal);
@@ -94,6 +94,8 @@ void main() {
     );
 
     bloc.onCreateFromCsv(csvJournal,
-        titles: ['Wert in €', 'Beschreibung', 'Zeit']);
+        header: 'Transaktionen seit ${exampleJournal.last.timestamp}',
+        titles: ['Wert in Euro', 'Beschreibung', 'Zeit'],
+        showPageCount: true);
   });
 }

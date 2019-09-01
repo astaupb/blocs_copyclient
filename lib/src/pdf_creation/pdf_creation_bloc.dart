@@ -33,24 +33,33 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     yield PdfCreationState.busy();
 
     if (event is CreateFromText) {
-      yield PdfCreationState.result(
-          _createFromText(event.text, event.center, event.orientation).save());
+      yield PdfCreationState.result(_createFromText(
+              event.text, event.showPageCount, event.center, event.orientation)
+          .save());
     } else if (event is CreateFromImage) {
       yield PdfCreationState.result(
           _createFromImage(event.image, event.center, event.orientation)
               .save());
     } else if (event is CreateFromCsv) {
       yield PdfCreationState.result(_createFromCsv(
-              event.csv, event.titles, event.center, event.orientation)
+              event.csv,
+              event.header,
+              event.titles,
+              event.showPageCount,
+              event.center,
+              event.orientation)
           .save());
     }
   }
 
   void onCreateFromCsv(String csv,
-          {List<String> titles = const [],
+          {String header = '',
+          List<String> titles = const [],
+          bool showPageCount = false,
           bool center = false,
           PageOrientation orientation = PageOrientation.natural}) =>
-      dispatch(CreateFromCsv(csv, titles, center, orientation));
+      dispatch(CreateFromCsv(
+          csv, header, titles, showPageCount, center, orientation));
 
   void onCreateFromImage(img.Image image,
           {bool center = true,
@@ -58,9 +67,10 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
       dispatch(CreateFromImage(image, center, orientation));
 
   void onCreateFromText(String text,
-          {bool center = false,
+          {bool showPageCount = false,
+          bool center = false,
           PageOrientation orientation = PageOrientation.natural}) =>
-      dispatch(CreateFromText(text, center, orientation));
+      dispatch(CreateFromText(text, showPageCount, center, orientation));
 
   @override
   void onError(Object error, StackTrace stacktrace) {
@@ -81,8 +91,8 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     super.onTransition(transition);
   }
 
-  Document _createFromCsv(String csv, List<String> titles, bool center,
-      PageOrientation orientation) {
+  Document _createFromCsv(String csv, String header, List<String> titles,
+      bool showPageCount, bool center, PageOrientation orientation) {
     final Document doc = Document();
 
     final List<List<dynamic>> csvList = CsvToListConverter()
@@ -98,8 +108,15 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
         orientation: orientation,
         crossAxisAlignment:
             (center) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        footer: (Context context) {
+          if (showPageCount) {
+            return _pageCountFooter(context);
+          } else {
+            return Container();
+          }
+        },
         build: (Context context) => [
-          Header(level: 1, text: 'Transaktionen ab XXX'), // TODO: show date
+          Header(level: 1, text: header),
           Table.fromTextArray(
             context: context,
             data: [
@@ -138,8 +155,8 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     return pdf;
   }
 
-  Document _createFromText(
-      String text, bool center, PageOrientation orientation) {
+  Document _createFromText(String text, bool showPageCount, bool center,
+      PageOrientation orientation) {
     final Document doc = Document();
     final List<String> paragraphs = text.split('\n');
 
@@ -149,6 +166,13 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
         orientation: orientation,
         crossAxisAlignment:
             (center) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        footer: (Context context) {
+          if (showPageCount) {
+            return _pageCountFooter(context);
+          } else {
+            return Container();
+          }
+        },
         build: (Context context) => [
           ...paragraphs.map((String paragraph) => Paragraph(text: paragraph)),
         ],
@@ -156,4 +180,11 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     );
     return doc;
   }
+
+  Widget _pageCountFooter(Context context) => Container(
+      alignment: Alignment.centerRight,
+      child: Text(context.pageNumber.toString(),
+          style: Theme.of(context)
+              .defaultTextStyle
+              .copyWith(color: PdfColors.grey)));
 }

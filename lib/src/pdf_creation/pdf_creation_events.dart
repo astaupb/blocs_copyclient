@@ -1,12 +1,16 @@
 import 'package:image/image.dart';
 import 'package:pdf/widgets.dart' as pdf;
 
-class CreateFromCsv extends PdfCreationEvent {
+class CreateFromCsv extends PdfCreationEvent implements MultipageCreationEvent {
   final String csv;
+  final String header;
   final List<String> titles;
 
-  CreateFromCsv(
-      this.csv, this.titles, bool center, pdf.PageOrientation orientation)
+  @override
+  bool showPageCount;
+
+  CreateFromCsv(this.csv, this.header, this.titles, this.showPageCount,
+      bool center, pdf.PageOrientation orientation)
       : super(center, orientation);
 
   @override
@@ -25,15 +29,24 @@ class CreateFromImage extends PdfCreationEvent {
       '[CreateFromImage center:$center ${image.exif.data.toString()} ${image.width}x${image.height}]';
 }
 
-class CreateFromText extends PdfCreationEvent {
+class CreateFromText extends PdfCreationEvent
+    implements MultipageCreationEvent {
   final String text;
 
-  CreateFromText(this.text, bool center, pdf.PageOrientation orientation)
+  @override
+  bool showPageCount;
+
+  CreateFromText(this.text, this.showPageCount, bool center,
+      pdf.PageOrientation orientation)
       : super(center, orientation);
 
   @override
   String toString() =>
       '[CreateFromText center:$center "${text.substring(0, 32)}[...]"]';
+}
+
+mixin MultipageCreationEvent {
+  bool showPageCount;
 }
 
 abstract class PdfCreationEvent {
