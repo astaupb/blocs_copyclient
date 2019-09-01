@@ -97,9 +97,19 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
 
     final List<List<dynamic>> csvList = CsvToListConverter()
         .convert(csv)
-        .map((List<dynamic> item) => item
-            .map((subitem) => (subitem != 'null') ? subitem.toString() : '')
-            .toList())
+        .map((List<dynamic> item) => item.map(
+              (subitem) {
+                if (subitem != 'null') {
+                  if (subitem is double) {
+                    return subitem.toStringAsFixed(2);
+                  } else {
+                    return subitem.toString();
+                  }
+                } else {
+                  return '';
+                }
+              },
+            ).toList())
         .toList();
 
     doc.addPage(
