@@ -61,7 +61,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
       dispatch(CreateFromCsv(
           csv, header, titles, showPageCount, center, orientation));
 
-  void onCreateFromImage(img.Image image,
+  void onCreateFromImage(List<int> image,
           {bool center = true,
           PageOrientation orientation = PageOrientation.natural}) =>
       dispatch(CreateFromImage(image, center, orientation));
@@ -144,14 +144,16 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
   }
 
   Document _createFromImage(
-      img.Image image, bool center, PageOrientation orientation) {
+      List<int> image, bool center, PageOrientation orientation) {
     final pdf = Document();
+
+    final img.Image imgImage = img.decodeImage(image);
 
     final PdfImage pdfImage = PdfImage(
       pdf.document,
-      image: image.getBytes(),
-      width: image.width,
-      height: image.height,
+      image: imgImage.getBytes(),
+      width: imgImage.width,
+      height: imgImage.height,
     );
 
     pdf.addPage(

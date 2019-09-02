@@ -68,8 +68,7 @@ void main() {
       }, count: 3),
     );
 
-    bloc.onCreateFromImage(
-        decodeImage(File('./in/asta.jpg').readAsBytesSync()),
+    bloc.onCreateFromImage(File('./in/asta.jpg').readAsBytesSync(),
         orientation: PageOrientation.landscape);
   });
 

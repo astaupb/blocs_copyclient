@@ -19,14 +19,14 @@ class CreateFromCsv extends PdfCreationEvent implements MultipageCreationEvent {
 }
 
 class CreateFromImage extends PdfCreationEvent {
-  final Image image;
+  final List<int> image;
 
   CreateFromImage(this.image, bool center, pdf.PageOrientation orientation)
       : super(center, orientation);
 
   @override
   String toString() =>
-      '[CreateFromImage center:$center ${image.exif.data.toString()} ${image.width}x${image.height}]';
+      '[CreateFromImage center:$center ${image.length}]';
 }
 
 class CreateFromText extends PdfCreationEvent

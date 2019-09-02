@@ -8,9 +8,8 @@ build_example:
   stage: build
   script:
     - cd example
-    - flutter channel master
+    - flutter channel stable
     - flutter upgrade
-    - flutter packages get
     - flutter build apk
   artifacts:
     paths:
