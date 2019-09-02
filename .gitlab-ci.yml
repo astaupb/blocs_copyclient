@@ -2,6 +2,7 @@ image: bchabord/flutter-android-docker:latest
 
 stages:
   - build
+  - test
 
 build_example:
   stage: build
@@ -14,3 +15,11 @@ build_example:
   artifacts:
     paths:
     - example/build/app/outputs/apk
+
+unit_test:
+  stage: test
+  script:
+    - pub run test
+  artifacts:
+    paths:
+      - test/out

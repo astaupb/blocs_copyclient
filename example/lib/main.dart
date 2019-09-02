@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      bloc: authBloc,
+      builder: (_) => authBloc,
       child: BlocBuilder(
         bloc: authBloc,
         builder: (BuildContext context, AuthState state) {
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
             jobsBloc = JoblistBloc(BackendSunrise(http.Client()));
             jobsBloc.onStart(state.token);
             return BlocProvider<JoblistBloc>(
-              bloc: jobsBloc,
+              builder: (_) => jobsBloc,
               child: JobsPage(),
             );
           }
