@@ -1,4 +1,3 @@
-import 'package:image/image.dart';
 import 'package:pdf/widgets.dart' as pdf;
 
 class CreateFromCsv extends PdfCreationEvent implements MultipageCreationEvent {
@@ -9,13 +8,12 @@ class CreateFromCsv extends PdfCreationEvent implements MultipageCreationEvent {
   @override
   bool showPageCount;
 
-  CreateFromCsv(this.csv, this.header, this.titles, this.showPageCount,
-      bool center, pdf.PageOrientation orientation)
+  CreateFromCsv(this.csv, this.header, this.titles, this.showPageCount, bool center,
+      pdf.PageOrientation orientation)
       : super(center, orientation);
 
   @override
-  String toString() =>
-      '[CreateFromCsv with titles: $titles "${csv.substring(0, 32)}"]';
+  String toString() => '[CreateFromCsv with titles: $titles "${csv.substring(0, 32)}"]';
 }
 
 class CreateFromImage extends PdfCreationEvent {
@@ -25,24 +23,22 @@ class CreateFromImage extends PdfCreationEvent {
       : super(center, orientation);
 
   @override
-  String toString() =>
-      '[CreateFromImage center:$center ${image.length}]';
+  String toString() => '[CreateFromImage center:$center ${image.length}]';
 }
 
-class CreateFromText extends PdfCreationEvent
-    implements MultipageCreationEvent {
+class CreateFromText extends PdfCreationEvent implements MultipageCreationEvent {
   final String text;
+  final bool monospace;
 
   @override
   bool showPageCount;
 
-  CreateFromText(this.text, this.showPageCount, bool center,
-      pdf.PageOrientation orientation)
+  CreateFromText(
+      this.text, this.showPageCount, bool center, pdf.PageOrientation orientation, this.monospace)
       : super(center, orientation);
 
   @override
-  String toString() =>
-      '[CreateFromText center:$center "${text.substring(0, 32)}[...]"]';
+  String toString() => '[CreateFromText center:$center "${text.substring(0, 32)}[...]"]';
 }
 
 mixin MultipageCreationEvent {

@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:blocs_copyclient/pdf_creation.dart';
 import 'package:blocs_copyclient/src/journal/journal_bloc.dart';
-import 'package:image/image.dart';
 import 'package:logging/logging.dart';
 import 'package:pdf/widgets.dart';
 import "package:test/test.dart";

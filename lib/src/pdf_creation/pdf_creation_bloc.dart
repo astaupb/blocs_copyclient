@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:csv/csv.dart';
@@ -7,6 +8,8 @@ import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
+import '../../fonts/LiberationMono.dart';
+import '../../fonts/LiberationSans.dart';
 import 'pdf_creation_events.dart';
 import 'pdf_creation_state.dart';
 
@@ -33,8 +36,12 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     yield PdfCreationState.busy();
 
     if (event is CreateFromText) {
-      yield PdfCreationState.result(_createFromText(
-              event.text, event.showPageCount, event.center, event.orientation)
+      yield PdfCreationState.result((await _createFromText(
+              event.text,
+              event.showPageCount,
+              event.center,
+              event.orientation,
+              event.monospace))
           .save());
     } else if (event is CreateFromImage) {
       yield PdfCreationState.result(
@@ -52,25 +59,33 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     }
   }
 
-  void onCreateFromCsv(String csv,
-          {String header = '',
-          List<String> titles = const [],
-          bool showPageCount = false,
-          bool center = false,
-          PageOrientation orientation = PageOrientation.natural}) =>
+  void onCreateFromCsv(
+    String csv, {
+    String header = '',
+    List<String> titles = const [],
+    bool showPageCount = false,
+    bool center = false,
+    PageOrientation orientation = PageOrientation.natural,
+  }) =>
       dispatch(CreateFromCsv(
           csv, header, titles, showPageCount, center, orientation));
 
-  void onCreateFromImage(List<int> image,
-          {bool center = true,
-          PageOrientation orientation = PageOrientation.natural}) =>
+  void onCreateFromImage(
+    List<int> image, {
+    bool center = true,
+    PageOrientation orientation = PageOrientation.natural,
+  }) =>
       dispatch(CreateFromImage(image, center, orientation));
 
-  void onCreateFromText(String text,
-          {bool showPageCount = false,
-          bool center = false,
-          PageOrientation orientation = PageOrientation.natural}) =>
-      dispatch(CreateFromText(text, showPageCount, center, orientation));
+  void onCreateFromText(
+    String text, {
+    bool showPageCount = false,
+    bool center = false,
+    PageOrientation orientation = PageOrientation.natural,
+    bool monospace = false,
+  }) =>
+      dispatch(
+          CreateFromText(text, showPageCount, center, orientation, monospace));
 
   @override
   void onError(Object error, StackTrace stacktrace) {
@@ -159,7 +174,11 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     pdf.addPage(
       Page(
         pageFormat: PdfPageFormat.a4,
-        orientation: orientation,
+        orientation: (orientation == PageOrientation.natural)
+            ? ((pdfImage.width > pdfImage.height)
+                ? PageOrientation.landscape
+                : PageOrientation.portrait)
+            : orientation,
         build: (Context context) =>
             (center) ? Center(child: Image(pdfImage)) : Image(pdfImage),
       ),
@@ -167,10 +186,27 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     return pdf;
   }
 
-  Document _createFromText(String text, bool showPageCount, bool center,
-      PageOrientation orientation) {
+  Future<Document> _createFromText(String text, bool showPageCount, bool center,
+      PageOrientation orientation, bool monospace) async {
+    Font ttfSans;
+    Font ttfMono;
+
     final Document doc = Document();
     final List<String> paragraphs = text.split('\n');
+
+    if (!monospace) {
+      final ByteData sansData = ByteData(liberationSans.length);
+      for (int i = 0; i < liberationSans.length; i++) {
+        sansData.setUint8(i, liberationSans[i]);
+      }
+      ttfSans = Font.ttf(sansData);
+    } else {
+      final ByteData monoData = ByteData(liberationMono.length);
+      for (int i = 0; i < liberationMono.length; i++) {
+        monoData.setUint8(i, liberationMono[i]);
+      }
+      ttfMono = Font.ttf(monoData);
+    }
 
     doc.addPage(
       MultiPage(
@@ -186,7 +222,9 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
           }
         },
         build: (Context context) => [
-          ...paragraphs.map((String paragraph) => Paragraph(text: paragraph)),
+          ...paragraphs.map((String paragraph) => Paragraph(
+              text: paragraph,
+              style: TextStyle(font: (monospace) ? ttfMono : ttfSans))),
         ],
       ),
     );
