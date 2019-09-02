@@ -41,7 +41,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   @override
   Stream<JoblistState> mapEventToState(JoblistEvent event) async* {
-    log.fine('Event: ${event}');
+    log.fine('Event: $event');
 
     /// go into busy state to show busyness
     yield JoblistState.busy();

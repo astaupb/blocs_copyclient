@@ -73,7 +73,7 @@ main(List<String> args) async {
         }
         break;
       case "exit":
-        await copyclient.authBloc.deleteToken();
+        copyclient.authBloc.deleteToken();
         break;
       default:
         stdout.write('command not found\n');

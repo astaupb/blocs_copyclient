@@ -39,16 +39,12 @@ class Job {
     int count = 0;
     if (jobOptions.range == '') return jobInfo.pagecount;
     for (String split
-        in (jobOptions.range.replaceAll(RegExp('![0-9]+(?:[-,]?[0-9]+)*'), ''))
-            .split(',')) {
+        in (jobOptions.range.replaceAll(RegExp('![0-9]+(?:[-,]?[0-9]+)*'), '')).split(',')) {
       if (split.contains('-')) {
-        final List<int> hyphenSplit = split
-            .split('-')
-            .map((String number) => int.tryParse(number))
-            .toList();
+        final List<int> hyphenSplit =
+            split.split('-').map((String number) => int.tryParse(number)).toList();
         for (int i = 1; i < hyphenSplit.length; i++) {
-          count +=
-              (hyphenSplit[i] ?? jobInfo.pagecount) - hyphenSplit[i - 1] + 1;
+          count += (hyphenSplit[i] ?? jobInfo.pagecount) - hyphenSplit[i - 1] + 1;
         }
       } else if (int.tryParse(split) != null) {
         count += 1;
@@ -106,8 +102,7 @@ class Job {
         // needs more than one page to nup
         if (_colorPages > 0) {
           // there are colored pages to spread across the nup
-          final int _nuppedTotal =
-              _totalPages ~/ 4 + ((_totalPages % 4 > 0) ? 1 : 0);
+          final int _nuppedTotal = _totalPages ~/ 4 + ((_totalPages % 4 > 0) ? 1 : 0);
 
           if (_nuppedTotal <= _colorPages) {
             // is there is a colored page for every page in the final nup, assume that every page has 1 collored member

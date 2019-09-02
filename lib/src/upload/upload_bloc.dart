@@ -45,7 +45,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
   @override
   Stream<UploadState> mapEventToState(UploadEvent event) async* {
-    log.fine('Event: ${event}');
+    log.fine('Event: $event');
 
     if (event is InitUploads) _token = event.token;
 
@@ -142,7 +142,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     return await request.send().then(
       (response) async {
         if (response.statusCode == 200) {
-          final String body = await utf8.decode(await response.stream.toBytes());
+          final String body = utf8.decode(await response.stream.toBytes());
           log.finest('[_getQueue] response: ${response.statusCode} $body');
           _queue = List<DispatcherTask>.from(
               json.decode(body).map((task) => DispatcherTask.fromMap(task)));

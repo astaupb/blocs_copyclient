@@ -8,7 +8,7 @@ class BackendShiva implements Backend {
   final String basePath = '/api/v1';
   final Client _innerClient;
 
-  BackendShiva(this._innerClient) {}
+  BackendShiva(this._innerClient);
 
   @override
   void close() {
@@ -53,7 +53,7 @@ class BackendSunrise implements Backend {
   final String basePath = '/astaprint';
   final Client _innerClient;
 
-  BackendSunrise(this._innerClient) {}
+  BackendSunrise(this._innerClient);
 
   @override
   void close() {

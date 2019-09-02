@@ -47,8 +47,8 @@ class Copyclient {
 
   Future<void> login({String username, String password}) async {
     if (username == null && password == null) {
-      username = prompt_for('username');
-      password = prompt_for('password');
+      username = promptFor('username');
+      password = promptFor('password');
       authBloc.login(username, password);
     } else if (username == null) {
       authBloc.tokenLogin(password);
@@ -96,7 +96,7 @@ class Copyclient {
     return null;
   }
 
-  String prompt_for(String prompt) {
+  String promptFor(String prompt) {
     stdout.write('$prompt: ');
     return stdin.readLineSync();
   }

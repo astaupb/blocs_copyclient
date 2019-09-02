@@ -52,7 +52,7 @@ void main() {
     expect(job.priceEstimation, 20);
 
     print('testing same stuff with NuP 2 and 4 now');
-    
+
     job.jobOptions.nup = 2;
 
     job.jobOptions.color = false;
@@ -67,7 +67,6 @@ void main() {
 
     job.jobOptions.color = false;
     expect(job.priceEstimation, 10);
-
 
     // also increase pages to nupping makes sense
     job = Job.fromMap(json.decode(longerJobMap));

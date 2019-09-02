@@ -14,7 +14,7 @@ void main() {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
   });
 
-  JournalBloc bloc;
+  //JournalBloc bloc;
 
   setUpAll(() {
     // create output directory for tests
