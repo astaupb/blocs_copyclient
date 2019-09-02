@@ -21,7 +21,7 @@ void main() {
 
   setUpAll(() {
     // create output directory for tests
-    final Directory outDir = Directory('test/out');
+    final Directory outDir = Directory('./out');
     if (!(outDir.existsSync())) outDir.create();
   });
 
@@ -29,7 +29,7 @@ void main() {
     bloc = PdfCreationBloc();
 
     // read test text from file
-    final File lorem = File('test/in/loremipsum.txt');
+    final File lorem = File('./in/loremipsum.txt');
     final String loremIpsum = lorem.readAsStringSync();
 
     // start a listener that saves the result document in test folder
@@ -37,7 +37,7 @@ void main() {
     listener = bloc.state.listen(
       expectAsync1((PdfCreationState state) {
         if (state.isResult) {
-          final File file = File('test/out/lorem.pdf');
+          final File file = File('./out/lorem.pdf');
           file.createSync(recursive: true);
           file.writeAsBytesSync(state.value, flush: true);
 
@@ -58,7 +58,7 @@ void main() {
     listener = bloc.state.listen(
       expectAsync1((PdfCreationState state) {
         if (state.isResult) {
-          final File file = File('test/out/image.pdf');
+          final File file = File('./out/image.pdf');
           file.createSync(recursive: true);
           file.writeAsBytesSync(state.value, flush: true);
 
@@ -69,7 +69,7 @@ void main() {
     );
 
     bloc.onCreateFromImage(
-        decodeImage(File('test/in/asta.jpg').readAsBytesSync()),
+        decodeImage(File('./in/asta.jpg').readAsBytesSync()),
         orientation: PageOrientation.landscape);
   });
 
@@ -83,7 +83,7 @@ void main() {
     listener = bloc.state.listen(
       expectAsync1((PdfCreationState state) {
         if (state.isResult) {
-          final File file = File('test/out/journal.pdf');
+          final File file = File('./out/journal.pdf');
           file.createSync(recursive: true);
           file.writeAsBytesSync(state.value, flush: true);
 

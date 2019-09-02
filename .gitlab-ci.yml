@@ -19,7 +19,7 @@ build_example:
 unit_test:
   stage: test
   script:
-    - pub run test
+    - flutter test
   artifacts:
     paths:
       - test/out

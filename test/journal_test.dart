@@ -18,7 +18,7 @@ void main() {
 
   setUpAll(() {
     // create output directory for tests
-    final Directory outDir = Directory('test/out');
+    final Directory outDir = Directory('./out');
     if (!(outDir.existsSync())) outDir.create();
   });
 
@@ -29,7 +29,7 @@ void main() {
     });
 
     test('create csv file', () {
-      File file = File('test/out/journal.csv')..createSync(recursive: true);
+      File file = File('./out/journal.csv')..createSync(recursive: true);
       file.writeAsBytesSync(journalToCsv(exampleJournal).codeUnits, flush: true);
     });
   });
