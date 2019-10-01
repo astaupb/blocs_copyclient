@@ -121,9 +121,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       //'password': password
     };
 
-    a3 != null ? queryParameters.putIfAbsent('a3', () => a3);
-    color != null ? queryParameters.putIfAbsent('color', () => color);
-    duplex != null ? queryParameters.putIfAbsent('duplex', () => duplex);
+    if (a3 != null) queryParameters.putIfAbsent('a3', () => a3);
+    if (color != null) queryParameters.putIfAbsent('color', () => color);
+    if (duplex != null) queryParameters.putIfAbsent('duplex', () => duplex);
 
     Request request = ApiRequest(
       'POST',
