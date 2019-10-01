@@ -116,20 +116,18 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     bool color,
     int duplex,
   }) async {
-    Map<String, dynamic> queryParameters = {
-      'filename': filename,
-      //'password': password
-    };
-
-    if (a3 != null) queryParameters.putIfAbsent('a3', () => a3);
-    if (color != null) queryParameters.putIfAbsent('color', () => color);
-    if (duplex != null) queryParameters.putIfAbsent('duplex', () => duplex);
 
     Request request = ApiRequest(
       'POST',
       '/jobs/queue',
       _backend,
-      queryParameters: queryParameters,
+      queryParameters: {
+        'filename': filename,
+        //'password': password,
+        'a3': a3.toString(),
+        'color': color.toString(),
+        'duplex': duplex.toString(),
+      },
     );
     request.headers['Content-Type'] = 'application/pdf';
     request.headers['X-Api-Key'] = _token;
