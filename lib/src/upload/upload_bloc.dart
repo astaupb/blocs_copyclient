@@ -35,12 +35,18 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   onUpload(
     List<int> data, {
     String filename,
-    String password,
+    String password
+    bool a3,
+    bool color,
+    int duplex,
   }) =>
       dispatch(UploadFile(
         data: data,
         filename: filename,
         password: password,
+        a3: a3??,
+        color: color??,
+        duplex: duplex??,
       ));
 
   @override
@@ -72,6 +78,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           event.data,
           filename: event.filename,
           password: event.password,
+          a3: event.a3,
+          color: event.color,
+          duplex: event.duplex,
         ).then((String uid) {
           _queue.forEach((task) {
             if (task.localId == localId) {
@@ -103,15 +112,24 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     List<int> data, {
     String filename = '',
     String password = '',
+    bool a3,
+    bool color,
+    int duplex,
   }) async {
+    Map<String, dynamic> queryParameters = {
+      'filename': filename,
+      //'password': password
+    };
+
+    a3 != null ? queryParameters.putIfAbsent('a3': a3);
+    color != null ? queryParameters.putIfAbsent('color' color);
+    duplex != null ? queryParameters.putIfAbsent('duplex' duplex);
+
     Request request = ApiRequest(
       'POST',
       '/jobs/queue',
       _backend,
-      queryParameters: {
-        'filename': filename,
-        //'password': password,
-      },
+      queryParameters: queryParameters,
     );
     request.headers['Content-Type'] = 'application/pdf';
     request.headers['X-Api-Key'] = _token;
