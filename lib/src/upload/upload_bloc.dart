@@ -35,7 +35,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   onUpload(
     List<int> data, {
     String filename,
-    String password
+    String password,
     bool a3,
     bool color,
     int duplex,
