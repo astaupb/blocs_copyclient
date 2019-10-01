@@ -17,6 +17,8 @@ class RefreshUploads extends UploadEvent {}
 class UploadFile extends UploadEvent {
   final List<int> data;
   final bool color;
+  final bool a3;
+  final int duplex;
   final String filename;
   final String password;
 
@@ -25,11 +27,15 @@ class UploadFile extends UploadEvent {
     this.color = true,
     this.filename = '',
     this.password = '',
+    this.a3 = false,
+    this.duplex = 0,
   });
 
   Map<String, dynamic> toMap() => {
         'data': data.length,
         'color': color,
+        'a3': a3,
+        'duplex': duplex,
         'filename': filename,
         'password': password,
       };
