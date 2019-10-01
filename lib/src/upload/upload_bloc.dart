@@ -44,9 +44,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         data: data,
         filename: filename,
         password: password,
-        a3: a3??,
-        color: color??,
-        duplex: duplex??,
+        a3: a3,
+        color: color,
+        duplex: duplex,
       ));
 
   @override
