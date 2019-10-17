@@ -12,6 +12,7 @@ class UserState extends ResultState<User> {
     bool isException = false,
   }) : super(
             value: user,
+            error: error,
             isResult: isResult,
             isInit: isInit,
             isBusy: isBusy,
