@@ -39,6 +39,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     bool a3,
     bool color,
     int duplex,
+    int copies,
   }) =>
       dispatch(UploadFile(
         data: data,
@@ -47,6 +48,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         a3: a3,
         color: color,
         duplex: duplex,
+        copies: copies,
       ));
 
   @override
@@ -81,6 +83,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           a3: event.a3,
           color: event.color,
           duplex: event.duplex,
+          copies: event.copies,
         ).then((String uid) {
           _queue.forEach((task) {
             if (task.localId == localId) {
@@ -115,6 +118,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     bool a3,
     bool color,
     int duplex,
+    int copies,
   }) async {
 
     Request request = ApiRequest(
@@ -127,6 +131,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         'a3': a3.toString(),
         'color': color.toString(),
         'duplex': duplex.toString(),
+        'copies': copies.toString(),
       },
     );
     request.headers['Content-Type'] = 'application/pdf';
