@@ -9,6 +9,7 @@ class JobOptions {
   int nup;
   int nupPageOrder;
   bool keep;
+  bool bypass;
 
   /// JobOptions with default values
   JobOptions(
@@ -20,7 +21,8 @@ class JobOptions {
       this.range = '',
       this.nup = 1,
       this.nupPageOrder = 0,
-      this.keep = false});
+      this.keep = false,
+      this.bypass = false});
 
   /// Build JobOptions object from map
   factory JobOptions.fromMap(Map<String, dynamic> options) => JobOptions(
@@ -33,6 +35,7 @@ class JobOptions {
         nup: options['nup'],
         nupPageOrder: options['nuppageorder'],
         keep: options['keep'],
+        bypass: options['bypass'],
       );
 
   Map<String, dynamic> toMap() => {
@@ -44,7 +47,8 @@ class JobOptions {
         'range': range,
         'nup': nup,
         'nuppageorder': nupPageOrder,
-        'keep': keep
+        'keep': keep,
+        'bypass': bypass
       };
 
   @override
