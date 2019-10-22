@@ -163,7 +163,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     final pdf = Document();
 
     // wait a few ms so the UI can receive the busy state in time
-    await Future.delayed(const Duration(milliseconds: 10));
+    await Future.delayed(const Duration(milliseconds: 100));
     
     _log.finest('decoding image');
     final img.Image imgImage = img.decodeImage(image);
