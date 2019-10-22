@@ -45,7 +45,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
           .save());
     } else if (event is CreateFromImage) {
       yield PdfCreationState.result(
-          _createFromImage(event.image, event.center, event.orientation)
+          (await _createFromImage(event.image, event.center, event.orientation))
               .save());
     } else if (event is CreateFromCsv) {
       yield PdfCreationState.result(_createFromCsv(
@@ -158,12 +158,17 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     return doc;
   }
 
-  Document _createFromImage(
-      List<int> image, bool center, PageOrientation orientation) {
+  Future<Document> _createFromImage(
+      List<int> image, bool center, PageOrientation orientation) async {
     final pdf = Document();
 
+    // wait a few ms so the UI can receive the busy state in time
+    await Future.delayed(const Duration(milliseconds: 10));
+    
+    _log.finest('decoding image');
     final img.Image imgImage = img.decodeImage(image);
 
+    _log.finest('creating  pdf image');
     final PdfImage pdfImage = PdfImage(
       pdf.document,
       image: imgImage.getBytes(),
@@ -171,6 +176,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
       height: imgImage.height,
     );
 
+    _log.finest('creating pdf with image');
     pdf.addPage(
       Page(
         pageFormat: PdfPageFormat.a4,
@@ -183,6 +189,8 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
             (center) ? Center(child: Image(pdfImage)) : Image(pdfImage),
       ),
     );
+
+    _log.finest('image pdf done');
     return pdf;
   }
 
