@@ -11,7 +11,7 @@ void main() {
     expect(
         job.toString(),
         equals(
-            '{id: 134818, timestamp: 1564768316, info: {filename: AStA Copyclient Benutzeranleitung.pdf, title: , pagecount: 4, colored: 4, a3: false}, options: {color: false, duplex: 0, copies: 1, collate: false, a3: false, range: , nup: 1, nuppageorder: 0, keep: false}, estimation: 20}'));
+            '{id: 134818, timestamp: 1564768316, info: {filename: AStA Copyclient Benutzeranleitung.pdf, title: , pagecount: 4, colored: 4, a3: false}, options: {color: false, duplex: 0, copies: 1, collate: false, a3: false, range: , nup: 1, nuppageorder: 0, keep: false, bypass: true}, estimation: 20}'));
   });
 
   test('calculate price before and after pagerange', () {
