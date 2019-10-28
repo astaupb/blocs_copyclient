@@ -10,19 +10,22 @@ class JobOptions {
   int nupPageOrder;
   bool keep;
   bool bypass;
+  String displayName;
 
   /// JobOptions with default values
-  JobOptions(
-      {this.color = false,
-      this.duplex = 0,
-      this.copies = 1,
-      this.collate = false,
-      this.a3 = false,
-      this.range = '',
-      this.nup = 1,
-      this.nupPageOrder = 0,
-      this.keep = false,
-      this.bypass = false});
+  JobOptions({
+    this.color = false,
+    this.duplex = 0,
+    this.copies = 1,
+    this.collate = false,
+    this.a3 = false,
+    this.range = '',
+    this.nup = 1,
+    this.nupPageOrder = 0,
+    this.keep = false,
+    this.bypass = false,
+    this.displayName = '',
+  });
 
   /// Build JobOptions object from map
   factory JobOptions.fromMap(Map<String, dynamic> options) => JobOptions(
@@ -36,6 +39,7 @@ class JobOptions {
         nupPageOrder: options['nuppageorder'],
         keep: options['keep'],
         bypass: options['bypass'],
+        displayName: options['displayname'],
       );
 
   Map<String, dynamic> toMap() => {
@@ -48,7 +52,8 @@ class JobOptions {
         'nup': nup,
         'nuppageorder': nupPageOrder,
         'keep': keep,
-        'bypass': bypass
+        'bypass': bypass,
+        'displayname': displayName,
       };
 
   @override
