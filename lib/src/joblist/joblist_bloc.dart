@@ -180,7 +180,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
     return await _backend.send(request).then(
       (response) async {
-        log.finer('_deleteJob: ${response.statusCode}');
+        log.finer('_deleteAllJobs: ${response.statusCode}');
         if (response.statusCode == 205) {
           _jobs = [];
         } else {
