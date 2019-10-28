@@ -6,6 +6,7 @@ class JobInfo {
   final int pagecount;
   final int colored;
   final bool a3;
+  final bool landscape;
 
   /// JobInfo with default values
   JobInfo({
@@ -14,6 +15,7 @@ class JobInfo {
     this.pagecount = 0,
     this.colored = 0,
     this.a3 = false,
+    this.landscape = false,
   });
 
   /// Build JobInfo object from map
@@ -23,6 +25,7 @@ class JobInfo {
         pagecount: info['pagecount'],
         colored: info['colored'],
         a3: info['a3'],
+        landscape: info['landscape'],
       );
 
   Map<String, dynamic> toMap() => {
@@ -31,6 +34,7 @@ class JobInfo {
         'pagecount': pagecount,
         'colored': colored,
         'a3': a3,
+        'landscape': landscape,
       };
 
   @override
