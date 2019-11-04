@@ -35,33 +35,26 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
   @override
   Stream<TokensState> mapEventToState(TokensEvent event) async* {
     log.fine('Event: $event');
+    yield TokensState.busy();
 
     if (event is InitTokens) {
       _token = event.token;
-    }
-
-    if (event is GetTokens) {
-      yield TokensState.busy();
+      yield TokensState.init();
+    } else if (event is GetTokens) {
       try {
         await _getTokens();
         yield TokensState.result(_tokens);
       } on ApiException catch (e) {
         yield TokensState.exception(e);
       }
-    }
-
-    if (event is DeleteToken) {
-      yield TokensState.busy();
+    } else if (event is DeleteToken) {
       try {
         await _deleteToken(event.id);
         yield TokensState.result(_tokens);
       } on ApiException catch (e) {
         yield TokensState.exception(e);
       }
-    }
-
-    if (event is DeleteTokens) {
-      yield TokensState.busy();
+    } else if (event is DeleteTokens) {
       try {
         await _deleteTokens();
         await _getTokens();
@@ -100,7 +93,8 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
           _tokens.removeWhere((Token tok) => tok.id == id);
           return;
         } else {
-          throw ApiException(response.statusCode, info: 'status code other than 205 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 205 received');
         }
       },
     );
@@ -119,7 +113,8 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
           _tokens = [];
           return;
         } else {
-          throw ApiException(response.statusCode, info: 'status code other than 205 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 205 received');
         }
       },
     );
@@ -147,7 +142,8 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
           );
           return;
         } else {
-          throw ApiException(response.statusCode, info: 'status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
