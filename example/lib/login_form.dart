@@ -8,14 +8,12 @@ class LoginForm extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  LoginFormState createState() {
-    return LoginFormState();
-  }
+  LoginFormState createState() => LoginFormState();
 }
 
 class LoginFormState extends State<LoginForm> {
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  static final TextEditingController usernameController = TextEditingController();
+  static final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

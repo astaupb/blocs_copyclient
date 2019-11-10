@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'login_form.dart';
 
@@ -12,11 +11,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   _LoginPageState();
-
-  static final http.Client client = http.Client();
-
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

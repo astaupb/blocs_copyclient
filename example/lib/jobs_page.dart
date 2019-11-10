@@ -12,12 +12,6 @@ class _JobsPageState extends State<JobsPage> {
   JoblistBloc jobsBloc;
 
   @override
-  void dispose() {
-    jobsBloc.close();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     jobsBloc = BlocProvider.of<JoblistBloc>(context);
     super.initState();

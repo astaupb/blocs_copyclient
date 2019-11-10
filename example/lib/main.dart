@@ -60,11 +60,7 @@ class _HomePageState extends State<HomePage> {
           if (state.isUnauthorized) {
             return LoginPage();
           } else if (state.isBusy) {
-            return Container(
-              width: 0.0,
-              height: 0.0,
-            );
-            //return Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           } else if (state.isAuthorized) {
             // AUTHORIZED AND READY TO HUSTLE
             jobsBloc.onStart(state.token);
