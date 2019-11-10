@@ -28,10 +28,10 @@ main(List<String> args) async {
     if (args.length < 1) continue;
     switch (args[0]) {
       case "user":
-        await copyclient.userBloc.onRefresh();
+        copyclient.userBloc.onRefresh();
         break;
       case "jobs":
-        await copyclient.joblistBloc.onRefresh();
+        copyclient.joblistBloc.onRefresh();
         switch (args.length) {
           case 1:
             copyclient.showJobs();
@@ -51,7 +51,7 @@ main(List<String> args) async {
         }
         break;
       case "journal":
-        await copyclient.journalBloc.onRefresh();
+        copyclient.journalBloc.onRefresh();
         break;
       case "upload":
         if (args.length == 2) {
@@ -73,7 +73,7 @@ main(List<String> args) async {
         }
         break;
       case "exit":
-        copyclient.authBloc.deleteToken();
+        copyclient.authBloc.onDeleteToken();
         break;
       default:
         stdout.write('command not found\n');

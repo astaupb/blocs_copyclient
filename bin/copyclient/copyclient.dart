@@ -34,7 +34,7 @@ class Copyclient {
     journalBloc = JournalBloc(backend);
     printQueueBloc = PrintQueueBloc(backend);
 
-    authBloc.state.listen((AuthState state) {
+    authBloc.listen((AuthState state) {
       if (state.isAuthorized) {
         authorized = true;
         propagateToken(state.token);
@@ -49,17 +49,17 @@ class Copyclient {
     if (username == null && password == null) {
       username = promptFor('username');
       password = promptFor('password');
-      authBloc.login(username, password);
+      authBloc.onLogin(username, password);
     } else if (username == null) {
-      authBloc.tokenLogin(password);
+      authBloc.onTokenLogin(password);
     } else {
-      authBloc.login(username, password);
+      authBloc.onLogin(username, password);
     }
   }
 
   Future<void> showJobs() async {
     var listener;
-    listener = joblistBloc.state.listen(
+    listener = joblistBloc.listen(
       (JoblistState state) {
         if (state.isResult)
           state.value.forEach((Job job) {
@@ -73,7 +73,7 @@ class Copyclient {
   Future<void> showJobDetails(int id) async {
     var listener;
     joblistBloc.onRefreshOptions(id);
-    listener = joblistBloc.state.listen((JoblistState state) {
+    listener = joblistBloc.listen((JoblistState state) {
       if (state.isResult) {
         print(state.value[joblistBloc.getIndexById(id)]);
         listener.cancel();
@@ -87,7 +87,7 @@ class Copyclient {
     var options = joblistBloc.jobs[index].jobOptions;
     options.range = range;
     joblistBloc.onUpdateOptionsById(id, options);
-    listener = joblistBloc.state.listen((JoblistState state) {
+    listener = joblistBloc.listen((JoblistState state) {
       if (state.isResult) {
         showJobDetails(id);
         listener.cancel();
