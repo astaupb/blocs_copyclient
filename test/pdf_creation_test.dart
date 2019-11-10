@@ -33,7 +33,7 @@ void main() {
 
     // start a listener that saves the result document in test folder
     StreamSubscription listener;
-    listener = bloc.state.listen(
+    listener = bloc.listen(
       expectAsync1((PdfCreationState state) {
         if (state.isResult) {
           final File file = File('./out/lorem.pdf');
@@ -41,7 +41,7 @@ void main() {
           file.writeAsBytesSync(state.value, flush: true);
 
           listener.cancel();
-          bloc.dispose();
+          bloc.close();
         }
       }, count: 3),
     );
@@ -54,7 +54,7 @@ void main() {
 
     // start a listener that saves the result document in test folder
     StreamSubscription listener;
-    listener = bloc.state.listen(
+    listener = bloc.listen(
       expectAsync1((PdfCreationState state) {
         if (state.isResult) {
           final File file = File('./out/image.pdf');
@@ -62,7 +62,7 @@ void main() {
           file.writeAsBytesSync(state.value, flush: true);
 
           listener.cancel();
-          bloc.dispose();
+          bloc.close();
         }
       }, count: 3),
     );
@@ -78,7 +78,7 @@ void main() {
 
     // start a listener that saves the result document in test folder
     StreamSubscription listener;
-    listener = bloc.state.listen(
+    listener = bloc.listen(
       expectAsync1((PdfCreationState state) {
         if (state.isResult) {
           final File file = File('./out/journal.pdf');
@@ -86,7 +86,7 @@ void main() {
           file.writeAsBytesSync(state.value, flush: true);
 
           listener.cancel();
-          bloc.dispose();
+          bloc.close();
         }
       }, count: 3),
     );

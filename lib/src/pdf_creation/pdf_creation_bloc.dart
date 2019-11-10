@@ -24,12 +24,6 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
   PdfCreationState get initialState => PdfCreationState.init();
 
   @override
-  void dispose() {
-    _log.fine('disposing of $this');
-    super.dispose();
-  }
-
-  @override
   Stream<PdfCreationState> mapEventToState(
     PdfCreationEvent event,
   ) async* {
@@ -67,7 +61,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     bool center = false,
     PageOrientation orientation = PageOrientation.natural,
   }) =>
-      dispatch(CreateFromCsv(
+      this.add(CreateFromCsv(
           csv, header, titles, showPageCount, center, orientation));
 
   void onCreateFromImage(
@@ -75,7 +69,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     bool center = true,
     PageOrientation orientation = PageOrientation.natural,
   }) =>
-      dispatch(CreateFromImage(image, center, orientation));
+      this.add(CreateFromImage(image, center, orientation));
 
   void onCreateFromText(
     String text, {
@@ -84,7 +78,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     PageOrientation orientation = PageOrientation.natural,
     bool monospace = false,
   }) =>
-      dispatch(
+      this.add(
           CreateFromText(text, showPageCount, center, orientation, monospace));
 
   @override
@@ -164,7 +158,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
 
     // wait a few ms so the UI can receive the busy state in time
     await Future.delayed(const Duration(milliseconds: 100));
-    
+
     _log.finest('decoding image');
     final img.Image imgImage = img.decodeImage(image);
 

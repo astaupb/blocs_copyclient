@@ -30,12 +30,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   get user => _user;
 
   @override
-  void dispose() {
-    _log.fine('disposing of $this');
-    super.dispose();
-  }
-
-  @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
     _log.fine(event);
 
@@ -85,22 +79,24 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
   }
 
-  onChangeOptions(JobOptions options) => dispatch(ChangeOptions(options));
+  void onChangeOptions(JobOptions options) => this.add(ChangeOptions(options));
 
-  onChangePassword(String oldPassword, String newPassword) =>
-      dispatch(ChangePassword(oldPassword, newPassword));
+  void onChangePassword(String oldPassword, String newPassword) =>
+      this.add(ChangePassword(oldPassword, newPassword));
 
-  onChangeUsername(String username) => dispatch(ChangeUsername(username: username));
+  void onChangeUsername(String username) =>
+      this.add(ChangeUsername(username: username));
 
-  onGetOptions() => dispatch(GetOptions());
+  void onGetOptions() => this.add(GetOptions());
 
-  onRefresh() => dispatch(RefreshUser());
+  void onRefresh() => this.add(RefreshUser());
 
-  onStart(String token) => dispatch(InitUser(token));
+  void onStart(String token) => this.add(InitUser(token));
 
   @override
   void onTransition(Transition<UserEvent, UserState> transition) {
-    _log.fine('Transition from ${transition.currentState} to ${transition.nextState}');
+    _log.fine(
+        'Transition from ${transition.currentState} to ${transition.nextState}');
     super.onTransition(transition);
   }
 
@@ -116,7 +112,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       (response) async {
         if (response.statusCode == 200) {
           String responseString = await response.stream.bytesToString();
-          _log.finer('[_getOptions] response: ${response.statusCode} $responseString');
+          _log.finer(
+              '[_getOptions] response: ${response.statusCode} $responseString');
 
           _user.options = JobOptions.fromMap(json.decode(responseString));
           return;
@@ -142,7 +139,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           _log.finer('[_getUser] response: ${response.statusCode}');
 
           /// move [responseMap] entries into the global [User] object
-          _user = User.fromMap(json.decode(utf8.decode(await response.stream.toBytes())));
+          _user = User.fromMap(
+              json.decode(utf8.decode(await response.stream.toBytes())));
           _user.token = _token;
         } else {
           throw ApiException(response.statusCode,

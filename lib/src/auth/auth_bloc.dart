@@ -25,21 +25,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthState get initialState => AuthState.unauthorized();
 
   @override
-  void dispose() {
-    log.info('disposing of $this');
-    backend.close();
-    super.dispose();
-  }
-
-  void login(String user, String pw, {bool persistent = false}) => dispatch(
-        Login(username: user, password: pw, persistent: persistent),
-      );
-
-  void deleteToken() => dispatch(LogoutToken());
-
-  void logout() => dispatch(Logout());
-
-  @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
     log.fine('Event: $event');
     if (event is Login) {
@@ -86,61 +71,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  void onDeleteToken() => this.add(LogoutToken());
+
+  void onLogin(String username, String password, {bool persistent = false}) =>
+      this.add(Login(
+          username: username, password: password, persistent: persistent));
+
+  void onRegister(String username, String password) =>
+      this.add(Register(username, password));
+
+  void onTokenLogin(String token) => this.add(TokenLogin(token: token));
+
   @override
   void onTransition(Transition<AuthEvent, AuthState> transition) {
     log.fine('State: ${transition.nextState}');
     super.onTransition(transition);
-  }
-
-  void register(String username, String password) => dispatch(Register(username, password));
-
-  void tokenLogin(String token) => dispatch(TokenLogin(token: token));
-
-  /// POST /user/tokens and then GET /user to update the global [User] object
-  Future<void> _postToken(Login initEvent) async {
-    log.fine('_postToken: ${initEvent.toString()}');
-    http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
-    request.headers['Accept'] = 'application/json';
-    request.headers['Authorization'] =
-        ('Basic ' + base64.encode(utf8.encode(initEvent.username + ':' + initEvent.password)));
-
-    log.finer('_postToken: $request');
-
-    await backend.send(request).then(
-      (response) async {
-        log.finer('_postToken: ${response.statusCode}');
-        if (response.statusCode == 200) {
-          token = json.decode(await response.stream.bytesToString());
-        } else {
-          throw ApiException(response.statusCode,
-              info: '_postToken: received response code other than 200');
-        }
-      },
-    ).timeout(Duration(seconds: 10),
-        onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
-  }
-
-  Future<void> _logout() async {
-    log.fine('_logout');
-    http.BaseRequest request = ApiRequest('POST', '/user/logout', backend);
-
-    request.headers['X-Api-Key'] = token;
-
-    log.finer('_logout: $request');
-
-    return await backend.send(request).then(
-      (response) async {
-        log.finer('_logout: ${response.statusCode}');
-        if (response.statusCode == 205) {
-          token = '';
-          return;
-        } else {
-          throw ApiException(response.statusCode,
-              info: '_logout: received status code other than 205');
-        }
-      },
-    ).timeout(Duration(seconds: 10),
-        onTimeout: () => throw ApiException(0, info: '_logout: connection timed out'));
   }
 
   Future<void> _deleteToken({int id}) async {
@@ -165,7 +110,58 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     ).timeout(Duration(seconds: 10),
-        onTimeout: () => throw ApiException(0, info: '_deleteToken: connection timed out'));
+        onTimeout: () =>
+            throw ApiException(0, info: '_deleteToken: connection timed out'));
+  }
+
+  Future<void> _logout() async {
+    log.fine('_logout');
+    http.BaseRequest request = ApiRequest('POST', '/user/logout', backend);
+
+    request.headers['X-Api-Key'] = token;
+
+    log.finer('_logout: $request');
+
+    return await backend.send(request).then(
+      (response) async {
+        log.finer('_logout: ${response.statusCode}');
+        if (response.statusCode == 205) {
+          token = '';
+          return;
+        } else {
+          throw ApiException(response.statusCode,
+              info: '_logout: received status code other than 205');
+        }
+      },
+    ).timeout(Duration(seconds: 10),
+        onTimeout: () =>
+            throw ApiException(0, info: '_logout: connection timed out'));
+  }
+
+  /// POST /user/tokens and then GET /user to update the global [User] object
+  Future<void> _postToken(Login initEvent) async {
+    log.fine('_postToken: ${initEvent.toString()}');
+    http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
+    request.headers['Accept'] = 'application/json';
+    request.headers['Authorization'] = ('Basic ' +
+        base64.encode(
+            utf8.encode(initEvent.username + ':' + initEvent.password)));
+
+    log.finer('_postToken: $request');
+
+    await backend.send(request).then(
+      (response) async {
+        log.finer('_postToken: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          token = json.decode(await response.stream.bytesToString());
+        } else {
+          throw ApiException(response.statusCode,
+              info: '_postToken: received response code other than 200');
+        }
+      },
+    ).timeout(Duration(seconds: 10),
+        onTimeout: () =>
+            throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
   Future<void> _postUser(String username, String password) async {
@@ -190,6 +186,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     ).timeout(Duration(seconds: 10),
-        onTimeout: () => throw ApiException(0, info: '_postUser: connection timed out'));
+        onTimeout: () =>
+            throw ApiException(0, info: '_postUser: connection timed out'));
   }
 }

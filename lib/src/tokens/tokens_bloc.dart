@@ -27,12 +27,6 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
   TokensState get initialState => TokensState.init();
 
   @override
-  void dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
-  }
-
-  @override
   Stream<TokensState> mapEventToState(TokensEvent event) async* {
     log.fine('Event: $event');
     yield TokensState.busy();
@@ -65,13 +59,13 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
     }
   }
 
-  void onDeleteToken(int id) => dispatch(DeleteToken(id));
+  void onDeleteToken(int id) => this.add(DeleteToken(id));
 
-  void onDeleteTokens() => dispatch(DeleteTokens());
+  void onDeleteTokens() => this.add(DeleteTokens());
 
-  void onGetTokens() => dispatch(GetTokens());
+  void onGetTokens() => this.add(GetTokens());
 
-  void onStart(String token) => dispatch(InitTokens(token));
+  void onStart(String token) => this.add(InitTokens(token));
 
   @override
   void onTransition(Transition<TokensEvent, TokensState> transition) {

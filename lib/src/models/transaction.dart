@@ -1,18 +1,18 @@
 class Transaction {
   int value;
   String description;
-  bool without_receipt;
-  int admin_id;
+  bool withoutReceipt;
+  int adminId;
   String timestamp;
 
-  Transaction({this.value, this.description, this.without_receipt, this.admin_id, this.timestamp});
+  Transaction({this.value, this.description, this.withoutReceipt, this.adminId, this.timestamp});
 
   factory Transaction.fromMap(Map<String, dynamic> transaction) {
     return Transaction(
       value: transaction['value'],
       description: transaction['description'],
-      without_receipt: transaction['without_receipt'],
-      admin_id: transaction['admin_id'],
+      withoutReceipt: transaction['without_receipt'],
+      adminId: transaction['admin_id'],
       timestamp: transaction['timestamp'],
     );
   }
@@ -20,8 +20,8 @@ class Transaction {
   Map<String, dynamic> toMap() => {
         'value': value,
         'description': description,
-        'without_receipt': without_receipt,
-        'admin_id': admin_id,
+        'without_receipt': withoutReceipt,
+        'admin_id': adminId,
         'timestamp': timestamp,
       };
 

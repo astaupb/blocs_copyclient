@@ -5,11 +5,11 @@ import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 
-import 'upload_events.dart';
-import 'upload_state.dart';
 import '../../exceptions.dart';
 import '../models/backend.dart';
 import '../models/dispatcher_task.dart';
+import 'upload_events.dart';
+import 'upload_state.dart';
 
 class UploadBloc extends Bloc<UploadEvent, UploadState> {
   final Logger log = Logger('UploadBloc');
@@ -27,29 +27,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
   @override
   get initialState => UploadState.init();
-
-  onStart(String token) => dispatch(InitUploads(token));
-
-  onRefresh() => dispatch(RefreshUploads());
-
-  onUpload(
-    List<int> data, {
-    String filename,
-    String password,
-    bool a3,
-    bool color,
-    int duplex,
-    int copies,
-  }) =>
-      dispatch(UploadFile(
-        data: data,
-        filename: filename,
-        password: password,
-        a3: a3,
-        color: color,
-        duplex: duplex,
-        copies: copies,
-      ));
 
   @override
   Stream<UploadState> mapEventToState(UploadEvent event) async* {
@@ -99,16 +76,55 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     }
   }
 
+  void onRefresh() => this.add(RefreshUploads());
+
+  void onStart(String token) => this.add(InitUploads(token));
+
   @override
   void onTransition(Transition<UploadEvent, UploadState> transition) {
     log.fine('State: ${transition.nextState}');
     super.onTransition(transition);
   }
 
-  @override
-  void dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
+  void onUpload(
+    List<int> data, {
+    String filename,
+    String password,
+    bool a3,
+    bool color,
+    int duplex,
+    int copies,
+  }) =>
+      this.add(UploadFile(
+        data: data,
+        filename: filename,
+        password: password,
+        a3: a3,
+        color: color,
+        duplex: duplex,
+        copies: copies,
+      ));
+
+  Future<void> _getQueue() async {
+    Request request = ApiRequest('GET', '/jobs/queue', _backend);
+    request.headers['Accept'] = 'application/json';
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('[_getQueue] request: $request');
+
+    return await request.send().then(
+      (response) async {
+        if (response.statusCode == 200) {
+          final String body = utf8.decode(await response.stream.toBytes());
+          log.finest('[_getQueue] response: ${response.statusCode} $body');
+          _queue = List<DispatcherTask>.from(
+              json.decode(body).map((task) => DispatcherTask.fromMap(task)));
+        } else {
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
+        }
+      },
+    );
   }
 
   Future<String> _postQueue(
@@ -120,7 +136,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     int duplex,
     int copies,
   }) async {
-
     Request request = ApiRequest(
       'POST',
       '/jobs/queue',
@@ -147,28 +162,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response.statusCode == 202) {
           return json.decode(body);
         } else {
-          throw ApiException(response.statusCode, info: 'status code other than 202 received');
-        }
-      },
-    );
-  }
-
-  Future<void> _getQueue() async {
-    Request request = ApiRequest('GET', '/jobs/queue', _backend);
-    request.headers['Accept'] = 'application/json';
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('[_getQueue] request: $request');
-
-    return await request.send().then(
-      (response) async {
-        if (response.statusCode == 200) {
-          final String body = utf8.decode(await response.stream.toBytes());
-          log.finest('[_getQueue] response: ${response.statusCode} $body');
-          _queue = List<DispatcherTask>.from(
-              json.decode(body).map((task) => DispatcherTask.fromMap(task)));
-        } else {
-          throw ApiException(response.statusCode, info: 'status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 202 received');
         }
       },
     );

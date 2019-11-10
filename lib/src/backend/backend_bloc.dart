@@ -22,12 +22,6 @@ class BackendBloc extends Bloc<BackendEvent, BackendState> {
   get initialState => BackendState.init();
 
   @override
-  void dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
-  }
-
-  @override
   Stream<BackendState> mapEventToState(BackendEvent event) async* {
     log.fine(event);
     if (event is SetBackend) {
@@ -36,11 +30,11 @@ class BackendBloc extends Bloc<BackendEvent, BackendState> {
     }
   }
 
+  void onSetBackend(Backend backend) => this.add(SetBackend(backend: backend));
+
   @override
   void onTransition(Transition<BackendEvent, BackendState> transition) {
     log.fine(transition.nextState);
     super.onTransition(transition);
   }
-
-  setBackend(Backend backend) => dispatch(SetBackend(backend: backend));
 }

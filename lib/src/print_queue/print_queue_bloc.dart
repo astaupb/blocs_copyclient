@@ -30,12 +30,6 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   get initialState => PrintQueueState.init();
 
   @override
-  dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
-  }
-
-  @override
   Stream<PrintQueueState> mapEventToState(PrintQueueEvent event) async* {
     log.fine('Event: $event');
 
@@ -93,13 +87,13 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     }
   }
 
-  onLockDevice({String queueUid}) => dispatch(LockQueue(queueUid: queueUid ?? null));
+  onDelete() => this.add(CancelJob());
 
-  onRefresh({int deviceId}) => dispatch(GetQueue(deviceId ?? _deviceId));
+  onLockDevice({String queueUid}) => this.add(LockQueue(queueUid: queueUid ?? null));
 
-  onDelete() => dispatch(CancelJob());
+  onRefresh({int deviceId}) => this.add(GetQueue(deviceId ?? _deviceId));
 
-  onStart(String token) => dispatch(InitPrintQueue(token));
+  onStart(String token) => this.add(InitPrintQueue(token));
 
   @override
   onTransition(Transition<PrintQueueEvent, PrintQueueState> transition) {
@@ -108,7 +102,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     super.onTransition(transition);
   }
 
-  setDeviceId(int deviceId) => dispatch(SetDeviceId(deviceId));
+  setDeviceId(int deviceId) => this.add(SetDeviceId(deviceId));
 
   Future<void> _deleteQueue(String uid) async {
     Request request =

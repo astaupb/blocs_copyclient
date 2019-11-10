@@ -20,7 +20,7 @@ List<Transaction> exampleJournal = [
   Transaction(
       value: 500,
       description: 'Aufladung 5 Euro',
-      admin_id: 8,
+      adminId: 8,
       timestamp: '20.08.19 11:45:00')
 ];
 

@@ -31,12 +31,6 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   List<Job> get jobs => _jobs;
 
-  @override
-  void dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
-  }
-
   int getIndexById(int id) => _jobs.indexWhere((job) => job.id == id);
 
   @override
@@ -108,29 +102,29 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     }
   }
 
-  onDelete(int index) => dispatch(DeleteJob(index: index));
+  void onDelete(int index) => this.add(DeleteJob(index: index));
 
-  onDeleteById(int id) => dispatch(DeleteJob(id: id));
+  void onDeleteAll() => this.add(DeleteAllJobs());
 
-  onDeleteAll() => dispatch(DeleteAllJobs());
+  void onDeleteById(int id) => this.add(DeleteJob(id: id));
 
-  onPrint(String deviceId, int index) => dispatch(PrintJob(
+  void onPrint(String deviceId, int index) => this.add(PrintJob(
         deviceId: deviceId,
         index: index,
       ));
 
-  onPrintById(String deviceId, int id) => dispatch(PrintJob(
+  void onPrintById(String deviceId, int id) => this.add(PrintJob(
         deviceId: deviceId,
         id: id,
       ));
 
-  onRefresh() => dispatch(RefreshJobs());
+  void onRefresh() => this.add(RefreshJobs());
 
-  onRefreshOptions(int index) => dispatch(RefreshOptions(index: index));
+  void onRefreshOptions(int index) => this.add(RefreshOptions(index: index));
 
-  onRefreshOptionsById(int id) => dispatch(RefreshOptions(id: id));
+  void onRefreshOptionsById(int id) => this.add(RefreshOptions(id: id));
 
-  onStart(String token) => dispatch(InitJobs(token));
+  void onStart(String token) => this.add(InitJobs(token));
 
   @override
   void onTransition(Transition<JoblistEvent, JoblistState> transition) {
@@ -148,29 +142,10 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
   }
 
   onUpdateOptions(int index, JobOptions options) =>
-      dispatch(UpdateOptions(options: options, index: index));
+      this.add(UpdateOptions(options: options, index: index));
 
   onUpdateOptionsById(int id, JobOptions options) =>
-      dispatch(UpdateOptions(options: options, id: id));
-
-  Future<void> _deleteJob(int id) async {
-    Request request = ApiRequest('DELETE', '/jobs/$id', _backend);
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('_deleteJob: $request');
-
-    return await _backend.send(request).then(
-      (response) async {
-        log.finer('_deleteJob: ${response.statusCode}');
-        if (response.statusCode == 205) {
-          _jobs.removeWhere((Job job) => job.id == id);
-        } else {
-          throw ApiException(response.statusCode,
-              info: 'received status code other than 205');
-        }
-      },
-    );
-  }
+      this.add(UpdateOptions(options: options, id: id));
 
   Future<void> _deleteAllJobs() async {
     Request request = ApiRequest('DELETE', '/jobs', _backend);
@@ -183,6 +158,25 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         log.finer('_deleteAllJobs: ${response.statusCode}');
         if (response.statusCode == 205) {
           _jobs = [];
+        } else {
+          throw ApiException(response.statusCode,
+              info: 'received status code other than 205');
+        }
+      },
+    );
+  }
+
+  Future<void> _deleteJob(int id) async {
+    Request request = ApiRequest('DELETE', '/jobs/$id', _backend);
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_deleteJob: $request');
+
+    return await _backend.send(request).then(
+      (response) async {
+        log.finer('_deleteJob: ${response.statusCode}');
+        if (response.statusCode == 205) {
+          _jobs.removeWhere((Job job) => job.id == id);
         } else {
           throw ApiException(response.statusCode,
               info: 'received status code other than 205');

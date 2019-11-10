@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:csv/csv.dart';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
-import 'package:csv/csv.dart';
 
-import 'journal_events.dart';
-import 'journal_state.dart';
 import '../../exceptions.dart';
 import '../models/backend.dart';
-import '../models/transaction.dart';
 import '../models/journal_result.dart';
+import '../models/transaction.dart';
+import 'journal_events.dart';
+import 'journal_state.dart';
 
 String journalToCsv(List<Transaction> journal) {
   return ListToCsvConverter().convert(List.from(journal.map((Transaction item) =>
@@ -31,12 +31,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   JournalBloc(this._backend) {
     log.fine('$this started');
   }
-
-  onStart(String token) => dispatch(InitJournal(token));
-
-  onRefresh() => dispatch(RefreshJournal());
-
-  void onAddTransaction(String token) => dispatch(AddTransaction(token));
 
   String get csvJournal => journalToCsv(_journal);
 
@@ -61,12 +55,18 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     } else if (event is AddTransaction) {
       try {
         await _postJournal(event.token);
-        dispatch(RefreshJournal());
+        this.add(RefreshJournal());
       } on ApiException catch (e) {
         yield JournalState.exception(e);
       }
     }
   }
+
+  void onAddTransaction(String token) => this.add(AddTransaction(token));
+
+  void onRefresh() => this.add(RefreshJournal());
+
+  void onStart(String token) => this.add(InitJournal(token));
 
   @override
   void onTransition(Transition<JournalEvent, JournalState> transition) {
@@ -75,10 +75,23 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     super.onTransition(transition);
   }
 
-  @override
-  void dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
+  Future<void> _getCredit() async {
+    Request request = ApiRequest('GET', '/journal/credit', _backend);
+    request.headers['Accept'] = 'application/json';
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_getCredit: $request');
+
+    return await _backend.send(request).then(
+      (response) async {
+        log.finer('_getCredit: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          _credit = json.decode(utf8.decode(await response.stream.toBytes()));
+        } else {
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
+        }
+      },
+    );
   }
 
   Future<void> _getJournal() async {
@@ -95,25 +108,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
           _journal = List.from(json
               .decode(utf8.decode(await response.stream.toBytes()))
               .map((value) => Transaction.fromMap(value)));
-        } else {
-          throw ApiException(response.statusCode, info: 'status code other than 200 received');
-        }
-      },
-    );
-  }
-
-  Future<void> _getCredit() async {
-    Request request = ApiRequest('GET', '/journal/credit', _backend);
-    request.headers['Accept'] = 'application/json';
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('_getCredit: $request');
-
-    return await _backend.send(request).then(
-      (response) async {
-        log.finer('_getCredit: ${response.statusCode}');
-        if (response.statusCode == 200) {
-          _credit = json.decode(utf8.decode(await response.stream.toBytes()));
         } else {
           throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }

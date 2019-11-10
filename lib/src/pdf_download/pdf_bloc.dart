@@ -26,12 +26,6 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
   PdfState get initialState => PdfState.init();
 
   @override
-  void dispose() {
-    log.fine('disposing of $this');
-    super.dispose();
-  }
-
-  @override
   Stream<PdfState> mapEventToState(PdfEvent event) async* {
     log.fine('Event: $event');
 
@@ -50,9 +44,9 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     }
   }
 
-  void onGetPdf(int id) => dispatch(GetPdf(id));
+  void onGetPdf(int id) => this.add(GetPdf(id));
 
-  void onStart(String token) => dispatch(InitPdf(token));
+  void onStart(String token) => this.add(InitPdf(token));
 
   @override
   void onTransition(Transition<PdfEvent, PdfState> transition) {
