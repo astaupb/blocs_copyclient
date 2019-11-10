@@ -4,17 +4,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 
-import 'backend_sunrise.dart';
-import 'login_page.dart';
+import 'backend_shiva.dart';
 import 'jobs_page.dart';
+import 'login_page.dart';
 
 void main() => runApp(CopyclientDemo());
+
+final routes = {
+  '/login': (BuildContext context) => LoginPage(),
+  '/': (BuildContext context) => HomePage(),
+  '/jobs': (BuildContext context) => JobsPage(),
+};
 
 class CopyclientDemo extends StatelessWidget {
   CopyclientDemo() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print('[${record.loggerName}] (${record.level.name}) ${record.time}: ${record.message}');
+      print(
+          '[${record.loggerName}] (${record.level.name}) ${record.time}: ${record.message}');
     });
     Logger('Copyclient').info('Copyclient Example started');
   }
@@ -31,12 +38,6 @@ class CopyclientDemo extends StatelessWidget {
   }
 }
 
-final routes = {
-  '/login': (BuildContext context) => LoginPage(),
-  '/': (BuildContext context) => HomePage(),
-  '/jobs': (BuildContext context) => JobsPage(),
-};
-
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -44,10 +45,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   static final http.Client client = http.Client();
-  static final Backend backend = BackendSunrise(client);
+  static final Backend backend = BackendShiva(client);
+
   AuthBloc authBloc = AuthBloc(backend: backend);
-  JoblistBloc jobsBloc;
-  PrintQueueBloc printQueueBloc = PrintQueueBloc(backend);
+  JoblistBloc jobsBloc = JoblistBloc(backend);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -65,7 +67,6 @@ class _HomePageState extends State<HomePage> {
             //return Center(child: CircularProgressIndicator());
           } else if (state.isAuthorized) {
             // AUTHORIZED AND READY TO HUSTLE
-            jobsBloc = JoblistBloc(BackendSunrise(http.Client()));
             jobsBloc.onStart(state.token);
             return BlocProvider<JoblistBloc>(
               builder: (_) => jobsBloc,
@@ -76,5 +77,12 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    authBloc.close();
+    jobsBloc.close();
+    super.dispose();
   }
 }

@@ -9,9 +9,22 @@ class JobsPage extends StatefulWidget {
 }
 
 class _JobsPageState extends State<JobsPage> {
+  JoblistBloc jobsBloc;
+
+  @override
+  void dispose() {
+    jobsBloc.close();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    jobsBloc = BlocProvider.of<JoblistBloc>(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    JoblistBloc jobsBloc = BlocProvider.of<JoblistBloc>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('My Jobs'),
@@ -35,8 +48,8 @@ class _JobsPageState extends State<JobsPage> {
                         jobsBloc.onPrintById(target, state.value[index].id);
                       } catch (e) {
                         print('Jobs: $e');
-                        Scaffold.of(context)
-                            .showSnackBar(SnackBar(content: Text('No printer was selected')));
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(content: Text('No printer was selected')));
                       }
                     },
                   );

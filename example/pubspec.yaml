@@ -11,7 +11,7 @@ dependencies:
   blocs_copyclient:
     path: ../
   barcode_scan: ^1.0.0
-  flutter_bloc: ^0.20.0
+  flutter_bloc: ^2.0.0
 
 dev_dependencies:
   flutter_test:

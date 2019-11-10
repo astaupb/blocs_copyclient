@@ -32,8 +32,9 @@ class LoginFormState extends State<LoginForm> {
             obscureText: true,
           ),
           RaisedButton(
+            child: Text('Login'),
             onPressed: () => BlocProvider.of<AuthBloc>(context)
-                .login(usernameController.text, passwordController.text),
+                .onLogin(usernameController.text, passwordController.text),
           ),
         ],
       ),

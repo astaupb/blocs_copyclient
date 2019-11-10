@@ -1,4 +1,3 @@
-import 'package:blocs_copyclient/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,8 +17,6 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
-  JoblistBloc jobsBloc;
 
   @override
   Widget build(BuildContext context) {
