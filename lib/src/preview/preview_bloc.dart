@@ -53,11 +53,8 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
   Future<void> _getPreview(Job job) async {
     if (previewSets.any((PreviewSet set) => set.jobId == job.id)) return;
     List<List<int>> files = [];
-    for (int i = 0;
-        i < ((job.jobInfo.pagecount > 4) ? 4 : job.jobInfo.pagecount);
-        i++) {
-      Request request =
-          ApiRequest('GET', '/jobs/${job.id}/preview/$i', _backend);
+    for (int i = 0; i < ((job.jobInfo.pagecount > 4) ? 4 : job.jobInfo.pagecount); i++) {
+      Request request = ApiRequest('GET', '/jobs/${job.id}/preview/$i', _backend);
       request.headers['Accept'] = 'image/jpeg';
       request.headers['X-Api-Key'] = _token;
 
@@ -69,8 +66,7 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
           if (response.statusCode == 200) {
             files.add(await response.stream.toBytes());
           } else {
-            throw ApiException(response.statusCode,
-                info: 'status code other than 200 received');
+            throw ApiException(response.statusCode, info: 'status code other than 200 received');
           }
         },
       );

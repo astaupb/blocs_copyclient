@@ -84,8 +84,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onChangePassword(String oldPassword, String newPassword) =>
       this.add(ChangePassword(oldPassword, newPassword));
 
-  void onChangeUsername(String username) =>
-      this.add(ChangeUsername(username: username));
+  void onChangeUsername(String username) => this.add(ChangeUsername(username: username));
 
   void onGetOptions() => this.add(GetOptions());
 
@@ -95,8 +94,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   @override
   void onTransition(Transition<UserEvent, UserState> transition) {
-    _log.fine(
-        'Transition from ${transition.currentState} to ${transition.nextState}');
+    _log.fine('Transition from ${transition.currentState} to ${transition.nextState}');
     super.onTransition(transition);
   }
 
@@ -112,8 +110,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       (response) async {
         if (response.statusCode == 200) {
           String responseString = await response.stream.bytesToString();
-          _log.finer(
-              '[_getOptions] response: ${response.statusCode} $responseString');
+          _log.finer('[_getOptions] response: ${response.statusCode} $responseString');
 
           _user.options = JobOptions.fromMap(json.decode(responseString));
           return;
@@ -139,8 +136,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           _log.finer('[_getUser] response: ${response.statusCode}');
 
           /// move [responseMap] entries into the global [User] object
-          _user = User.fromMap(
-              json.decode(utf8.decode(await response.stream.toBytes())));
+          _user = User.fromMap(json.decode(utf8.decode(await response.stream.toBytes())));
           _user.token = _token;
         } else {
           throw ApiException(response.statusCode,

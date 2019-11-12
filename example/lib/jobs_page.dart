@@ -42,8 +42,8 @@ class _JobsPageState extends State<JobsPage> {
                         jobsBloc.onPrintById(target, state.value[index].id);
                       } catch (e) {
                         print('Jobs: $e');
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('No printer was selected')));
+                        Scaffold.of(context)
+                            .showSnackBar(SnackBar(content: Text('No printer was selected')));
                       }
                     },
                   );

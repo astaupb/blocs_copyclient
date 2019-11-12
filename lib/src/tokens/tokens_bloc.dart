@@ -87,8 +87,7 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
           _tokens.removeWhere((Token tok) => tok.id == id);
           return;
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 205 received');
+          throw ApiException(response.statusCode, info: 'status code other than 205 received');
         }
       },
     );
@@ -107,8 +106,7 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
           _tokens = [];
           return;
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 205 received');
+          throw ApiException(response.statusCode, info: 'status code other than 205 received');
         }
       },
     );
@@ -136,8 +134,7 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
           );
           return;
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );

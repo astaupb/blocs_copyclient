@@ -31,24 +31,14 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
 
     if (event is CreateFromText) {
       yield PdfCreationState.result((await _createFromText(
-              event.text,
-              event.showPageCount,
-              event.center,
-              event.orientation,
-              event.monospace))
+              event.text, event.showPageCount, event.center, event.orientation, event.monospace))
           .save());
     } else if (event is CreateFromImage) {
       yield PdfCreationState.result(
-          (await _createFromImage(event.image, event.center, event.orientation))
-              .save());
+          (await _createFromImage(event.image, event.center, event.orientation)).save());
     } else if (event is CreateFromCsv) {
-      yield PdfCreationState.result(_createFromCsv(
-              event.csv,
-              event.header,
-              event.titles,
-              event.showPageCount,
-              event.center,
-              event.orientation)
+      yield PdfCreationState.result(_createFromCsv(event.csv, event.header, event.titles,
+              event.showPageCount, event.center, event.orientation)
           .save());
     }
   }
@@ -61,8 +51,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     bool center = false,
     PageOrientation orientation = PageOrientation.natural,
   }) =>
-      this.add(CreateFromCsv(
-          csv, header, titles, showPageCount, center, orientation));
+      this.add(CreateFromCsv(csv, header, titles, showPageCount, center, orientation));
 
   void onCreateFromImage(
     List<int> image, {
@@ -78,8 +67,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     PageOrientation orientation = PageOrientation.natural,
     bool monospace = false,
   }) =>
-      this.add(
-          CreateFromText(text, showPageCount, center, orientation, monospace));
+      this.add(CreateFromText(text, showPageCount, center, orientation, monospace));
 
   @override
   void onError(Object error, StackTrace stacktrace) {
@@ -100,8 +88,8 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     super.onTransition(transition);
   }
 
-  Document _createFromCsv(String csv, String header, List<String> titles,
-      bool showPageCount, bool center, PageOrientation orientation) {
+  Document _createFromCsv(String csv, String header, List<String> titles, bool showPageCount,
+      bool center, PageOrientation orientation) {
     final Document doc = Document();
 
     final List<List<dynamic>> csvList = CsvToListConverter()
@@ -125,8 +113,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
       MultiPage(
         pageFormat: PdfPageFormat.a4,
         orientation: orientation,
-        crossAxisAlignment:
-            (center) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: (center) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         footer: (Context context) {
           if (showPageCount) {
             return _pageCountFooter(context);
@@ -139,10 +126,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
           Table.fromTextArray(
             context: context,
             data: [
-              if (titles.isNotEmpty)
-                titles
-              else
-                List.generate(csvList.first.length, (_) => ''),
+              if (titles.isNotEmpty) titles else List.generate(csvList.first.length, (_) => ''),
               ...csvList,
             ],
           )
@@ -179,8 +163,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
                 ? PageOrientation.landscape
                 : PageOrientation.portrait)
             : orientation,
-        build: (Context context) =>
-            (center) ? Center(child: Image(pdfImage)) : Image(pdfImage),
+        build: (Context context) => (center) ? Center(child: Image(pdfImage)) : Image(pdfImage),
       ),
     );
 
@@ -214,8 +197,7 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
       MultiPage(
         pageFormat: PdfPageFormat.a4,
         orientation: orientation,
-        crossAxisAlignment:
-            (center) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: (center) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         footer: (Context context) {
           if (showPageCount) {
             return _pageCountFooter(context);
@@ -224,9 +206,8 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
           }
         },
         build: (Context context) => [
-          ...paragraphs.map((String paragraph) => Paragraph(
-              text: paragraph,
-              style: TextStyle(font: (monospace) ? ttfMono : ttfSans))),
+          ...paragraphs.map((String paragraph) =>
+              Paragraph(text: paragraph, style: TextStyle(font: (monospace) ? ttfMono : ttfSans))),
         ],
       ),
     );
@@ -236,7 +217,5 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
   Widget _pageCountFooter(Context context) => Container(
       alignment: Alignment.centerRight,
       child: Text(context.pageNumber.toString(),
-          style: Theme.of(context)
-              .defaultTextStyle
-              .copyWith(color: PdfColors.grey)));
+          style: Theme.of(context).defaultTextStyle.copyWith(color: PdfColors.grey)));
 }

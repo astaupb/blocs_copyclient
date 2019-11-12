@@ -74,13 +74,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void onDeleteToken(int id) => this.add(LogoutToken(id: id));
 
   void onLogin(String username, String password, {bool persistent = false}) =>
-      this.add(Login(
-          username: username, password: password, persistent: persistent));
+      this.add(Login(username: username, password: password, persistent: persistent));
 
   void onLogout() => this.add(Logout());
 
-  void onRegister(String username, String password) =>
-      this.add(Register(username, password));
+  void onRegister(String username, String password) => this.add(Register(username, password));
 
   void onTokenLogin(String token) => this.add(TokenLogin(token: token));
 
@@ -112,8 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     ).timeout(Duration(seconds: 10),
-        onTimeout: () =>
-            throw ApiException(0, info: '_deleteToken: connection timed out'));
+        onTimeout: () => throw ApiException(0, info: '_deleteToken: connection timed out'));
   }
 
   Future<void> _logout() async {
@@ -136,8 +133,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     ).timeout(Duration(seconds: 10),
-        onTimeout: () =>
-            throw ApiException(0, info: '_logout: connection timed out'));
+        onTimeout: () => throw ApiException(0, info: '_logout: connection timed out'));
   }
 
   /// POST /user/tokens and then GET /user to update the global [User] object
@@ -145,9 +141,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     log.fine('_postToken: ${initEvent.toString()}');
     http.BaseRequest request = ApiRequest('POST', '/user/tokens', backend);
     request.headers['Accept'] = 'application/json';
-    request.headers['Authorization'] = ('Basic ' +
-        base64.encode(
-            utf8.encode(initEvent.username + ':' + initEvent.password)));
+    request.headers['Authorization'] =
+        ('Basic ' + base64.encode(utf8.encode(initEvent.username + ':' + initEvent.password)));
 
     log.finer('_postToken: $request');
 
@@ -162,8 +157,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     ).timeout(Duration(seconds: 10),
-        onTimeout: () =>
-            throw ApiException(0, info: '_postToken: connection timed out'));
+        onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
   Future<void> _postUser(String username, String password) async {
@@ -188,7 +182,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     ).timeout(Duration(seconds: 10),
-        onTimeout: () =>
-            throw ApiException(0, info: '_postUser: connection timed out'));
+        onTimeout: () => throw ApiException(0, info: '_postUser: connection timed out'));
   }
 }

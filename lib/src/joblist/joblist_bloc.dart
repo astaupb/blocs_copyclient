@@ -57,8 +57,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       }
     } else if (event is PrintJob) {
       try {
-        await _printJob(event.deviceId,
-            ((event.id != null) ? event.id : _jobs[event.index].id));
+        await _printJob(event.deviceId, ((event.id != null) ? event.id : _jobs[event.index].id));
         int index = getIndexById(event.id);
         if (!_jobs[index].jobOptions.keep) {
           _jobs.remove(index);
@@ -69,8 +68,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       }
     } else if (event is DeleteJob) {
       try {
-        await _deleteJob(
-            ((event.id != null) ? event.id : _jobs[event.index].id));
+        await _deleteJob(((event.id != null) ? event.id : _jobs[event.index].id));
         yield JoblistState.result(_jobs);
       } on ApiException catch (e) {
         yield JoblistState.exception(e);
@@ -133,8 +131,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       try {
         (cache ?? null).set('jobs', _jobs);
       } catch (e) {
-        log.severe(
-            'you should use caching with this BloC, pass it in the constructor');
+        log.severe('you should use caching with this BloC, pass it in the constructor');
       }
     }
 
@@ -159,8 +156,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         if (response.statusCode == 205) {
           _jobs = [];
         } else {
-          throw ApiException(response.statusCode,
-              info: 'received status code other than 205');
+          throw ApiException(response.statusCode, info: 'received status code other than 205');
         }
       },
     );
@@ -178,8 +174,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         if (response.statusCode == 205) {
           _jobs.removeWhere((Job job) => job.id == id);
         } else {
-          throw ApiException(response.statusCode,
-              info: 'received status code other than 205');
+          throw ApiException(response.statusCode, info: 'received status code other than 205');
         }
       },
     );
@@ -196,11 +191,10 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       (response) async {
         log.finer('_getSingle: ${response.statusCode}');
         if (response.statusCode == 200) {
-          _jobs[getIndexById(id)] = Job.fromMap(
-              json.decode(utf8.decode(await response.stream.toBytes())));
+          _jobs[getIndexById(id)] =
+              Job.fromMap(json.decode(utf8.decode(await response.stream.toBytes())));
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
@@ -218,8 +212,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       (response) async {
         log.finer('_getJobs: ${response.statusCode}');
         if (response.statusCode == 200) {
-          _jobs = List.from(
-              json.decode(utf8.decode(await response.stream.toBytes())).map(
+          _jobs = List.from(json.decode(utf8.decode(await response.stream.toBytes())).map(
             (value) {
               Job job = Job.fromMap(value);
               return job;
@@ -227,8 +220,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
           ));
           return;
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
@@ -245,11 +237,10 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       (response) async {
         log.finer('_getOptions: ${response.statusCode}');
         if (response.statusCode == 200) {
-          _jobs[getIndexById(id)].jobOptions = JobOptions.fromMap(
-              json.decode(utf8.decode(await response.stream.toBytes())));
+          _jobs[getIndexById(id)].jobOptions =
+              JobOptions.fromMap(json.decode(utf8.decode(await response.stream.toBytes())));
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
@@ -271,8 +262,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         log.finer('_printJob: ${response.statusCode}');
         if (response.statusCode == 202) {
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 202 received');
+          throw ApiException(response.statusCode, info: 'status code other than 202 received');
         }
       },
     );
@@ -293,8 +283,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       if (response.statusCode == 205) {
         jobs[getIndexById(id)].jobOptions = options;
       } else {
-        throw ApiException(response.statusCode,
-            info: 'status code other than 205 received');
+        throw ApiException(response.statusCode, info: 'status code other than 205 received');
       }
     });
   }

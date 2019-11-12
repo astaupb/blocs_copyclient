@@ -20,8 +20,7 @@ class CopyclientDemo extends StatelessWidget {
   CopyclientDemo() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print(
-          '[${record.loggerName}] (${record.level.name}) ${record.time}: ${record.message}');
+      print('[${record.loggerName}] (${record.level.name}) ${record.time}: ${record.message}');
     });
     Logger('Copyclient').info('Copyclient Example started');
   }
