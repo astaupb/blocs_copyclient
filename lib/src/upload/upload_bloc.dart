@@ -120,8 +120,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           _queue = List<DispatcherTask>.from(
               json.decode(body).map((task) => DispatcherTask.fromMap(task)));
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
@@ -129,7 +128,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
   Future<String> _postQueue(
     List<int> data, {
-    String filename = '',
+    String filename,
     String password = '',
     bool a3,
     bool color,
@@ -141,12 +140,16 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       '/jobs/queue',
       _backend,
       queryParameters: {
-        'filename': filename,
+        if (filename != null) 'filename': filename,
         //'password': password,
-        'a3': a3.toString(),
-        'color': color.toString(),
-        'duplex': duplex.toString(),
-        'copies': copies.toString(),
+        if (a3 != null)
+          'a3': a3.toString(),
+        if (color != null)
+          'color': color.toString(),
+        if (duplex != null)
+          'duplex': duplex.toString(),
+        if (copies != null)
+          'copies': copies.toString(),
       },
     );
     request.headers['Content-Type'] = 'application/pdf';
@@ -162,8 +165,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response.statusCode == 202) {
           return json.decode(body);
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 202 received');
+          throw ApiException(response.statusCode, info: 'status code other than 202 received');
         }
       },
     );
