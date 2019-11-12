@@ -18,6 +18,8 @@ build_example:
 unit_test:
   stage: test
   script:
+    - flutter channel stable
+    - flutter upgrade
     - flutter test
   artifacts:
     paths:
