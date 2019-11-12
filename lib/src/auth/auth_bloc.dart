@@ -71,11 +71,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void onDeleteToken() => this.add(LogoutToken());
+  void onDeleteToken(int id) => this.add(LogoutToken(id: id));
 
   void onLogin(String username, String password, {bool persistent = false}) =>
       this.add(Login(
           username: username, password: password, persistent: persistent));
+
+  void onLogout() => this.add(Logout());
 
   void onRegister(String username, String password) =>
       this.add(Register(username, password));
