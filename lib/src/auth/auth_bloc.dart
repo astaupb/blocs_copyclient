@@ -33,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _postToken(event);
         yield AuthState.authorized(token, persistent: event.persistent);
       } on ApiException catch (e) {
-        log.severe(e.info);
+        log.severe(e);
         yield AuthState.exception(e);
       }
     } else if (event is TokenLogin) {
@@ -42,7 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         token = event.token;
         yield AuthState.authorized(token);
       } on ApiException catch (e) {
-        log.severe(e.info);
+        log.severe(e);
         yield AuthState.exception(e);
       }
     } else if (event is LogoutToken) {
@@ -51,7 +51,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _deleteToken(id: event.id);
         yield AuthState.unauthorized();
       } on ApiException catch (e) {
-        log.severe(e.info);
+        log.severe(e);
         yield AuthState.exception(e);
       }
     } else if (event is Register) {

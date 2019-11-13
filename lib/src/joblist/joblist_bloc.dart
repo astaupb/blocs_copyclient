@@ -131,7 +131,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       try {
         (cache ?? null).set('jobs', _jobs);
       } catch (e) {
-        log.severe('you should use caching with this BloC, pass it in the constructor');
+        log.warning('you should use caching with this BloC, pass it in the constructor');
       }
     }
 
