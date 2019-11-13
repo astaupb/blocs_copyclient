@@ -26,8 +26,8 @@ class Token {
         map['user_agent'],
         map['ip'],
         map['location'],
-        DateTime.fromMillisecondsSinceEpoch(map['created']),
-        DateTime.fromMillisecondsSinceEpoch(map['updated']),
+        DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000),
+        DateTime.fromMillisecondsSinceEpoch(map['updated'] * 1000),
       );
 
   Map<String, dynamic> toMap() => {
