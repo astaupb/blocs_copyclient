@@ -122,17 +122,23 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
     return await _backend.send(request).then(
       (response) async {
         log.finer('_getTokens: ${response.statusCode} on ${response.request}');
-        log.finest('_getTokens: ${await response.stream.bytesToString()}');
+
         if (response.statusCode == 200) {
-          _tokens = List.from(
-            json.decode(await response.stream.bytesToString()).map(
+          _tokens = List.from(await response.stream.bytesToString().then<Iterable<Token>>((String raw) {
+            log.finest('_getTokens: raw response $raw');
+
+            Iterable j = json.decode(raw);
+            log.finest('_getTokens: decoded json: $j');
+
+            return j.map<Token>(
               (item) {
                 Token temp = Token.fromMap(item);
+                log.finest('_getTokens: parsed Token object $temp');
                 temp.clientType = _parseClientType(temp.userAgent);
                 return temp;
               },
-            ),
-          );
+            );
+          }));
           return;
         } else {
           throw ApiException(response.statusCode, info: 'status code other than 200 received');
