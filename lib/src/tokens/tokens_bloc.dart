@@ -121,7 +121,8 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
 
     return await _backend.send(request).then(
       (response) async {
-        log.finer('_getTokens: ${response.statusCode}');
+        log.finer('_getTokens: ${response.statusCode} on ${response.request}');
+        log.finest('_getTokens: ${await response.stream.bytesToString()}');
         if (response.statusCode == 200) {
           _tokens = List.from(
             json.decode(await response.stream.bytesToString()).map(

@@ -1,6 +1,9 @@
 import 'package:blocs_copyclient/src/models/transaction.dart';
 
-List<Transaction> exampleJournal = [
+const String username = 'test';
+const String password = 'test123';
+
+final List<Transaction> exampleJournal = [
   Transaction(value: -5, description: '1 Seiten gedruckt', timestamp: '20.08.19 12:05:00'),
   Transaction(value: -100, description: '5 Seiten Farbe gedruckt', timestamp: '20.08.19 12:05:00'),
   Transaction(value: -40, description: '2 Seiten Farbe gedruckt', timestamp: '20.08.19 12:05:00'),

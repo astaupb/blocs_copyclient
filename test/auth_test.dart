@@ -5,9 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 
 import 'backend_shiva.dart';
-
-const String username = 'test';
-const String password = 'test123';
+import 'example_data.dart';
 
 void main() {
   AuthBloc bloc;
