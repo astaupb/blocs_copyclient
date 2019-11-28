@@ -257,7 +257,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       queryParameters: {'id': id.toString()},
     );
     request.headers['X-Api-Key'] = _token;
-    request.body = json.encode(options.toMap());
+    if (options != null) request.body = json.encode(options.toMap());
 
     log.finer('_printJob: $request');
 
