@@ -36,12 +36,15 @@ class PrintJob extends JoblistEvent {
   final int id;
   final int index;
 
-  PrintJob({@required this.deviceId, this.id, this.index});
+  final JobOptions options;
+
+  PrintJob({@required this.deviceId, this.id, this.index, this.options});
 
   Map<String, dynamic> toMap() => {
         'deviceId': deviceId,
         'id': id,
         'index': index,
+        'options': options,
       };
 
   @override

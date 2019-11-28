@@ -57,7 +57,8 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       }
     } else if (event is PrintJob) {
       try {
-        await _printJob(event.deviceId, ((event.id != null) ? event.id : _jobs[event.index].id));
+        await _printJob(event.deviceId, ((event.id != null) ? event.id : _jobs[event.index].id),
+            options: event.options);
         int index = getIndexById(event.id);
         if (!_jobs[index].jobOptions.keep) {
           _jobs.remove(index);
@@ -106,14 +107,16 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   void onDeleteById(int id) => this.add(DeleteJob(id: id));
 
-  void onPrint(String deviceId, int index) => this.add(PrintJob(
+  void onPrint(String deviceId, int index, {JobOptions options}) => this.add(PrintJob(
         deviceId: deviceId,
         index: index,
+        options: options,
       ));
 
-  void onPrintById(String deviceId, int id) => this.add(PrintJob(
+  void onPrintById(String deviceId, int id, {JobOptions options}) => this.add(PrintJob(
         deviceId: deviceId,
         id: id,
+        options: options,
       ));
 
   void onRefresh() => this.add(RefreshJobs());
@@ -246,7 +249,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     );
   }
 
-  Future<void> _printJob(String deviceId, int id) async {
+  Future<void> _printJob(String deviceId, int id, {JobOptions options}) async {
     Request request = ApiRequest(
       'POST',
       '/printers/$deviceId/queue',
@@ -254,6 +257,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       queryParameters: {'id': id.toString()},
     );
     request.headers['X-Api-Key'] = _token;
+    request.body = json.encode(options.toMap());
 
     log.finer('_printJob: $request');
 
