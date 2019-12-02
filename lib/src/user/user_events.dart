@@ -1,6 +1,17 @@
 import 'package:blocs_copyclient/src/models/joboptions.dart';
 import 'package:meta/meta.dart';
 
+class ChangeEmail extends UserEvent {
+  final String email;
+
+  ChangeEmail(this.email);
+
+  Map<String, dynamic> toMap() => {'email': email};
+
+  @override
+  String toString() => toMap().toString();
+}
+
 class ChangeOptions extends UserEvent {
   final JobOptions options;
 

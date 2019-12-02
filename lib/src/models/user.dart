@@ -2,6 +2,7 @@ import 'joboptions.dart';
 
 class User {
   String name;
+  String email;
   int userId;
   int card;
   int pin;
@@ -13,6 +14,7 @@ class User {
 
   User(
       {this.name,
+      this.email,
       this.userId,
       this.card,
       this.pin,
@@ -23,6 +25,7 @@ class User {
 
   factory User.fromMap(dynamic obj) => User(
         name: obj['name'],
+        email: obj['email'],
         userId: obj['id'],
         card: obj['card'],
         pin: obj['pin'],
@@ -37,6 +40,7 @@ class User {
 
   Map<String, dynamic> toMap() => {
         'name': name,
+        'email': email,
         'id': userId,
         'card': card,
         'pin': pin,

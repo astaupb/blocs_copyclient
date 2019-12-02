@@ -44,6 +44,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         _log.severe(e);
         yield UserState.exception(e);
       }
+    } else if (event is ChangeEmail) {
+      try {
+        await _putEmail(event.email);
+        yield UserState.result(_user);
+      } on ApiException catch (e) {
+        _log.severe(e);
+        yield UserState.exception(e);
+      }
     } else if (event is ChangeUsername) {
       try {
         await _putUsername(event.username);
@@ -78,6 +86,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
     }
   }
+
+  void onChangeEmail(String email) => this.add(ChangeEmail(email));
 
   void onChangeOptions(JobOptions options) => this.add(ChangeOptions(options));
 
@@ -144,6 +154,24 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       },
     );
+  }
+
+  Future<void> _putEmail(String email) async {
+    Request request = ApiRequest('PUT', '/user/email', _backend, queryParameters: {'email':  email});
+    request.headers['Content-Type'] = 'application/json';
+    request.headers['X-Api-Key'] = _token;
+
+    _log.finer('[_putEmail] request: $request');
+
+    return await _backend.send(request).then((response) {
+      _log.finer('[_putEmail] response: ${response.statusCode}');
+      if (response.statusCode == 205) {
+        _user.email = email;
+      } else {
+        throw ApiException(response.statusCode,
+            info: '_putUsername: received response code other than 205');
+      }
+    });
   }
 
   /// PUT /user/options
