@@ -1,6 +1,25 @@
+import 'package:blocs_copyclient/upload.dart';
 import 'package:meta/meta.dart';
 
-class UploadEvent {}
+class AddUpload extends UploadEvent {
+  final String filename;
+  final UploadProgress progress;
+
+  AddUpload(this.filename, this.progress);
+
+  @override
+  String toString() => '[AddUpload $filename $progress]';
+}
+
+class UpdateProgress extends UploadEvent {
+  final int localId;
+  final UploadProgress progress;
+
+  UpdateProgress(this.localId, this.progress);
+
+  @override
+  String toString() => '[UpdateProgress $localId $progress]';
+}
 
 class InitUploads extends UploadEvent {
   final String token;
@@ -13,6 +32,8 @@ class InitUploads extends UploadEvent {
 }
 
 class RefreshUploads extends UploadEvent {}
+
+class UploadEvent {}
 
 class UploadFile extends UploadEvent {
   final List<int> data;

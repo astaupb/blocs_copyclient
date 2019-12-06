@@ -41,8 +41,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       } on ApiException catch (e) {
         yield UploadState.exception(e);
       }
-    }
-    if (event is UploadFile) {
+    } else if (event is UploadFile) {
       _activeUploads++;
       int localId = _activeUploads;
       _queue.add(DispatcherTask(
@@ -74,8 +73,21 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       } on ApiException catch (e) {
         yield UploadState.exception(e);
       }
+    } else if (event is AddUpload) {
+      _activeUploads++;
+      int localId = _activeUploads;
+      _queue.add(DispatcherTask(
+          filename: event.filename, isUploading: true, localId: localId, progress: event.progress));
+      yield UploadState.result(_queue);
+    } else if (event is UpdateProgress) {
+      _queue.singleWhere((DispatcherTask task) => task.localId == event.localId).progress =
+          event.progress;
+      yield UploadState.result(_queue);
     }
   }
+
+  void onAddUpload(String filename, UploadProgress progress) =>
+      this.add(AddUpload(filename, progress));
 
   void onRefresh() => this.add(RefreshUploads());
 
@@ -86,6 +98,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     log.fine('State: ${transition.nextState}');
     super.onTransition(transition);
   }
+
+  void onUpdateProgress(int localId, UploadProgress progress) =>
+      this.add(UpdateProgress(localId, progress));
 
   void onUpload(
     List<int> data, {
