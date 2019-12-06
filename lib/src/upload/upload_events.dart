@@ -20,6 +20,7 @@ class UploadFile extends UploadEvent {
   final bool a3;
   final int duplex;
   final int copies;
+  final int preprocess;
   final String filename;
   final String password;
 
@@ -31,12 +32,14 @@ class UploadFile extends UploadEvent {
     this.a3 = false,
     this.duplex = 0,
     this.copies = 1,
+    this.preprocess = 1,
   });
 
   Map<String, dynamic> toMap() => {
         'data': data.length,
         'color': color,
         'a3': a3,
+        'preprocess': preprocess,
         'duplex': duplex,
         'copies': copies,
         'filename': filename,

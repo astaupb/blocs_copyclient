@@ -61,6 +61,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           color: event.color,
           duplex: event.duplex,
           copies: event.copies,
+          preprocess: event.preprocess,
         ).then((String uid) {
           _queue.forEach((task) {
             if (task.localId == localId) {
@@ -94,6 +95,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     bool color,
     int duplex,
     int copies,
+    int preprocess,
   }) =>
       this.add(UploadFile(
         data: data,
@@ -103,6 +105,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         color: color,
         duplex: duplex,
         copies: copies,
+        preprocess: preprocess,
       ));
 
   Future<void> _getQueue() async {
@@ -120,7 +123,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           _queue = List<DispatcherTask>.from(
               json.decode(body).map((task) => DispatcherTask.fromMap(task)));
         } else {
-          throw ApiException(response.statusCode, info: 'status code other than 200 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 200 received');
         }
       },
     );
@@ -134,6 +138,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     bool color,
     int duplex,
     int copies,
+    int preprocess,
   }) async {
     Request request = ApiRequest(
       'POST',
@@ -150,6 +155,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           'duplex': duplex.toString(),
         if (copies != null)
           'copies': copies.toString(),
+        if (preprocess != null)
+          'preprocess': preprocess.toString(),
       },
     );
     request.headers['Content-Type'] = 'application/pdf';
@@ -165,7 +172,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response.statusCode == 202) {
           return json.decode(body);
         } else {
-          throw ApiException(response.statusCode, info: 'status code other than 202 received');
+          throw ApiException(response.statusCode,
+              info: 'status code other than 202 received');
         }
       },
     );
