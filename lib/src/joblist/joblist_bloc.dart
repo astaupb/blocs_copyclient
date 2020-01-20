@@ -107,6 +107,8 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     }
   }
 
+  void onCopyById(int id, bool asImage) => this.add(CopyJob(id: id, image: asImage));
+
   void onDelete(int index) => this.add(DeleteJob(index: index));
 
   void onDeleteAll() => this.add(DeleteAllJobs());
@@ -152,6 +154,25 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   onUpdateOptionsById(int id, JobOptions options) =>
       this.add(UpdateOptions(options: options, id: id));
+
+  Future<void> _copyJob(int id, bool image) async {
+    Request request = ApiRequest('POST', '/jobs/$id?image=$image', _backend);
+    request.headers['X-Api-Key'] = _token;
+
+    log.finer('_copyJob: $request');
+
+    return await _backend.send(request).then(
+      (response) async {
+        log.finer('_copyJob: ${response.statusCode}');
+        if (response.statusCode == 202 || response.statusCode == 200) {
+          return;
+        } else {
+          throw ApiException(response.statusCode,
+              info: 'received status code other than 202 or 200');
+        }
+      },
+    );
+  }
 
   Future<void> _deleteAllJobs() async {
     Request request = ApiRequest('DELETE', '/jobs', _backend);
@@ -296,24 +317,5 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
         throw ApiException(response.statusCode, info: 'status code other than 205 received');
       }
     });
-  }
-
-  Future<void> _copyJob(int id, bool image) async {
-    Request request = ApiRequest('POST', '/jobs/$id?image=$image', _backend);
-    request.headers['X-Api-Key'] = _token;
-
-    log.finer('_copyJob: $request');
-
-    return await _backend.send(request).then(
-      (response) async {
-        log.finer('_copyJob: ${response.statusCode}');
-        if (response.statusCode == 202 || response.statusCode == 200) {
-          return;
-        } else {
-          throw ApiException(response.statusCode,
-              info: 'received status code other than 202 or 200');
-        }
-      },
-    );
   }
 }
