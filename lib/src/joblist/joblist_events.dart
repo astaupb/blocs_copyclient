@@ -51,6 +51,21 @@ class PrintJob extends JoblistEvent {
   String toString() => toMap().toString();
 }
 
+class CopyJob extends JoblistEvent {
+  final int id;
+  final bool image;
+
+  CopyJob({@required this.id, this.image});
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'image': image,
+      };
+
+  @override
+  String toString() => toMap().toString();
+}
+
 /// Demand refreshing all jobs, or if [index] is set only that one
 class RefreshJobs extends JoblistEvent {}
 

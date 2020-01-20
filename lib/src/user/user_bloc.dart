@@ -157,7 +157,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   Future<void> _putEmail(String email) async {
-    Request request = ApiRequest('PUT', '/user/email', _backend, queryParameters: {'email':  email});
+    Request request = ApiRequest('PUT', '/user/email', _backend, queryParameters: {'email': email});
     request.headers['Content-Type'] = 'application/json';
     request.headers['X-Api-Key'] = _token;
 

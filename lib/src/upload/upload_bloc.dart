@@ -138,8 +138,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           _queue = List<DispatcherTask>.from(
               json.decode(body).map((task) => DispatcherTask.fromMap(task)));
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 200 received');
+          throw ApiException(response.statusCode, info: 'status code other than 200 received');
         }
       },
     );
@@ -187,8 +186,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response.statusCode == 202) {
           return json.decode(body);
         } else {
-          throw ApiException(response.statusCode,
-              info: 'status code other than 202 received');
+          throw ApiException(response.statusCode, info: 'status code other than 202 received');
         }
       },
     );

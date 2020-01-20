@@ -124,7 +124,8 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
         log.finer('_getTokens: ${response.statusCode} on ${response.request}');
 
         if (response.statusCode == 200) {
-          _tokens = List.from(await response.stream.bytesToString().then<Iterable<Token>>((String raw) {
+          _tokens =
+              List.from(await response.stream.bytesToString().then<Iterable<Token>>((String raw) {
             log.finest('_getTokens: raw response $raw');
 
             Iterable j = json.decode(raw);
