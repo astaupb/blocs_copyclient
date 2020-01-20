@@ -156,7 +156,12 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
       this.add(UpdateOptions(options: options, id: id));
 
   Future<void> _copyJob(int id, bool image) async {
-    Request request = ApiRequest('POST', '/jobs/$id?image=$image', _backend);
+    Request request = ApiRequest(
+      'POST',
+      '/jobs/$id',
+      _backend,
+      queryParameters: {'image': image.toString()},
+    );
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_copyJob: $request');
