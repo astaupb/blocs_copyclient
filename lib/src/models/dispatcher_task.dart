@@ -1,4 +1,3 @@
-import 'package:blocs_copyclient/upload.dart';
 import 'package:meta/meta.dart';
 
 class UploadProgress {

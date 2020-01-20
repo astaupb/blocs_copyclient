@@ -307,7 +307,7 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
     return await _backend.send(request).then(
       (response) async {
         log.finer('_copyJob: ${response.statusCode}');
-        if (response.statusCode == 202 && response.statusCode == 200) {
+        if (response.statusCode == 202 || response.statusCode == 200) {
           return;
         } else {
           throw ApiException(response.statusCode,
