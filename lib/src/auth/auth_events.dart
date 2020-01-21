@@ -45,12 +45,14 @@ class Logout extends AuthEvent {}
 class Register extends AuthEvent {
   final String username;
   final String password;
+  final String email;
 
-  Register(this.username, this.password);
+  Register(this.username, this.password, this.email);
 
   Map<String, dynamic> toMap() => {
         'username': username,
         'password': password,
+        'email': email,
       };
 
   @override
