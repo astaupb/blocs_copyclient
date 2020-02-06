@@ -78,7 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void onLogout() => this.add(Logout());
 
-  void onRegister(String username, String password, String email) => this.add(Register(username, password, email));
+  void onRegister(String username, String password, String email) =>
+      this.add(Register(username, password, email));
 
   void onTokenLogin(String token) => this.add(TokenLogin(token: token));
 
@@ -160,14 +161,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         onTimeout: () => throw ApiException(0, info: '_postToken: connection timed out'));
   }
 
-  Future<void> _postUser(String username, String password, [String email='']) async {
+  Future<void> _postUser(String username, String password, [String email = '']) async {
     http.Request request = ApiRequest('POST', '/user', backend);
     request.headers['Content-Type'] = 'application/json';
 
     request.body = json.encode({
       'name': username,
       'password': password,
-      'email': email,
+      if (email != '') 'email': email,
     });
 
     log.finer('_postUser: $request');
