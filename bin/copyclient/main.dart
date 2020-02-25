@@ -64,7 +64,7 @@ main(List<String> args) async {
         if (args.length == 2) {
           int id = int.tryParse(args[1]);
           if (id != null) {
-            copyclient.printQueueBloc.onRefresh(deviceId: id);
+            copyclient.printQueueBloc.onSetDeviceId(id);
           } else {
             stdout.write("pass valid deviceId");
           }

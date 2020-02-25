@@ -39,20 +39,6 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     if (event is SetDeviceId) {
       _deviceId = event.deviceId;
     }
-    if (event is GetQueue) {
-      if (event.deviceId != null) {
-        _deviceId = event.deviceId;
-      }
-    }
-
-    if (event is GetQueue || event is SetDeviceId) {
-      try {
-        await _getQueue();
-        yield PrintQueueState.result(PrintQueueResult(_incoming, _processing));
-      } on ApiException catch (e) {
-        yield PrintQueueState.exception(e);
-      }
-    }
 
     if (event is AppendJob) {
       try {
@@ -61,13 +47,11 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
       }
-    }
-
-    if (event is LockQueue) {
+    } else if (event is LockQueue) {
       try {
         String lockUid = '';
         if (event.queueUid != null) {
-          lockUid = await _postQueue(lockUid: event.queueUid);
+          lockUid = await _postQueue();
         } else {
           lockUid = await _postQueue();
         }
@@ -75,11 +59,9 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
       }
-    }
-
-    if (event is CancelJob) {
+    } else if (event is CancelJob) {
       try {
-        await _deleteQueue(event.uid);
+        await _deleteQueue();
         yield PrintQueueState.result(PrintQueueResult(_incoming, _processing));
       } on ApiException catch (e) {
         yield PrintQueueState.exception(e);
@@ -91,7 +73,7 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
 
   onLockDevice({String queueUid}) => this.add(LockQueue(queueUid: queueUid ?? null));
 
-  onRefresh({int deviceId}) => this.add(GetQueue(deviceId ?? _deviceId));
+  onSetDeviceId(int deviceId) => this.add(SetDeviceId(deviceId));
 
   onStart(String token) => this.add(InitPrintQueue(token));
 
@@ -102,11 +84,8 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     super.onTransition(transition);
   }
 
-  setDeviceId(int deviceId) => this.add(SetDeviceId(deviceId));
-
-  Future<void> _deleteQueue(String uid) async {
-    Request request =
-        ApiRequest('DELETE', '/printers/$_deviceId/queue${(uid != null) ? '/$uid' : ''}', _backend);
+  Future<void> _deleteQueue() async {
+    Request request = ApiRequest('DELETE', '/printers/$_deviceId/queue', _backend);
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_deleteQueue $request');
@@ -121,30 +100,13 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     });
   }
 
-  Future<void> _getQueue() async {
-    Request request = ApiRequest('GET', '/printers/$_deviceId/queue', _backend);
-    request.headers['X-Api-Key'] = _token;
-    request.headers['Accept'] = 'application/json';
-
-    log.finer('_getQueue $request');
-    return await _backend.send(request).then((response) async {
-      log.finer('_getQueue: ${response.statusCode}');
-      if (response.statusCode == 200) {
-        var body = json.decode(utf8.decode(await response.stream.toBytes()));
-        _incoming = List.from(body['incoming'].map((value) => PrintQueueTask.fromMap(value)));
-        _processing = List.from(body['processing'].map((value) => PrintQueueTask.fromMap(value)));
-        return;
-      } else {
-        throw ApiException(response.statusCode, info: 'not 200');
-      }
-    });
-  }
-
-  Future<String> _postQueue({int jobId, String lockUid}) async {
-    String path = '/printers/$_deviceId/queue';
-    if (lockUid != null && lockUid.isNotEmpty) path += '/$lockUid';
-    Request request = ApiRequest('POST', path, _backend,
-        queryParameters: (jobId != null) ? {'id': jobId.toString()} : null);
+  Future<String> _postQueue({int jobId}) async {
+    Request request = ApiRequest(
+      'POST',
+      '/printers/$_deviceId/queue',
+      _backend,
+      queryParameters: (jobId != null) ? {'id': jobId.toString()} : null,
+    );
     request.headers['X-Api-Key'] = _token;
 
     log.finer('_postQueue $request');
