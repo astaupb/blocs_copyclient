@@ -36,8 +36,10 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
     if (event is InitPrintQueue) {
       _token = event.token;
     }
+
     if (event is SetDeviceId) {
       _deviceId = event.deviceId;
+      yield PrintQueueState.result(PrintQueueResult([], []));
     }
 
     if (event is AppendJob) {
