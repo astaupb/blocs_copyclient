@@ -1,7 +1,7 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:blocs_copyclient/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:barcode_scan/barcode_scan.dart';
 
 class JobsPage extends StatefulWidget {
   @override
@@ -10,12 +10,6 @@ class JobsPage extends StatefulWidget {
 
 class _JobsPageState extends State<JobsPage> {
   JoblistBloc jobsBloc;
-
-  @override
-  void initState() {
-    jobsBloc = BlocProvider.of<JoblistBloc>(context);
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +36,7 @@ class _JobsPageState extends State<JobsPage> {
                         jobsBloc.onPrintById(target, state.value[index].id);
                       } catch (e) {
                         print('Jobs: $e');
-                        Scaffold.of(context)
+                        ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text('No printer was selected')));
                       }
                     },
@@ -61,5 +55,11 @@ class _JobsPageState extends State<JobsPage> {
             child: Icon(Icons.refresh),
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    jobsBloc = BlocProvider.of<JoblistBloc>(context);
+    super.initState();
   }
 }

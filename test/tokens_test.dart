@@ -28,7 +28,7 @@ void main() {
   });
 
   test('test getting tokens', () {
-    bloc.listen(expectAsync1((TokensState state) {
+    bloc.stream.listen(expectAsync1((TokensState state) {
       if (state.isInit) {
         print('TokensBloc initialized');
       } else if (state.isBusy) {
