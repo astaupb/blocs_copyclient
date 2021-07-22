@@ -18,12 +18,9 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
 
   List<PdfFile> _pdfs = [];
 
-  PdfBloc(this._backend) {
+  PdfBloc(this._backend) : super(PdfState.init()) {
     log.fine('$this started');
   }
-
-  @override
-  PdfState get initialState => PdfState.init();
 
   @override
   Stream<PdfState> mapEventToState(PdfEvent event) async* {

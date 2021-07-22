@@ -28,16 +28,13 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   List<Transaction> _journal;
   int _credit;
 
-  JournalBloc(this._backend) {
+  JournalBloc(this._backend) : super(JournalState.init()) {
     log.fine('$this started');
   }
 
   String get csvJournal => journalToCsv(_journal);
 
   List<int> get csvJournalBytes => Uint16List.fromList(csvJournal.codeUnits);
-
-  @override
-  get initialState => JournalState.init();
 
   @override
   Stream<JournalState> mapEventToState(JournalEvent event) async* {

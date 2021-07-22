@@ -19,12 +19,9 @@ class TokensBloc extends Bloc<TokensEvent, TokensState> {
 
   List<Token> _tokens;
 
-  TokensBloc(this._backend) {
+  TokensBloc(this._backend) : super(TokensState.init()) {
     log.fine('$this started');
   }
-
-  @override
-  TokensState get initialState => TokensState.init();
 
   @override
   Stream<TokensState> mapEventToState(TokensEvent event) async* {

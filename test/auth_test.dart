@@ -1,8 +1,8 @@
 @TestOn("vm")
 import 'package:blocs_copyclient/auth.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
+import 'package:test/test.dart';
 
 import 'backend_shiva.dart';
 import 'example_data.dart';
@@ -20,7 +20,7 @@ void main() {
   });
 
   test('test logging in', () {
-    bloc.listen(expectAsync1((AuthState state) {
+    bloc.stream.listen(expectAsync1((AuthState state) {
       if (state.isAuthorized) {
         print('successfully authorized');
       }

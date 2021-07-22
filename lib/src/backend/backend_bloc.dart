@@ -12,14 +12,11 @@ class BackendBloc extends Bloc<BackendEvent, BackendState> {
   final log = Logger('BackendBloc');
   Backend _backend;
 
-  BackendBloc() {
+  BackendBloc() : super(BackendState.init()) {
     log.fine('$this started');
   }
 
   get backend => _backend;
-
-  @override
-  get initialState => BackendState.init();
 
   @override
   Stream<BackendState> mapEventToState(BackendEvent event) async* {

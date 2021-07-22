@@ -1,5 +1,6 @@
 name: blocs_copyclient_example
 description: A demo projet for the AStA Copyclient business logic
+publish_to: none
 version: 1.0.0+1
 
 environment:
@@ -10,8 +11,9 @@ dependencies:
     sdk: flutter
   blocs_copyclient:
     path: ../
+  http: ^0.13.3
   barcode_scan: ^1.0.0
-  flutter_bloc: ^2.0.0
+  flutter_bloc: ^7.0.0
 
 dev_dependencies:
   flutter_test:

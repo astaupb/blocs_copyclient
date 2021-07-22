@@ -19,14 +19,11 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
   int _activeUploads = 0;
 
-  List<DispatcherTask> _queue = List<DispatcherTask>();
+  List<DispatcherTask> _queue = <DispatcherTask>[];
 
-  UploadBloc(this._backend) {
+  UploadBloc(this._backend) : super(UploadState.init()) {
     log.fine('$this started');
   }
-
-  @override
-  get initialState => UploadState.init();
 
   @override
   Stream<UploadState> mapEventToState(UploadEvent event) async* {
@@ -161,16 +158,11 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       queryParameters: {
         if (filename != null) 'filename': filename,
         //'password': password,
-        if (a3 != null)
-          'a3': a3.toString(),
-        if (color != null)
-          'color': color.toString(),
-        if (duplex != null)
-          'duplex': duplex.toString(),
-        if (copies != null)
-          'copies': copies.toString(),
-        if (preprocess != null)
-          'preprocess': preprocess.toString(),
+        if (a3 != null) 'a3': a3.toString(),
+        if (color != null) 'color': color.toString(),
+        if (duplex != null) 'duplex': duplex.toString(),
+        if (copies != null) 'copies': copies.toString(),
+        if (preprocess != null) 'preprocess': preprocess.toString(),
       },
     );
     request.headers['Content-Type'] = 'application/pdf';

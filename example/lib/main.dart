@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (_) => authBloc,
+      create: (_) => authBloc,
       child: BlocBuilder(
         bloc: authBloc,
         builder: (BuildContext context, AuthState state) {
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
             // AUTHORIZED AND READY TO HUSTLE
             jobsBloc.onStart(state.token);
             return BlocProvider<JoblistBloc>(
-              builder: (_) => jobsBloc,
+              create: (_) => jobsBloc,
               child: JobsPage(),
             );
           }

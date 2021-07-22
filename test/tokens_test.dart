@@ -1,9 +1,9 @@
 @TestOn("vm")
 import 'package:blocs_copyclient/auth.dart';
 import 'package:blocs_copyclient/tokens.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
+import 'package:test/test.dart';
 
 import 'backend_shiva.dart';
 import 'example_data.dart';
@@ -22,9 +22,9 @@ void main() {
     bloc = TokensBloc(BackendShiva(http.Client()));
     authBloc = AuthBloc(backend: BackendShiva(http.Client()));
     authBloc.onLogin(username, password);
-    await authBloc.takeWhile((state) => state.isAuthorized != true).toList();
+    await authBloc.stream.takeWhile((state) => state.isAuthorized != true).toList();
     bloc.onStart(authBloc.state.token);
-    await bloc.takeWhile((state) => state.isInit != true).toList();
+    await bloc.stream.takeWhile((state) => state.isInit != true).toList();
   });
 
   test('test getting tokens', () {

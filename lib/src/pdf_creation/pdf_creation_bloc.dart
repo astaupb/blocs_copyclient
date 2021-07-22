@@ -16,12 +16,9 @@ import 'pdf_creation_state.dart';
 class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
   Logger _log = Logger('PdfCreationBloc');
 
-  PdfCreationBloc() {
+  PdfCreationBloc() : super(PdfCreationState.init()) {
     _log.fine('$this started');
   }
-
-  @override
-  PdfCreationState get initialState => PdfCreationState.init();
 
   @override
   Stream<PdfCreationState> mapEventToState(
@@ -30,14 +27,14 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     yield PdfCreationState.busy();
 
     if (event is CreateFromText) {
-      yield PdfCreationState.result((await _createFromText(
+      yield PdfCreationState.result(await (await _createFromText(
               event.text, event.showPageCount, event.center, event.orientation, event.monospace))
           .save());
     } else if (event is CreateFromImage) {
       yield PdfCreationState.result(
-          (await _createFromImage(event.image, event.center, event.orientation)).save());
+          await (await _createFromImage(event.image, event.center, event.orientation)).save());
     } else if (event is CreateFromCsv) {
-      yield PdfCreationState.result(_createFromCsv(event.csv, event.header, event.titles,
+      yield PdfCreationState.result(await _createFromCsv(event.csv, event.header, event.titles,
               event.showPageCount, event.center, event.orientation)
           .save());
     }
@@ -147,11 +144,10 @@ class PdfCreationBloc extends Bloc<PdfCreationEvent, PdfCreationState> {
     final img.Image imgImage = img.decodeImage(image);
 
     _log.finest('creating  pdf image');
-    final PdfImage pdfImage = PdfImage(
-      pdf.document,
-      image: imgImage.getBytes(),
-      width: imgImage.width,
+    final pdfImage = RawImage(
+      bytes: imgImage.data.buffer.asUint8List(),
       height: imgImage.height,
+      width: imgImage.width,
     );
 
     _log.finest('creating pdf with image');

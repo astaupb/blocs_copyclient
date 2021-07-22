@@ -18,12 +18,9 @@ class PreviewBloc extends Bloc<PreviewEvent, PreviewState> {
 
   List<PreviewSet> previewSets = [];
 
-  PreviewBloc(this._backend) {
+  PreviewBloc(this._backend) : super(PreviewState.init()) {
     log.fine('$this started');
   }
-
-  @override
-  PreviewState get initialState => PreviewState.init();
 
   @override
   Stream<PreviewState> mapEventToState(PreviewEvent event) async* {

@@ -22,12 +22,9 @@ class PrintQueueBloc extends Bloc<PrintQueueEvent, PrintQueueState> {
   List<PrintQueueTask> _incoming;
   List<PrintQueueTask> _processing;
 
-  PrintQueueBloc(this._backend) {
+  PrintQueueBloc(this._backend) : super(PrintQueueState.init()) {
     log.fine('$this started');
   }
-
-  @override
-  get initialState => PrintQueueState.init();
 
   @override
   Stream<PrintQueueState> mapEventToState(PrintQueueEvent event) async* {

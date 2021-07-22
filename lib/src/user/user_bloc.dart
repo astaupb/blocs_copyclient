@@ -20,12 +20,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   String _token;
 
   Backend _backend;
-  UserBloc(this._backend) {
+  UserBloc(this._backend) : super(UserState.init()) {
     _log.fine('$this started');
   }
-
-  @override
-  UserState get initialState => UserState.init();
 
   get user => _user;
 

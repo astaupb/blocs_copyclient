@@ -22,12 +22,9 @@ class JoblistBloc extends Bloc<JoblistEvent, JoblistState> {
 
   List<Job> _jobs;
 
-  JoblistBloc(this._backend) {
+  JoblistBloc(this._backend) : super(JoblistState.init()) {
     log.fine('$this started');
   }
-
-  @override
-  JoblistState get initialState => JoblistState.init();
 
   List<Job> get jobs => _jobs;
 

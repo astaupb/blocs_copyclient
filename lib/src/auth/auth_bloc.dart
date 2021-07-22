@@ -17,12 +17,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   String token;
   Backend backend;
 
-  AuthBloc({@required this.backend, this.token}) {
+  AuthBloc({@required this.backend, this.token}) : super(AuthState.unauthorized()) {
     log.info('$this started');
   }
-
-  @override
-  AuthState get initialState => AuthState.unauthorized();
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
