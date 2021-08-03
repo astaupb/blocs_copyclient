@@ -24,7 +24,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     _log.fine('$this started');
   }
 
-  get user => _user;
+  User get user => _user;
 
   @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
